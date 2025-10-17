@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://cql02p5dei2we"]
+
+[ext_resource type="Script" uid="uid://c83dm173v7ctt" path="res://Scripts/snipe_bullet.gd" id="1_hfuv3"]
+[ext_resource type="Texture2D" uid="uid://n86qtof4jqhf" path="res://scene/Snipe_tower/Turrets_g56.png" id="2_l7178"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_c3tts"]
+radius = 2.0
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_hfuv3")
+speed = 3000.0
+damage = 30
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_c3tts")
+
+[node name="TurretsG56" type="Sprite2D" parent="."]
+position = Vector2(5.96046e-08, 5.96046e-08)
+scale = Vector2(0.134615, 0.134615)
+texture = ExtResource("2_l7178")

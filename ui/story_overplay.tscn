@@ -1,0 +1,106 @@
+[gd_scene load_steps=8 format=3 uid="uid://vrxady7gtkin"]
+
+[ext_resource type="Script" uid="uid://b5tbjgmnxnnxr" path="res://ui/story_overplay.gd" id="1_dqh81"]
+[ext_resource type="Texture2D" uid="uid://bf8ufuajl6aia" path="res://Sprite/Personnage 1/Open Peeps - Sitting (4).png" id="2_7kq8i"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ryvsr"]
+bg_color = Color(0.207275, 0.695148, 0.531787, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p5bb4"]
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7kq8i"]
+bg_color = Color(0.525775, 0.577695, 0.861687, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aulbf"]
+bg_color = Color(0.307112, 0.665323, 0.676987, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_unrg2"]
+bg_color = Color(0.518977, 0.585084, 0.840305, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[node name="CanvasLayer" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_dqh81")
+
+[node name="Panel" type="Panel" parent="."]
+z_index = 7
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 46.0
+offset_right = 719.0
+offset_bottom = 808.0
+texture = ExtResource("2_7kq8i")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Caption" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 730.0
+offset_top = 116.0
+offset_right = 1460.0
+offset_bottom = 246.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = 10
+theme_override_constants/paragraph_spacing = 10
+theme_override_constants/shadow_offset_x = 10
+theme_override_constants/shadow_offset_y = 10
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 40
+text = "Bon, on est arrivé finalement entiers. 
+Pas la peine d'en chier une brique!"
+autowrap_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 908.0
+offset_top = 400.0
+offset_right = 1490.0
+offset_bottom = 800.0
+alignment = 1
+
+[node name="NextBtn" type="Button" parent="Panel/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 30
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_ryvsr")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_p5bb4")
+theme_override_styles/normal = SubResource("StyleBoxFlat_7kq8i")
+text = "Suivant"
+
+[node name="Control" type="Control" parent="Panel/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="SkipBtn" type="Button" parent="Panel/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 30
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_aulbf")
+theme_override_styles/normal = SubResource("StyleBoxFlat_unrg2")
+text = "Passer"

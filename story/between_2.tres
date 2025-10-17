@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="StorySequence" load_steps=9 format=3 uid="uid://bsd6oypxwotf8"]
+
+[ext_resource type="Texture2D" uid="uid://dnb84hr1ny07p" path="res://Sprite/Personnage 1/Open Peeps - Bust (11).png" id="1_qmrs5"]
+[ext_resource type="Texture2D" uid="uid://c3ydoaad426ox" path="res://Sprite/Personnage 2/Open Peeps - Bust (15).png" id="2_exqrg"]
+[ext_resource type="Texture2D" uid="uid://cn2l0das2mpsk" path="res://Sprite/Personnage 1/Open Peeps - Bust (6).png" id="3_ouygi"]
+[ext_resource type="Texture2D" uid="uid://1fjv32mct51x" path="res://Sprite/Personnage 2/Open Peeps - Bust (18).png" id="4_np3u3"]
+[ext_resource type="Texture2D" uid="uid://c3i5snog64yha" path="res://Slime/ChatGPT_Image_25_sept._2025__13_19_21-removebg-preview.png" id="5_616ym"]
+[ext_resource type="Texture2D" uid="uid://d3pj26ofotjxo" path="res://Sprite/Personnage 1/Open Peeps - Bust (8).png" id="6_801g0"]
+[ext_resource type="Texture2D" uid="uid://dyblcq2hkpbj1" path="res://Sprite/Personnage 2/Open Peeps - Bust (14).png" id="7_x1k88"]
+[ext_resource type="Script" uid="uid://cx62ga41ymge4" path="res://story/story_sequence.gd" id="9_u677q"]
+
+[resource]
+script = ExtResource("9_u677q")
+images = Array[Texture2D]([ExtResource("1_qmrs5"), ExtResource("2_exqrg"), ExtResource("3_ouygi"), ExtResource("4_np3u3"), ExtResource("5_616ym"), ExtResource("6_801g0"), ExtResource("7_x1k88")])
+texts = Array[String](["ça commence à faire beaucoup de gros papas ! ", "J'ai testé un truc qui pourra les ralentir", "Les ralentir ? ça a l'air super bourrin ! on va détuire la région, non ? ", "Mais non, je l'ai testé, ça a juste jeté un froid", "....................", "T'as quand même transformé mon Blobi en pizza picard ??!? ", "Roh mais non, il va vite s'en remettre, enfin je crois.... "])

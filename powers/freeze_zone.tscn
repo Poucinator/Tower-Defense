@@ -1,0 +1,191 @@
+[gd_scene load_steps=10 format=3 uid="uid://bml7u5ogudft4"]
+
+[ext_resource type="Script" uid="uid://bxxo8ikxpmblk" path="res://powers/freeze_zone.gd" id="1_ijxnu"]
+[ext_resource type="Texture2D" uid="uid://dfoikgtnlh6yw" path="res://powers/sprites/Ice/tile000.png" id="2_l15iu"]
+[ext_resource type="Texture2D" uid="uid://drnqxbvtx3fq3" path="res://powers/sprites/Ice/tile001.png" id="3_v6mgv"]
+[ext_resource type="Texture2D" uid="uid://bhfrpvpgh5461" path="res://powers/sprites/Ice/tile002.png" id="4_ii1yq"]
+[ext_resource type="Texture2D" uid="uid://bugjmgq8taqfy" path="res://powers/sprites/Ice/tile004.png" id="5_6ilf6"]
+[ext_resource type="Texture2D" uid="uid://bgdviw6pwdr0i" path="res://powers/sprites/Ice/tile005.png" id="6_xkr8b"]
+[ext_resource type="Texture2D" uid="uid://bdq2ehl5224k7" path="res://powers/sprites/Ice/tile006.png" id="7_scs8c"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ijxnu"]
+radius = 34.3657
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j21ea"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_l15iu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_v6mgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ii1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6ilf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xkr8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_scs8c")
+}],
+"loop": true,
+"name": &"ice",
+"speed": 9.0
+}]
+
+[node name="Area2D" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_ijxnu")
+slow_multiplier = 0.3
+duration = 10.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ijxnu")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -193)
+scale = Vector2(0.93695, 0.75)
+sprite_frames = SubResource("SpriteFrames_j21ea")
+animation = &"ice"
+frame_progress = 0.646368

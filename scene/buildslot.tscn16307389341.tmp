@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://h0hcq3wmwfw4"]
+
+[ext_resource type="Script" uid="uid://dk3uhemfpdlgt" path="res://Scripts/build_slot.gd" id="1_d1feq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xb8ee"]
+
+[node name="BuildSlot" type="Area2D"]
+script = ExtResource("1_d1feq")
+controller_path = null
+price_override = null
+allow_only_when_building = null
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(10, 10)
+shape = SubResource("RectangleShape2D_xb8ee")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = 6
+offset_right = 20.0
+offset_bottom = 20.0

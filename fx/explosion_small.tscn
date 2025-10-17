@@ -1,0 +1,73 @@
+[gd_scene load_steps=13 format=3 uid="uid://phswgwwx8i2y"]
+
+[ext_resource type="Script" uid="uid://cg4xrp032cada" path="res://fx/explosion.gd" id="1_sarbb"]
+[ext_resource type="Texture2D" uid="uid://3wdsqrc0pfoh" path="res://Sprite/fx/tile000.png" id="2_00ecd"]
+[ext_resource type="Texture2D" uid="uid://b7mheamq5pnsa" path="res://Sprite/fx/tile001.png" id="3_n38f7"]
+[ext_resource type="Texture2D" uid="uid://b0x6vpgdlmxpq" path="res://Sprite/fx/tile002.png" id="4_04uxl"]
+[ext_resource type="Texture2D" uid="uid://newic0wvhxxm" path="res://Sprite/fx/tile003.png" id="5_svoss"]
+[ext_resource type="Texture2D" uid="uid://dsq53u84tsa7h" path="res://Sprite/fx/tile004.png" id="6_t32s1"]
+[ext_resource type="Texture2D" uid="uid://dgh5h6yacoofw" path="res://Sprite/fx/tile005.png" id="7_f8vyr"]
+[ext_resource type="Texture2D" uid="uid://cfv5plypbop1d" path="res://Sprite/fx/tile006.png" id="8_w5hsq"]
+[ext_resource type="Texture2D" uid="uid://c47snwphrn6je" path="res://Sprite/fx/tile007.png" id="9_n5jgi"]
+[ext_resource type="AudioStream" uid="uid://cdj88r88rnokm" path="res://fx/Cinematic Boom - sound effect - [High quality].mp3" id="10_eg3mj"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_s03pj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_00ecd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_n38f7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_04uxl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_svoss")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_t32s1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_f8vyr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_w5hsq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_n5jgi")
+}],
+"loop": false,
+"name": &"Boom",
+"speed": 15.0
+}]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_eg3mj"]
+particle_flag_disable_z = true
+direction = Vector3(1, 1, 1)
+initial_velocity_max = 212.77
+gravity = Vector3(0, 0, 0)
+
+[node name="Explosion" type="Node2D"]
+script = ExtResource("1_sarbb")
+flash_energy = 0.1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_s03pj")
+animation = &"Boom"
+frame = 7
+frame_progress = 1.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 30
+lifetime = 0.6
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_eg3mj")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("10_eg3mj")
+volume_db = 1.857

@@ -1,0 +1,159 @@
+[gd_scene load_steps=30 format=3 uid="uid://c8sx3dan50kc4"]
+
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_dpms2"]
+[ext_resource type="Texture2D" uid="uid://c1brc1rtc8ktu" path="res://Sprite/Enemy/Slime bleu/Dead/tile039.png" id="2_kjarb"]
+[ext_resource type="Texture2D" uid="uid://7rc86vsb2he0" path="res://Sprite/Enemy/Slime bleu/Dead/tile040.png" id="3_wd8my"]
+[ext_resource type="Texture2D" uid="uid://dbqmnvmf62tb0" path="res://Sprite/Enemy/Slime bleu/Dead/tile041.png" id="4_fkt0p"]
+[ext_resource type="Texture2D" uid="uid://bc21ujmvauq1o" path="res://Sprite/Enemy/Slime bleu/Dead/tile042.png" id="5_ttvit"]
+[ext_resource type="Texture2D" uid="uid://b4pl4k4plcqkv" path="res://Sprite/Enemy/Slime bleu/Dead/tile043.png" id="6_bu6xs"]
+[ext_resource type="Texture2D" uid="uid://dvcq4gttlf0" path="res://Sprite/Enemy/Slime bleu/Dead/tile044.png" id="7_pwsgh"]
+[ext_resource type="Texture2D" uid="uid://nyc138rrleok" path="res://Sprite/Enemy/Slime bleu/Dead/tile045.png" id="8_1jtnp"]
+[ext_resource type="Texture2D" uid="uid://ddyywstxlnuh5" path="res://Sprite/Enemy/Slime bleu/Dead/tile046.png" id="9_qwcu1"]
+[ext_resource type="Texture2D" uid="uid://dmww6ut8m7d4y" path="res://Sprite/Enemy/Slime bleu/Dead/tile047.png" id="10_jprrp"]
+[ext_resource type="Texture2D" uid="uid://c6djkpxhio7hc" path="res://Sprite/Enemy/Slime bleu/Dead/tile048.png" id="11_g1yu6"]
+[ext_resource type="Texture2D" uid="uid://3nxe8fvwesmf" path="res://Sprite/Enemy/Slime bleu/Dead/tile049.png" id="12_71lso"]
+[ext_resource type="Texture2D" uid="uid://d1b3ove8wsgmn" path="res://Sprite/Enemy/Slime bleu/Dead/tile050.png" id="13_xk2gf"]
+[ext_resource type="Texture2D" uid="uid://bin8nmsue0ns8" path="res://Sprite/Enemy/Slime bleu/Dead/tile051.png" id="14_gio81"]
+[ext_resource type="Texture2D" uid="uid://8ragwcob8pla" path="res://Sprite/Enemy/Slime bleu/Walk/tile033.png" id="15_3jdsq"]
+[ext_resource type="Texture2D" uid="uid://dns20aixs73p0" path="res://Sprite/Enemy/Slime bleu/Walk/tile034.png" id="16_bmiky"]
+[ext_resource type="Texture2D" uid="uid://btner4gsnwy41" path="res://Sprite/Enemy/Slime bleu/Walk/tile035.png" id="17_ysd20"]
+[ext_resource type="Texture2D" uid="uid://bt2b1x4apxav" path="res://Sprite/Enemy/Slime bleu/Walk/tile036.png" id="18_v1002"]
+[ext_resource type="Texture2D" uid="uid://cwsrpgrs5776r" path="res://Sprite/Enemy/Slime bleu/Walk/tile037.png" id="19_pvvrs"]
+[ext_resource type="Texture2D" uid="uid://cbkps5tobkqeh" path="res://Sprite/Enemy/Slime bleu/Walk/tile038.png" id="20_jxq3o"]
+[ext_resource type="Texture2D" uid="uid://cpmr1kria0f1n" path="res://Sprite/Enemy/Slime bleu/Walk/tile039.png" id="21_arxpq"]
+[ext_resource type="Texture2D" uid="uid://cr4psr8wo78rc" path="res://Sprite/Enemy/Slime bleu/Walk/tile040.png" id="22_c5wr7"]
+[ext_resource type="Texture2D" uid="uid://bu44gph4b31hs" path="res://Sprite/Enemy/Slime bleu/Walk/tile041.png" id="23_ycca8"]
+[ext_resource type="Texture2D" uid="uid://sats5enx5eju" path="res://Sprite/Enemy/Slime bleu/Walk/tile042.png" id="24_wasof"]
+[ext_resource type="Texture2D" uid="uid://hy7x4js22jm" path="res://Sprite/Enemy/Slime bleu/Walk/tile043.png" id="25_33ipg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1fcsh"]
+size = Vector2(33, 78.75)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fjf2u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_kjarb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_wd8my")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_fkt0p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_ttvit")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_bu6xs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_pwsgh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_1jtnp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_qwcu1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_jprrp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_g1yu6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_71lso")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_xk2gf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_gio81")
+}],
+"loop": false,
+"name": &"dead",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("15_3jdsq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_bmiky")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_ysd20")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_v1002")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_pvvrs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_jxq3o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_arxpq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_c5wr7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_ycca8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_wasof")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_33ipg")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 20.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ij5d4"]
+bg_color = Color(0.788954, 0.533671, 0.354743, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.07, 0.07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ctxp"]
+bg_color = Color(0.013718, 0.728269, 9.62615e-07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.02, 0.02, 0.02, 1)
+
+[node name="CharacterBody2D" type="CharacterBody2D" groups=["Enemy"]]
+collision_layer = 2
+script = ExtResource("1_dpms2")
+speed = 120.0
+max_hp = 50
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, -39.625)
+shape = SubResource("RectangleShape2D_1fcsh")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 8
+position = Vector2(10, -21)
+scale = Vector2(1.775, 1.88194)
+sprite_frames = SubResource("SpriteFrames_fjf2u")
+animation = &"walk"
+frame_progress = 0.912532
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+z_index = 4
+offset_left = -15.0
+offset_top = -104.0
+offset_right = 14.0
+offset_bottom = -96.0
+theme_override_styles/background = SubResource("StyleBoxFlat_ij5d4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2ctxp")
+show_percentage = false

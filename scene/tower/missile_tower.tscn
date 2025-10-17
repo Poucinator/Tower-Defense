@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=3 uid="uid://11ao7sf06x1j"]
+
+[ext_resource type="Script" uid="uid://dvq0kwsnfjiu5" path="res://scene/tower/missile_tower.gd" id="1_qw0ie"]
+[ext_resource type="Texture2D" uid="uid://cf583wphcy202" path="res://Sprite/New Tower/Turrets_g21.png" id="2_qw0ie"]
+[ext_resource type="Texture2D" uid="uid://don5po8yyg27u" path="res://Sprite/New Tower/Turrets_g20.png" id="3_51x1k"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_58b7d"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_qw0ie")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_51x1k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_qw0ie")
+}],
+"loop": true,
+"name": &"shoot",
+"speed": 1.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptvpv"]
+size = Vector2(10, 10)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_df2s1"]
+radius = 397.081
+
+[node name="BlueTower" type="StaticBody2D"]
+z_index = 5
+rotation = 1.5708
+collision_layer = 5
+input_pickable = true
+script = ExtResource("1_qw0ie")
+fire_interval = 0.7
+missile_speed = 800.0
+missile_damage = 10
+splash_falloff = 1.0
+detector_path = NodePath("Tower")
+muzzle_path = NodePath("Muzzle")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.011832, 0.0214193)
+rotation = 1.57079
+scale = Vector2(0.127155, 0.084711)
+sprite_frames = SubResource("SpriteFrames_58b7d")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ptvpv")
+
+[node name="Area" type="Marker2D" parent="."]
+position = Vector2(8, -9.53674e-07)
+
+[node name="Tower" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tower"]
+shape = SubResource("CircleShape2D_df2s1")
+
+[node name="Muzzle" type="Node2D" parent="."]
+position = Vector2(17, -6.15398e-05)
+
+[connection signal="body_entered" from="Tower" to="." method="_on_tower_body_entered"]
+[connection signal="body_exited" from="Tower" to="." method="_on_tower_body_exited"]

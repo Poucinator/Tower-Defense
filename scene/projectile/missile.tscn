@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://g87dna751rr0"]
+
+[ext_resource type="Script" uid="uid://bgpykicyggqlq" path="res://scene/projectile/missile.gd" id="1_1h261"]
+[ext_resource type="Texture2D" uid="uid://dhgdquy86e2jl" path="res://Sprite/New Tower/Turrets_g45.png" id="1_8c2nl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1h261"]
+size = Vector2(8, 6)
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+z_index = 12
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_1h261")
+speed = 1000.0
+splash_falloff = 1.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 8
+position = Vector2(-0.0625033, -0.125)
+rotation = 1.57079
+scale = Vector2(0.130319, 0.101974)
+texture = ExtResource("1_8c2nl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+z_index = 4
+shape = SubResource("RectangleShape2D_1h261")

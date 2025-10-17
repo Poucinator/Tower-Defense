@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://dyi6l0yieri2"]
+
+[ext_resource type="Script" uid="uid://ckvwm1scqodry" path="res://scene/tower/barracks_tower.gd" id="1_kdibp"]
+[ext_resource type="Texture2D" uid="uid://tann1ueve5fi" path="res://scene/Barrack/Turrets_g28.png" id="1_l2to6"]
+[ext_resource type="PackedScene" uid="uid://dhon22w0it0a5" path="res://units/marine.tscn" id="2_j1ifm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j1ifm"]
+size = Vector2(28, 28)
+
+[node name="StaticBody2D" type="StaticBody2D"]
+script = ExtResource("1_kdibp")
+marine_scene = ExtResource("2_j1ifm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_j1ifm")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(3.8147e-06, 1.90735e-06)
+scale = Vector2(0.093008, 0.0943272)
+texture = ExtResource("1_l2to6")
+
+[node name="Rally" type="Node2D" parent="."]

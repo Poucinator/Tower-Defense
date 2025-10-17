@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cpyoif78gioug"]
+
+[ext_resource type="Script" uid="uid://blyffss550jct" path="res://powers/summon_zone.gd" id="1_ebon0"]
+[ext_resource type="PackedScene" uid="uid://dhon22w0it0a5" path="res://units/marine.tscn" id="2_amitd"]
+
+[node name="SummonZone" type="Node2D"]
+script = ExtResource("1_ebon0")
+marine_scene = ExtResource("2_amitd")
+
+[node name="Timer" type="Timer" parent="."]

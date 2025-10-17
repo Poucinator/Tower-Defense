@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://djy8fy8bwhvwc"]
+
+[ext_resource type="Script" uid="uid://84nomtfk5e4t" path="res://Scripts/ui/tower_menu.gd" id="1_tipf3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4vboh"]
+bg_color = Color(0.595174, 0.592843, 0.658816, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.518971, 0.850954, 1, 1)
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
+shadow_size = 8
+
+[node name="TowerMenu" type="PopupPanel"]
+position = Vector2i(565, 299)
+size = Vector2i(21, 49)
+visible = true
+max_size = Vector2i(8000, 8000)
+theme_override_styles/panel = SubResource("StyleBoxFlat_4vboh")
+script = ExtResource("1_tipf3")
+
+[node name="Box" type="VBoxContainer" parent="."]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 11.0
+offset_bottom = 39.0
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="UpgradeBtn" type="TextureButton" parent="Box"]
+layout_mode = 2
+
+[node name="PriceLabel" type="Label" parent="Box"]
+layout_mode = 2

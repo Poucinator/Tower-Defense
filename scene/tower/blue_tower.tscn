@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3 uid="uid://b183lbw7sw7rv"]
+
+[ext_resource type="Script" uid="uid://d2k1papweed8x" path="res://Scripts/blue_tower.gd" id="1_aibar"]
+[ext_resource type="PackedScene" uid="uid://b3fhtr5p33q75" path="res://scene/tower/Blue_TowerMk2.tscn" id="2_58b7d"]
+[ext_resource type="Texture2D" uid="uid://bpljadse7l2fm" path="res://Sprite/New Tower/Turrets_g2.png" id="2_n4j27"]
+[ext_resource type="Texture2D" uid="uid://b217g8wi6vlp8" path="res://Sprite/New Tower/Turrets_g18.png" id="3_58b7d"]
+[ext_resource type="Texture2D" uid="uid://vbtyrm0ixcf7" path="res://Sprite/New Tower/Turrets_g3.png" id="3_vdptn"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_58b7d"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_vdptn")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_vdptn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_n4j27")
+}],
+"loop": true,
+"name": &"shoot",
+"speed": 7.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptvpv"]
+size = Vector2(10, 10)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_df2s1"]
+radius = 114.11
+
+[node name="BlueTower" type="StaticBody2D"]
+z_index = 9
+rotation = 1.5708
+collision_layer = 5
+input_pickable = true
+script = ExtResource("1_aibar")
+fire_interval = 0.3
+detector_path = NodePath("Tower")
+muzzle_path = NodePath("Muzzle")
+upgrade_scene = ExtResource("2_58b7d")
+upgrade_cost = 500
+upgrade_icon = ExtResource("3_58b7d")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.011832, 0.0214193)
+rotation = 1.57079
+scale = Vector2(0.127155, 0.084711)
+sprite_frames = SubResource("SpriteFrames_58b7d")
+animation = &"shoot"
+autoplay = "idle"
+frame_progress = 0.236279
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ptvpv")
+
+[node name="Area" type="Marker2D" parent="."]
+position = Vector2(8, -9.53674e-07)
+
+[node name="Tower" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tower"]
+shape = SubResource("CircleShape2D_df2s1")
+
+[node name="Muzzle" type="Node2D" parent="."]
+position = Vector2(17, -6.15398e-05)
+
+[connection signal="body_entered" from="Tower" to="." method="_on_tower_body_entered"]
+[connection signal="body_exited" from="Tower" to="." method="_on_tower_body_exited"]

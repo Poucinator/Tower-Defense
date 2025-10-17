@@ -1,0 +1,162 @@
+[gd_scene load_steps=31 format=3 uid="uid://t8dm8cilti0m"]
+
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_61m8l"]
+[ext_resource type="Texture2D" uid="uid://myyljqy6pbi6" path="res://Sprite/Enemy/Purple/Dead/tile016.png" id="2_akfb2"]
+[ext_resource type="Texture2D" uid="uid://bwp8cb5de28ai" path="res://Sprite/Enemy/Purple/Dead/tile015.png" id="3_uxcsk"]
+[ext_resource type="Texture2D" uid="uid://bk1cu1ia6rsn4" path="res://Sprite/Enemy/Purple/Dead/tile014.png" id="4_xabqe"]
+[ext_resource type="Texture2D" uid="uid://4rky5n2wslll" path="res://Sprite/Enemy/Purple/Dead/tile013.png" id="5_d848a"]
+[ext_resource type="Texture2D" uid="uid://c7qfyy2wcc7on" path="res://Sprite/Enemy/Purple/Dead/tile012.png" id="6_3sj8q"]
+[ext_resource type="Texture2D" uid="uid://c37rto2u55pvh" path="res://Sprite/Enemy/Purple/Dead/tile011.png" id="7_te06x"]
+[ext_resource type="Texture2D" uid="uid://cj088mtytswch" path="res://Sprite/Enemy/Purple/Dead/tile010.png" id="8_c1ftr"]
+[ext_resource type="Texture2D" uid="uid://ckgdetl3hanr4" path="res://Sprite/Enemy/Purple/Dead/tile009.png" id="9_u4qi8"]
+[ext_resource type="Texture2D" uid="uid://dy8ioejrn3lj8" path="res://Sprite/Enemy/Purple/Dead/tile008.png" id="10_m441x"]
+[ext_resource type="Texture2D" uid="uid://ccneq8hssdm4o" path="res://Sprite/Enemy/Purple/Dead/tile007.png" id="11_hxa8p"]
+[ext_resource type="Texture2D" uid="uid://cq43vk8dd7ya0" path="res://Sprite/Enemy/Purple/Dead/tile006.png" id="12_7m01v"]
+[ext_resource type="Texture2D" uid="uid://byhcre8mxmrx1" path="res://Sprite/Enemy/Purple/Dead/tile005.png" id="13_61m8l"]
+[ext_resource type="Texture2D" uid="uid://dc7y4fhiia2wg" path="res://Sprite/Enemy/Purple/Dead/tile004.png" id="14_kttp6"]
+[ext_resource type="Texture2D" uid="uid://csvkch6pd8vei" path="res://Sprite/Enemy/Purple/Dead/tile003.png" id="15_byuaq"]
+[ext_resource type="Texture2D" uid="uid://ytx7etmpvo0p" path="res://Sprite/Enemy/Purple/Dead/tile002.png" id="16_rx4l0"]
+[ext_resource type="Texture2D" uid="uid://c65j2nnpueahg" path="res://Sprite/Enemy/Purple/Dead/tile001.png" id="17_enao3"]
+[ext_resource type="Texture2D" uid="uid://c7s0oqlosn4s0" path="res://Sprite/Enemy/Purple/Dead/tile000.png" id="18_bac7o"]
+[ext_resource type="Texture2D" uid="uid://nlvjxlbecha4" path="res://Sprite/Enemy/Purple/Fly/tile000.png" id="19_cvjn8"]
+[ext_resource type="Texture2D" uid="uid://cjwak5t2y5bia" path="res://Sprite/Enemy/Purple/Fly/tile001.png" id="20_bifuy"]
+[ext_resource type="Texture2D" uid="uid://2j2xss7jxdf5" path="res://Sprite/Enemy/Purple/Fly/tile002.png" id="21_eo1f0"]
+[ext_resource type="Texture2D" uid="uid://utxneloemvvb" path="res://Sprite/Enemy/Purple/Fly/tile003.png" id="22_f7rup"]
+[ext_resource type="Texture2D" uid="uid://c0a0gct4st16s" path="res://Sprite/Enemy/Purple/Fly/tile004.png" id="23_d56e4"]
+[ext_resource type="Texture2D" uid="uid://crjeggtcd7gle" path="res://Sprite/Enemy/Purple/Fly/tile005.png" id="24_5k4wp"]
+[ext_resource type="Texture2D" uid="uid://ccwc10cj1k0ox" path="res://Sprite/Enemy/Purple/Fly/tile006.png" id="25_vwv3q"]
+[ext_resource type="Texture2D" uid="uid://bjdsgs8422e34" path="res://Sprite/Enemy/Purple/Fly/tile007.png" id="26_kwpc7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1fcsh"]
+size = Vector2(54.625, 55)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fjf2u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_akfb2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_uxcsk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_xabqe")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_d848a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_3sj8q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_te06x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_c1ftr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_u4qi8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_m441x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_hxa8p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_7m01v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_61m8l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_kttp6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_byuaq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_rx4l0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_enao3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_bac7o")
+}],
+"loop": false,
+"name": &"dead",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("19_cvjn8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_bifuy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_eo1f0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_f7rup")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_d56e4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_5k4wp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_vwv3q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_kwpc7")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 20.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ij5d4"]
+bg_color = Color(0.788954, 0.533671, 0.354743, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.07, 0.07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ctxp"]
+bg_color = Color(0.013718, 0.728269, 9.62615e-07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.02, 0.02, 0.02, 1)
+
+[node name="CharacterBody2D" type="CharacterBody2D" groups=["Enemy"]]
+collision_layer = 2
+script = ExtResource("1_61m8l")
+max_hp = 10
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, -59)
+shape = SubResource("RectangleShape2D_1fcsh")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 8
+position = Vector2(1, -56)
+scale = Vector2(1.01006, 0.992499)
+sprite_frames = SubResource("SpriteFrames_fjf2u")
+animation = &"walk"
+frame_progress = 0.833165
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+z_index = 4
+offset_left = -57.0
+offset_top = -161.0
+offset_right = 53.0
+offset_bottom = -153.0
+theme_override_styles/background = SubResource("StyleBoxFlat_ij5d4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2ctxp")
+show_percentage = false

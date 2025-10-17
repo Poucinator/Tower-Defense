@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmthdw2mvqxxg"]
+
+[ext_resource type="Texture2D" uid="uid://cauvbcbsxvy7r" path="res://Sprite/tower Legacy/Bleu/tile117.png" id="1_ea5at"]
+[ext_resource type="Script" uid="uid://dl3dv1t81606g" path="res://Scripts/bluebullet.gd" id="1_m3ank"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_m3ank"]
+radius = 2.0
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+z_index = 5
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_m3ank")
+speed = 800.0
+damage = 3
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CircleShape2D_m3ank")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
+texture = ExtResource("1_ea5at")

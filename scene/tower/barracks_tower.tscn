@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3 uid="uid://dyi6l0yieri2"]
+
+[ext_resource type="Script" uid="uid://ckvwm1scqodry" path="res://scene/tower/barracks_tower.gd" id="1_kdibp"]
+[ext_resource type="PackedScene" uid="uid://dhon22w0it0a5" path="res://units/marine.tscn" id="2_j1ifm"]
+[ext_resource type="PackedScene" uid="uid://b7dum3daatldm" path="res://scene/tower/barracks_tower_MK2.tscn" id="3_488rp"]
+[ext_resource type="Texture2D" uid="uid://cxgkvf3n2t0fc" path="res://scene/Barrack/ChatGPT_Image_4_oct._2025__09_42_57-removebg-preview (1).png" id="4_488rp"]
+[ext_resource type="Texture2D" uid="uid://0x02fxs4iccg" path="res://scene/Barrack/_Untitled_design-removebg-preview.png" id="5_0wlpn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j1ifm"]
+size = Vector2(28, 28)
+
+[node name="StaticBody2D" type="StaticBody2D"]
+collision_mask = 2
+input_pickable = true
+script = ExtResource("1_kdibp")
+marine_scene = ExtResource("2_j1ifm")
+ring_radius = 30.0
+move_speed = 40.0
+upgrade_scene = ExtResource("3_488rp")
+upgrade_icon = ExtResource("4_488rp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_j1ifm")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 7
+position = Vector2(0, -9.53674e-07)
+scale = Vector2(0.171585, 0.160248)
+texture = ExtResource("5_0wlpn")
+
+[node name="Rally" type="Node2D" parent="."]

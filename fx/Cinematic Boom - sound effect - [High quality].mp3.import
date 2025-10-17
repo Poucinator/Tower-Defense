@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cdj88r88rnokm"
+path="res://.godot/imported/Cinematic Boom - sound effect - [High quality].mp3-0fdac4f02fac39c7a3eedae2c53f49eb.mp3str"
+
+[deps]
+
+source_file="res://fx/Cinematic Boom - sound effect - [High quality].mp3"
+dest_files=["res://.godot/imported/Cinematic Boom - sound effect - [High quality].mp3-0fdac4f02fac39c7a3eedae2c53f49eb.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

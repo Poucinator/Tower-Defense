@@ -1,0 +1,12 @@
+# Godot 4.x
+.godot/
+.import/
+.mono/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE/Editeurs
+.vscode/
+.idea/

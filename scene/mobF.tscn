@@ -1,0 +1,207 @@
+[gd_scene load_steps=42 format=3 uid="uid://dnn1533jxulsc"]
+
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_2cvf6"]
+[ext_resource type="Texture2D" uid="uid://bu5yq2jhcbbgn" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_000.png" id="2_2cvf6"]
+[ext_resource type="Texture2D" uid="uid://boqmnyl33f84" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_001.png" id="3_jme5q"]
+[ext_resource type="Texture2D" uid="uid://bm0h8we2d3rue" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_002.png" id="4_r1f82"]
+[ext_resource type="Texture2D" uid="uid://dlmbbrecwn8f7" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_003.png" id="5_e2nwc"]
+[ext_resource type="Texture2D" uid="uid://di0cnkc48l1cj" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_004.png" id="6_mnn8l"]
+[ext_resource type="Texture2D" uid="uid://dlaigilte8dd4" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_005.png" id="7_mr4kb"]
+[ext_resource type="Texture2D" uid="uid://nwvc3i2fxwdi" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_006.png" id="8_kpwrc"]
+[ext_resource type="Texture2D" uid="uid://kk53v6v64w6j" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_007.png" id="9_a6cs3"]
+[ext_resource type="Texture2D" uid="uid://chovn0gdq5c2t" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_008.png" id="10_bwb4g"]
+[ext_resource type="Texture2D" uid="uid://bljnmep1t45cf" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_009.png" id="11_eupvu"]
+[ext_resource type="Texture2D" uid="uid://bam7drim03x4d" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_010.png" id="12_y4021"]
+[ext_resource type="Texture2D" uid="uid://bcs8783wammo3" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_011.png" id="13_23rbq"]
+[ext_resource type="Texture2D" uid="uid://cilep4cc0exip" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_012.png" id="14_4my10"]
+[ext_resource type="Texture2D" uid="uid://ccybxd4qbbdwf" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_013.png" id="15_5ddca"]
+[ext_resource type="Texture2D" uid="uid://dmg2ri2cj6xty" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_014.png" id="16_kq0sc"]
+[ext_resource type="Texture2D" uid="uid://cc5otmrd834k5" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_015.png" id="17_dep6a"]
+[ext_resource type="Texture2D" uid="uid://rhke0027rfhl" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_016.png" id="18_3e672"]
+[ext_resource type="Texture2D" uid="uid://bmhqvexjiwqh3" path="res://Sprite/Enemy/BigBat/Dead/0_Monster_Dying_017.png" id="19_hm1ld"]
+[ext_resource type="Texture2D" uid="uid://cnpir4ru5vabp" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_000.png" id="20_vrcl2"]
+[ext_resource type="Texture2D" uid="uid://bmsmpwbkjprxq" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_001.png" id="21_13jg5"]
+[ext_resource type="Texture2D" uid="uid://dom0ygie3wu4c" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_002.png" id="22_v5mmi"]
+[ext_resource type="Texture2D" uid="uid://doi1f6ixmlcwx" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_003.png" id="23_uln44"]
+[ext_resource type="Texture2D" uid="uid://bcn8g543kx3b8" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_004.png" id="24_wvw22"]
+[ext_resource type="Texture2D" uid="uid://bwqph4ldwqgas" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_005.png" id="25_svyml"]
+[ext_resource type="Texture2D" uid="uid://c1ic7ptt3dxin" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_006.png" id="26_xpimd"]
+[ext_resource type="Texture2D" uid="uid://lf3350wp4sg6" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_007.png" id="27_3io1b"]
+[ext_resource type="Texture2D" uid="uid://co467x6784447" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_008.png" id="28_6gq1a"]
+[ext_resource type="Texture2D" uid="uid://dtskw61p8d0mc" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_009.png" id="29_fxtko"]
+[ext_resource type="Texture2D" uid="uid://crwatishk7kvk" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_010.png" id="30_p0a86"]
+[ext_resource type="Texture2D" uid="uid://cu5tjxyt1ypnv" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_011.png" id="31_cgftf"]
+[ext_resource type="Texture2D" uid="uid://b73tnfe4yieum" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_012.png" id="32_34ofk"]
+[ext_resource type="Texture2D" uid="uid://b1vx5xobms7qf" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_013.png" id="33_cc0lt"]
+[ext_resource type="Texture2D" uid="uid://c2ywlbil4i5jq" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_014.png" id="34_vxg17"]
+[ext_resource type="Texture2D" uid="uid://bw2cuha62wr2s" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_015.png" id="35_cj30g"]
+[ext_resource type="Texture2D" uid="uid://bsu31467blgbt" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_016.png" id="36_i0slm"]
+[ext_resource type="Texture2D" uid="uid://cu23xbnjvy7ih" path="res://Sprite/Enemy/BigBat/Fly/0_Monster_Fly_017.png" id="37_pik0q"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1fcsh"]
+size = Vector2(54.625, 55)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fjf2u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_2cvf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_jme5q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_r1f82")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_e2nwc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_mnn8l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_mr4kb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_kpwrc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_a6cs3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_bwb4g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_eupvu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_y4021")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_23rbq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_4my10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_5ddca")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_kq0sc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_dep6a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_3e672")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_hm1ld")
+}],
+"loop": false,
+"name": &"dead",
+"speed": 80.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("20_vrcl2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_13jg5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_v5mmi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_uln44")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_wvw22")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_svyml")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_xpimd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_3io1b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_6gq1a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_fxtko")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_p0a86")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_cgftf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_34ofk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_cc0lt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_vxg17")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_cj30g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_i0slm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_pik0q")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 120.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ij5d4"]
+bg_color = Color(0.788954, 0.533671, 0.354743, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.07, 0.07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ctxp"]
+bg_color = Color(0.013718, 0.728269, 9.62615e-07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.02, 0.02, 0.02, 1)
+
+[node name="CharacterBody2D" type="CharacterBody2D" groups=["Enemy"]]
+collision_layer = 2
+script = ExtResource("1_2cvf6")
+max_hp = 10
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, -59)
+shape = SubResource("RectangleShape2D_1fcsh")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 8
+position = Vector2(0, -58)
+scale = Vector2(0.301364, 0.359998)
+sprite_frames = SubResource("SpriteFrames_fjf2u")
+animation = &"dead"
+frame = 17
+frame_progress = 1.0
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+z_index = 4
+offset_left = -57.0
+offset_top = -161.0
+offset_right = 53.0
+offset_bottom = -153.0
+theme_override_styles/background = SubResource("StyleBoxFlat_ij5d4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2ctxp")
+show_percentage = false
