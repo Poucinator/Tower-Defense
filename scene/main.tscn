@@ -1,4 +1,4 @@
-[gd_scene load_steps=109 format=4 uid="uid://b7e6bo6ttaigf"]
+[gd_scene load_steps=114 format=4 uid="uid://b7e6bo6ttaigf"]
 
 [ext_resource type="Texture2D" uid="uid://drfwn32oe7glp" path="res://Tilemaps/tileset.png" id="2_wscrc"]
 [ext_resource type="Texture2D" uid="uid://bqlc45dj12b8h" path="res://Tilemaps/trees & stuff.png" id="3_mswub"]
@@ -25,6 +25,7 @@
 [ext_resource type="Script" uid="uid://db8xblng2lp20" path="res://powers/power_controller.gd" id="21_fdqew"]
 [ext_resource type="PackedScene" uid="uid://bosmeipu65j6k" path="res://scene/mobM.tscn" id="21_vneqc"]
 [ext_resource type="PackedScene" uid="uid://bf7qp34jo472o" path="res://scene/mobN.tscn" id="22_rg6nf"]
+[ext_resource type="PackedScene" uid="uid://cr714ro7vnj2n" path="res://scene/mobD.tscn" id="23_mjuaj"]
 [ext_resource type="Script" uid="uid://bd071wec5kl0" path="res://story/story_director.gd" id="24_gn2wi"]
 [ext_resource type="PackedScene" uid="uid://vrxady7gtkin" path="res://ui/story_overplay.tscn" id="25_p8adh"]
 [ext_resource type="Resource" uid="uid://bsd6oypxwotf8" path="res://story/between_2.tres" id="28_io27d"]
@@ -2130,8 +2131,8 @@ script = ExtResource("6_b5f6u")
 path2d_path = NodePath("")
 stage_scene = ExtResource("6_of57s")
 mob_scene = ExtResource("22_rg6nf")
-count = 20
-interval = 0.6
+count = 40
+interval = 0.2
 rotates = false
 loop = false
 metadata/_custom_type_script = "uid://bgbah0klh7wbu"
@@ -2141,6 +2142,46 @@ script = ExtResource("6_b5f6u")
 path2d_path = NodePath("")
 stage_scene = ExtResource("8_b5f6u")
 mob_scene = ExtResource("22_rg6nf")
+count = 40
+interval = 0.2
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_glogg"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("12_tv8i1")
+mob_scene = ExtResource("22_rg6nf")
+count = 20
+interval = 0.2
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_2b0vc"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("13_0vlqb")
+mob_scene = ExtResource("22_rg6nf")
+count = 20
+interval = 0.2
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_bkwet"]
+script = ExtResource("10_rg6nf")
+path = NodePath("PathSpawnerMultiLVL18")
+delay = 1.0
+wait_clear = false
+metadata/_custom_type_script = "uid://6hr8nrey163n"
+
+[sub_resource type="Resource" id="Resource_s4y88"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("6_of57s")
+mob_scene = ExtResource("23_mjuaj")
 count = 20
 interval = 0.6
 rotates = false
@@ -2202,7 +2243,7 @@ min_zoom = 0.01
 [node name="LevelDirector" type="Node" parent="."]
 script = ExtResource("5_k65ib")
 hud_path = NodePath("../CanvasLayer")
-wave_paths = Array[NodePath]([NodePath("../WaveSequence_1"), NodePath("../WaveSequence_2"), NodePath("../WaveSequence_3"), NodePath("../WaveSequence_4")])
+wave_paths = Array[NodePath]([NodePath("../WaveSequence_1"), NodePath("../WaveSequence_2"), NodePath("../WaveSequence_3"), NodePath("../WaveSequence_4"), NodePath("../WaveSequence_5")])
 story_director_path = NodePath("../StoryDirector")
 
 [node name="WaveSequence_1" type="Node2D" parent="."]
@@ -2347,9 +2388,21 @@ events = Array[ExtResource("10_rg6nf")]([SubResource("Resource_cejmo")])
 
 [node name="PathSpawnerMultiLVL17" type="Node2D" parent="WaveSequence_4"]
 script = ExtResource("4_brvut")
-lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_oamnj"), SubResource("Resource_0vc71")])
+lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_oamnj"), SubResource("Resource_0vc71"), SubResource("Resource_glogg"), SubResource("Resource_2b0vc")])
 
 [node name="Timer" type="Timer" parent="WaveSequence_4/PathSpawnerMultiLVL17"]
+
+[node name="WaveSequence_5" type="Node2D" parent="."]
+script = ExtResource("9_fa8t4")
+events = Array[ExtResource("10_rg6nf")]([SubResource("Resource_bkwet")])
+first_delay = 1.0
+
+[node name="PathSpawnerMultiLVL18" type="Node2D" parent="WaveSequence_5"]
+script = ExtResource("4_brvut")
+lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_s4y88")])
+autostart = false
+
+[node name="Timer" type="Timer" parent="WaveSequence_5/PathSpawnerMultiLVL18"]
 
 [node name="BuildController" type="Node2D" parent="."]
 script = ExtResource("6_p1hux")

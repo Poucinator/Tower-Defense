@@ -90,7 +90,13 @@ func _open_upgrade_menu() -> void:
 	_menu_ref = menu
 
 func _on_upgrade_clicked() -> void:
+	# 🔒 Empêche les upgrades pendant le mode vente
+	if "is_selling_mode" in Game and Game.is_selling_mode:
+		print("[MissileTower] Upgrade bloqué : mode vente actif.")
+		return
+
 	if not _try_spend(upgrade_cost):
+		print("[Missile] Or insuffisant")
 		return
 	if upgrade_scene == null:
 		return
@@ -107,9 +113,13 @@ func _on_upgrade_clicked() -> void:
 	parent.add_child(new_tower)
 	new_tower.global_position = global_position
 	new_tower.rotation = rotation
+
+	# Prévention double-clic juste après upgrade
 	if new_tower.has_variable("_click_ready_at_ms"):
 		new_tower._click_ready_at_ms = Time.get_ticks_msec()
+
 	queue_free()
+
 
 # -------- Détection / Tir --------
 func _on_tower_body_entered(b: Node2D) -> void:

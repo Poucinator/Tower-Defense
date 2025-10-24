@@ -32,7 +32,7 @@ size = Vector2(10, 10)
 [sub_resource type="CircleShape2D" id="CircleShape2D_df2s1"]
 radius = 397.081
 
-[node name="BlueTower" type="StaticBody2D"]
+[node name="BlueTower" type="StaticBody2D" groups=["Tower"]]
 z_index = 5
 rotation = 1.5708
 collision_layer = 5

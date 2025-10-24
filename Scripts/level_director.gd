@@ -19,7 +19,7 @@ var hud: Node = null
 var waves: Array[Node] = []
 var current_idx: int = -1
 var _skip_inter_delay := false
-var _inter_left: float = 0.0          # ⬅️ ajouté pour stocker le temps restant (utile pour la récompense)
+var _inter_left: float = 0.0          # ⬅️ stocke le temps restant (pour la récompense)
 const DBG := true
 
 
@@ -109,6 +109,9 @@ func _prepare_wave(index: int) -> void:
 	if hud and hud.has_method("director_countdown_start"):
 		hud.call("director_countdown_start", inter_level_delay)
 
+	# 🔓 AJOUT : débloquer dès le début du compte à rebours
+	_unlock_progression(index)
+
 	while _inter_left > 0.0 and not _skip_inter_delay:
 		await get_tree().create_timer(0.1).timeout
 		_inter_left = max(0.0, _inter_left - 0.1)
@@ -124,6 +127,7 @@ func _prepare_wave(index: int) -> void:
 		wave.begin(0.0, index)
 	else:
 		push_warning("[LD] ⚠️ ", wave.name, " n’a pas de méthode begin()")
+
 
 
 ## ==========================================================
@@ -177,3 +181,29 @@ func _get_first_spawner_in_wave(wave: Node) -> Node:
 			var spawner := wave.get_node_or_null(first_event.path)
 			return spawner
 	return null
+
+
+# ==========================================================
+#     🔓 Déblocage des tours/pouvoirs par numéro de vague
+# ==========================================================
+func _unlock_progression(index: int) -> void:
+	# On débloque au début de la WaveSequence N (index N)
+	# Mapping souhaité (index 0 = 1ère wave) :
+	# 1 → snipe, 2 → freeze, 3 → missile, 4 → heal+summon, 5 → barrack_mk2
+	if hud == null or not hud.has_method("unlock_element"):
+		return
+
+	match index:
+		1:
+			hud.call("unlock_element", "snipe")
+		2:
+			hud.call("unlock_element", "freeze")
+		3:
+			hud.call("unlock_element", "missile")
+		4:
+			hud.call("unlock_element", "heal")
+			hud.call("unlock_element", "summon")
+		5:
+			hud.call("unlock_element", "barrack_mk2")
+		_:
+			pass

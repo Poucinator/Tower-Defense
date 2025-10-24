@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bu8ql60gnhsad"]
+[gd_scene load_steps=12 format=3 uid="uid://bu8ql60gnhsad"]
 
 [ext_resource type="Script" uid="uid://bue551sw22h6u" path="res://ui/hud.gd" id="1_5nt5s"]
 [ext_resource type="Texture2D" uid="uid://dk7kexs0ssyii" path="res://Sprite/coin-removebg-preview.png" id="2_4nxdm"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b06sbfyfa2yi8" path="res://scene/Snipe_tower/Turrets_g9.png" id="5_yx4hk"]
 [ext_resource type="Texture2D" uid="uid://cf583wphcy202" path="res://Sprite/New Tower/Turrets_g21.png" id="6_ldol0"]
 [ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="7_0qwpj"]
+[ext_resource type="Texture2D" uid="uid://dl2jay081erp" path="res://ui/cursor_sell.png" id="9_0twk8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldol0"]
 bg_color = Color(0.289058, 0.679883, 0.586034, 1)
@@ -39,7 +40,7 @@ shadow_size = 9
 script = ExtResource("1_5nt5s")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-offset_right = 896.0
+offset_right = 756.0
 offset_bottom = 152.0
 
 [node name="GoldLabel" type="Label" parent="HBoxContainer"]
@@ -59,11 +60,6 @@ layout_mode = 2
 texture = ExtResource("4_pgw44")
 expand_mode = 2
 
-[node name="Label4" type="Label" parent="HBoxContainer"]
-layout_mode = 2
-text = "Barrack
-50 PO "
-
 [node name="BuildBarracksBtn" type="TextureButton" parent="HBoxContainer"]
 custom_minimum_size = Vector2(160, 64)
 layout_mode = 2
@@ -71,11 +67,13 @@ texture_normal = ExtResource("4_yxe7t")
 ignore_texture_size = true
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="Label4" type="Label" parent="HBoxContainer/BuildBarracksBtn"]
 layout_mode = 2
-text = "Gunner 
-Tower 
-100 PO "
+offset_left = 43.0
+offset_top = 125.0
+offset_right = 104.0
+offset_bottom = 182.0
+text = "50 PO "
 
 [node name="BuildBlueBtn" type="TextureButton" parent="HBoxContainer"]
 custom_minimum_size = Vector2(90, 90)
@@ -85,11 +83,13 @@ texture_normal = ExtResource("4_yx4hk")
 ignore_texture_size = true
 stretch_mode = 4
 
-[node name="Label2" type="Label" parent="HBoxContainer"]
+[node name="Label" type="Label" parent="HBoxContainer/BuildBlueBtn"]
 layout_mode = 2
-text = "Snipe 
-Tower
-200 PO"
+offset_left = 10.0
+offset_top = 146.0
+offset_right = 73.0
+offset_bottom = 221.0
+text = "100 PO "
 
 [node name="BuildSnipeBtn" type="TextureButton" parent="HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
@@ -98,11 +98,13 @@ texture_normal = ExtResource("5_yx4hk")
 ignore_texture_size = true
 stretch_mode = 4
 
-[node name="Label3" type="Label" parent="HBoxContainer"]
+[node name="Label2" type="Label" parent="HBoxContainer/BuildSnipeBtn"]
 layout_mode = 2
-text = "Missile
-Tower
-300 PO"
+offset_left = 3.0
+offset_top = 161.0
+offset_right = 58.0
+offset_bottom = 236.0
+text = "200 PO"
 
 [node name="BuildMissileBtn" type="TextureButton" parent="HBoxContainer"]
 custom_minimum_size = Vector2(90, 90)
@@ -111,11 +113,20 @@ texture_normal = ExtResource("6_ldol0")
 ignore_texture_size = true
 stretch_mode = 4
 
+[node name="Label3" type="Label" parent="HBoxContainer/BuildMissileBtn"]
+layout_mode = 2
+offset_left = 13.0
+offset_top = 151.0
+offset_right = 68.0
+offset_bottom = 226.0
+text = "300 PO"
+
 [node name="TimerLabel" type="Label" parent="HBoxContainer"]
 visible = false
 layout_mode = 2
 
 [node name="NextWaveBtn" type="Button" parent="HBoxContainer"]
+visible = false
 layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_ldol0")
 theme_override_styles/normal = SubResource("StyleBoxFlat_yx4hk")
@@ -161,3 +172,23 @@ offset_left = 40.0
 offset_top = -27.0
 offset_right = 80.0
 offset_bottom = -4.0
+
+[node name="RightBar" type="HBoxContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -182.0
+offset_top = -185.0
+offset_right = 68.0
+offset_bottom = 65.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.728338, 0.738101)
+alignment = 2
+
+[node name="SellBtn" type="TextureButton" parent="RightBar"]
+clip_contents = true
+layout_mode = 2
+texture_normal = ExtResource("9_0twk8")

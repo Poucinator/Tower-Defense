@@ -22,6 +22,9 @@ extends CanvasLayer
 @onready var summon_btn:   BaseButton = $"BottomBar/SummonBtn"
 @onready var summon_label: Label      = $"BottomBar/SummonBtn/Label"
 
+# --- Barre droite : Vente ---
+@onready var sell_btn:     BaseButton = $"RightBar/SellBtn"
+
 # --- Lien vers contrôleurs externes ---
 @export var power_controller_path: NodePath
 @export var build_controller_path: NodePath
@@ -32,6 +35,7 @@ var spawner: Node = null
 
 # --- États locaux ---
 var _last_left: float = 0.0
+var _is_sell_mode: bool = false
 
 # --- Mode LevelDirector ---
 signal next_clicked()
@@ -66,12 +70,20 @@ func _ready() -> void:
 	if build_snipe_btn: build_snipe_btn.pressed.connect(_on_build_snipe_pressed)
 	if build_missile_btn: build_missile_btn.pressed.connect(_on_build_missile_pressed)
 	if build_barracks_btn: build_barracks_btn.pressed.connect(_on_build_barracks_pressed)
+	if build and build.has_signal("sell_mode_changed"):
+		build.sell_mode_changed.connect(_on_sell_mode_changed)
 
 	# Bouton "Prochaine vague"
 	if next_btn:
 		next_btn.visible = false
 		next_btn.disabled = true
 		next_btn.pressed.connect(_on_next_wave_pressed)
+
+	# Bouton Vendre
+	if sell_btn:
+		sell_btn.pressed.connect(_on_sell_pressed)
+		sell_btn.tooltip_text = "Vendre une tour (75% de sa valeur)"
+		_update_sell_visual(false)
 
 	# Spawner initial
 	var initial_spawner := get_node_or_null(spawner_path)
@@ -92,6 +104,9 @@ func _ready() -> void:
 		powers.call("set_heal_cooldown", 20.0)
 	if powers and powers.has_method("set_summon_cooldown"):
 		powers.call("set_summon_cooldown", 25.0)
+
+	# 🔒 Masquer au départ ce qui n'est pas débloqué
+	_init_locked_elements()
 
 	set_process(true)
 
@@ -169,6 +184,30 @@ func _on_build_barracks_pressed() -> void:
 	if build: build.call("start_placing", BARRACKS_TOWER_SCN, BARRACKS_TOWER_PRICE)
 
 # =========================================================
+#                   Vente des tours
+# =========================================================
+func _on_sell_pressed() -> void:
+	print("[HUD] Sell button pressed")
+	if not build:
+		push_warning("[HUD] Aucun BuildController lié.")
+		return
+	# ✅ hand authority to the controller; no local toggle here
+	var target := not Game.is_selling_mode
+	build.call("start_sell_mode", target)
+
+
+# Visuel du bouton Vente (activé/désactivé)
+func _update_sell_visual(active: bool) -> void:
+	if not sell_btn:
+		return
+	if active:
+		sell_btn.add_theme_color_override("font_color", Color(1, 0.8, 0.2))
+		sell_btn.modulate = Color(1, 1, 0.5)
+	else:
+		sell_btn.add_theme_color_override("font_color", Color(1, 1, 1))
+		sell_btn.modulate = Color(1, 1, 1)
+
+# =========================================================
 #          Spawner callbacks (timer à droite)
 # =========================================================
 func _on_countdown_started(total: float) -> void:
@@ -206,7 +245,6 @@ func _update_next_button_state() -> void:
 		left = _director_cd_left
 	elif spawner and spawner.has_method("is_countdown_running"):
 		can_skip = spawner.call("is_countdown_running")
-		# prendre la valeur live du spawner si dispo
 		if spawner and spawner.has_method("get_countdown_left"):
 			left = float(spawner.call("get_countdown_left"))
 		else:
@@ -218,14 +256,11 @@ func _update_next_button_state() -> void:
 	next_btn.text = "Lancer (+" + str(reward) + " PO)"
 
 func _on_next_wave_pressed() -> void:
-	# 🔹 Cas 1 : compte à rebours du LevelDirector (inter-vague)
 	if _director_cd_active:
-		# l’award est géré coté LevelDirector pour éviter les doubles crédits
 		next_btn.disabled = true
 		emit_signal("next_clicked")
 		return
 
-	# 🔹 Cas 2 : compte à rebours d’un Spawner (intra-vague)
 	if spawner and spawner.has_method("is_countdown_running") and spawner.call("is_countdown_running"):
 		var left := 0.0
 		if spawner.has_method("get_countdown_left"):
@@ -243,7 +278,6 @@ func _on_next_wave_pressed() -> void:
 #                   Pouvoirs
 # =========================================================
 func _process(_delta: float) -> void:
-	# --- Pouvoir Gel ---
 	if freeze_btn and freeze_label and powers and powers.has_method("get_freeze_cooldown_left"):
 		var left := powers.call("get_freeze_cooldown_left") as float
 		if left > 0.0:
@@ -253,7 +287,6 @@ func _process(_delta: float) -> void:
 			freeze_btn.disabled = false
 			freeze_label.text = "Gel"
 
-	# --- Pouvoir Soin ---
 	if heal_btn and heal_label and powers and powers.has_method("get_heal_cooldown_left"):
 		var left := powers.call("get_heal_cooldown_left") as float
 		if left > 0.0:
@@ -263,7 +296,6 @@ func _process(_delta: float) -> void:
 			heal_btn.disabled = false
 			heal_label.text = "Soin"
 
-	# --- Pouvoir Appel tactique ---
 	if summon_btn and summon_label and powers and powers.has_method("get_summon_cooldown_left"):
 		var left := powers.call("get_summon_cooldown_left") as float
 		if left > 0.0:
@@ -287,3 +319,37 @@ func _on_heal_pressed() -> void:
 func _on_summon_pressed() -> void:
 	if powers and powers.has_method("start_place_summon"):
 		powers.call("start_place_summon")
+
+# =========================================================
+#            AJOUTS : visibilité initiale & déblocage
+# =========================================================
+func _init_locked_elements() -> void:
+	build_barracks_btn.visible = true
+	build_btn.visible = true
+	build_snipe_btn.visible = false
+	build_missile_btn.visible = false
+	freeze_btn.visible = false
+	heal_btn.visible = false
+	summon_btn.visible = false
+
+func unlock_element(name: String) -> void:
+	match name:
+		"snipe":
+			build_snipe_btn.visible = true
+		"freeze":
+			freeze_btn.visible = true
+		"missile":
+			build_missile_btn.visible = true
+		"heal":
+			heal_btn.visible = true
+		"summon":
+			summon_btn.visible = true
+		"barrack_mk2":
+			print("[HUD] Amélioration Barrack MK2 débloquée (à implémenter)")
+		_:
+			push_warning("[HUD] Élément inconnu : %s" % name)
+
+
+func _on_sell_mode_changed(active: bool) -> void:
+	_is_sell_mode = active
+	_update_sell_visual(active)

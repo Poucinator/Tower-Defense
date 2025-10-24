@@ -214,13 +214,18 @@ func _open_upgrade_menu() -> void:
 	_menu_ref = menu
 
 func _on_upgrade_clicked() -> void:
+	# 🔒 Empêche les upgrades pendant le mode vente
+	if "is_selling_mode" in Game and Game.is_selling_mode:
+		print("[Barracks] Upgrade bloqué : mode vente actif.")
+		return
+
 	if not _try_spend(upgrade_cost):
 		print("[Barracks] Or insuffisant")
 		return
 	if upgrade_scene == null:
 		return
 
-	# Nettoyer les anciens marines
+	# Nettoyer les anciens marines avant la transition
 	for m in _marines:
 		if m and is_instance_valid(m):
 			m.queue_free()
@@ -230,13 +235,18 @@ func _on_upgrade_clicked() -> void:
 	var new_tower := upgrade_scene.instantiate() as Node2D
 	if new_tower == null:
 		return
+
+	# Réassigne le slot
 	var slot := _find_build_slot_under_me()
 	if slot and slot.has_method("set_occupied"):
 		slot.call("set_occupied", new_tower)
+
 	parent.add_child(new_tower)
 	new_tower.global_position = global_position
 	new_tower.rotation = rotation
+
 	queue_free()
+
 
 func _try_spend(amount: int) -> bool:
 	if "try_spend" in Game:

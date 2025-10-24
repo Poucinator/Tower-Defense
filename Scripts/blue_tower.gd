@@ -101,6 +101,11 @@ func _open_upgrade_menu() -> void:
 
 
 func _on_upgrade_clicked() -> void:
+	# 🔒 Empêche les upgrades pendant le mode vente
+	if "is_selling_mode" in Game and Game.is_selling_mode:
+		print("[BlueTower] Upgrade bloqué : mode vente actif.")
+		return
+
 	# Vérifie l'or et paie
 	if not _try_spend(upgrade_cost):
 		print("[Tower] Or insuffisant pour upgrade")
@@ -125,6 +130,7 @@ func _on_upgrade_clicked() -> void:
 
 	# Détruit cette tour
 	queue_free()
+
 
 
 # ---------- Détection / tir ----------
