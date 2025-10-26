@@ -101,6 +101,8 @@ func _hit_flash() -> void:
 		tw.tween_property(anim, "modulate", Color(1, 1, 1), 0.06)
 
 func _die() -> void:
+	set_collision_layer(0)
+	set_collision_mask(0)
 	# libère le Marine engagé
 	if engaged_by and is_instance_valid(engaged_by) and engaged_by.has_method("release_target_from_enemy"):
 		engaged_by.call("release_target_from_enemy", self)
@@ -123,10 +125,6 @@ func _die() -> void:
 	if hp_bar:
 		hp_bar.visible = false
 
-	# 🔒 Désactive toutes les collisions et masques
-	# (ne peut plus être ciblé ni touché)
-	set_collision_layer(0)
-	set_collision_mask(0)
 
 	# Arrête ses attaques éventuelles
 	if _attack_timer:

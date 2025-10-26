@@ -1,18 +1,26 @@
-[gd_scene load_steps=5 format=3 uid="uid://ykasis7y41ds"]
+[gd_scene load_steps=7 format=3 uid="uid://ykasis7y41ds"]
 
 [ext_resource type="Script" uid="uid://ckvwm1scqodry" path="res://scene/tower/barracks_tower.gd" id="1_g48ra"]
-[ext_resource type="PackedScene" uid="uid://84bsgeo7ax2i" path="res://units/marine_MK3.tscn" id="2_g48ra"]
+[ext_resource type="PackedScene" uid="uid://boh5s28fkmwle" path="res://units/marine_MK3.tscn" id="2_g48ra"]
 [ext_resource type="Texture2D" uid="uid://x0mfvrofdetc" path="res://scene/Barrack/Untitled_design__2_-removebg-preview.png" id="3_g48ra"]
+[ext_resource type="PackedScene" uid="uid://dei4mje64sqxx" path="res://scene/tower/barracks_tower_MK4.tscn" id="3_pyq8u"]
+[ext_resource type="Texture2D" uid="uid://dir8uda3a6mrr" path="res://scene/Barrack/_Untitled_2_design-removebg-preview.png" id="4_n0r6m"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j1ifm"]
 size = Vector2(28, 28)
 
 [node name="StaticBody2D" type="StaticBody2D" groups=["Barracks", "Tower"]]
 collision_mask = 2
+input_pickable = true
 script = ExtResource("1_g48ra")
 marine_scene = ExtResource("2_g48ra")
-marine_count = 5
+marine_count = 4
 ring_radius = 30.0
+move_speed = 40.0
+respawn_delay = 7.0
+upgrade_scene = ExtResource("3_pyq8u")
+upgrade_cost = 750
+upgrade_icon = ExtResource("4_n0r6m")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_j1ifm")

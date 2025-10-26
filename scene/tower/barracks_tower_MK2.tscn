@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://b7dum3daatldm"]
 
 [ext_resource type="Script" uid="uid://ckvwm1scqodry" path="res://scene/tower/barracks_tower.gd" id="1_xkld3"]
-[ext_resource type="PackedScene" uid="uid://boh5s28fkmwle" path="res://units/marine_MK2.tscn" id="2_354qy"]
+[ext_resource type="PackedScene" uid="uid://dg5x2rg3rupmu" path="res://units/marine_MK2.tscn" id="2_354qy"]
 [ext_resource type="PackedScene" uid="uid://ykasis7y41ds" path="res://scene/tower/barracks_tower_MK3.tscn" id="3_354qy"]
 [ext_resource type="Texture2D" uid="uid://b02w1ceil2ef3" path="res://scene/Barrack/Untitled_design-removebg-preview.png" id="4_354qy"]
 [ext_resource type="Texture2D" uid="uid://cxgkvf3n2t0fc" path="res://scene/Barrack/ChatGPT_Image_4_oct._2025__09_42_57-removebg-preview (1).png" id="5_8jfo6"]
@@ -16,7 +16,10 @@ script = ExtResource("1_xkld3")
 marine_scene = ExtResource("2_354qy")
 marine_count = 4
 ring_radius = 30.0
+move_speed = 40.0
+respawn_delay = 8.0
 upgrade_scene = ExtResource("3_354qy")
+upgrade_cost = 250
 upgrade_icon = ExtResource("4_354qy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

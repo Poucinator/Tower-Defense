@@ -1,0 +1,196 @@
+[gd_scene load_steps=33 format=3 uid="uid://5juit6jqfoq3"]
+
+[ext_resource type="Script" uid="uid://vb14fhah0dek" path="res://units/marine.gd" id="1_oayb5"]
+[ext_resource type="Texture2D" uid="uid://beynke8sxdfci" path="res://units/Sprites/MK4/attack/marine 3 pistol_shoot_0.png" id="2_oayb5"]
+[ext_resource type="Texture2D" uid="uid://d1takolmd73at" path="res://units/Sprites/MK4/attack/marine 3 pistol_shoot_1.png" id="3_0h378"]
+[ext_resource type="Texture2D" uid="uid://bnmww68borhaa" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_0.png" id="4_o64l6"]
+[ext_resource type="Texture2D" uid="uid://df1j45m5y7cmp" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_1.png" id="5_hvj31"]
+[ext_resource type="Texture2D" uid="uid://dou6dl8v1n44h" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_2.png" id="6_5tjbs"]
+[ext_resource type="Texture2D" uid="uid://bgffxklxthi3r" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_3.png" id="7_qvpd1"]
+[ext_resource type="Texture2D" uid="uid://c3vcsjsfm0y52" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_4.png" id="8_m3h43"]
+[ext_resource type="Texture2D" uid="uid://bd3y4wfo4kalm" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_5.png" id="9_vdjcg"]
+[ext_resource type="Texture2D" uid="uid://b6pmyyiefluy6" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_6.png" id="10_n1lgj"]
+[ext_resource type="Texture2D" uid="uid://js58j6csbnd2" path="res://units/Sprites/MK4/dead/marine 3 pistol_dead_7.png" id="11_4xwnv"]
+[ext_resource type="Texture2D" uid="uid://c6c67yg02jvff" path="res://units/Sprites/MK4/idle/marine 3 pistol_idle_0.png" id="12_tfxll"]
+[ext_resource type="Texture2D" uid="uid://ylq8a8d6hpoe" path="res://units/Sprites/MK4/idle/marine 3 pistol_idle_1.png" id="13_3tcpn"]
+[ext_resource type="Texture2D" uid="uid://bpbio7531mwe7" path="res://units/Sprites/MK4/idle/marine 3 pistol_idle_2.png" id="14_uhll6"]
+[ext_resource type="Texture2D" uid="uid://j034vcbrl0xq" path="res://units/Sprites/MK4/idle/marine 3 pistol_idle_3.png" id="15_ef3yr"]
+[ext_resource type="Texture2D" uid="uid://bx3vmyko3rp0n" path="res://units/Sprites/MK4/idle/marine 3 pistol_idle_4.png" id="16_3d58j"]
+[ext_resource type="Texture2D" uid="uid://cubbdfy3753y7" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_0.png" id="17_klb4c"]
+[ext_resource type="Texture2D" uid="uid://dq38cen8a6g0t" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_1.png" id="18_s5fsm"]
+[ext_resource type="Texture2D" uid="uid://dhnk5gpl4sw3a" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_2.png" id="19_umxp2"]
+[ext_resource type="Texture2D" uid="uid://dm2l58ve0vt14" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_3.png" id="20_v6m7y"]
+[ext_resource type="Texture2D" uid="uid://d3cvheqvmx42j" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_4.png" id="21_l8fgm"]
+[ext_resource type="Texture2D" uid="uid://1wen35h6hais" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_5.png" id="22_qcow0"]
+[ext_resource type="Texture2D" uid="uid://402nib5d3ao0" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_6.png" id="23_naue6"]
+[ext_resource type="Texture2D" uid="uid://c3yl4p1qtkywo" path="res://units/Sprites/MK4/walk/marine 3 pistol_run_7.png" id="24_7vixn"]
+[ext_resource type="Texture2D" uid="uid://sdjhk3s508hk" path="res://units/Sprites/tile012.png" id="25_5dqn2"]
+[ext_resource type="Texture2D" uid="uid://cirkf3ojnni8h" path="res://units/Sprites/muzzle flash.png" id="26_jntav"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4p05y"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_oayb5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_0h378")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_o64l6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_hvj31")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_5tjbs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_qvpd1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_m3h43")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_vdjcg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_n1lgj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_4xwnv")
+}],
+"loop": true,
+"name": &"dead",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("12_tfxll")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_3tcpn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_uhll6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_ef3yr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_3d58j")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("17_klb4c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_s5fsm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_umxp2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_v6m7y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_l8fgm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_qcow0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_naue6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_7vixn")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 10.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5vis3"]
+bg_color = Color(0.788954, 0.533671, 0.354743, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.07, 0.07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fs23d"]
+bg_color = Color(0.013718, 0.728269, 9.62615e-07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.02, 0.02, 0.02, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2w5wj"]
+radius = 144.42
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_y70m1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("25_5dqn2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_jntav")
+}],
+"loop": true,
+"name": &"flash",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5vis3"]
+radius = 19.0263
+
+[node name="Marine" type="Node2D" groups=["Marine"]]
+script = ExtResource("1_oayb5")
+max_hp = 500
+attack_damage = 20
+regen_per_sec = 10.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.999996, -19)
+scale = Vector2(0.78125, 1.17969)
+sprite_frames = SubResource("SpriteFrames_4p05y")
+animation = &"attack"
+frame_progress = 0.849911
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+z_index = 9
+offset_left = -15.0
+offset_top = -34.0
+offset_right = 15.0
+offset_bottom = -26.0
+theme_override_styles/background = SubResource("StyleBoxFlat_5vis3")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fs23d")
+show_percentage = false
+
+[node name="Aggro" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Aggro"]
+shape = SubResource("CircleShape2D_2w5wj")
+
+[node name="MuzzleFlash" type="AnimatedSprite2D" parent="."]
+position = Vector2(18, -8)
+sprite_frames = SubResource("SpriteFrames_y70m1")
+animation = &"flash"
+frame_progress = 0.857706
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_5vis3")

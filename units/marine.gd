@@ -14,7 +14,7 @@ extends Node2D
 @export var support_radius: float = 140.0
 @export var face_target: bool = true
 @export var muzzle_offset: float = 5.0
-@export var regen_per_sec: float = 1.0   # NEW : regen HP/sec
+@export var regen_per_sec: float = 1.0   # regen HP/sec
 
 var barrack: Node = null
 
@@ -30,7 +30,7 @@ var is_dead: bool = false
 var is_moving: bool = false
 
 # --- Regen interne ---
-var _regen_buffer: float = 0.0   # NEW : cumule la regen partielle
+var _regen_buffer: float = 0.0   # cumule la regen partielle
 
 func _ready() -> void:
 	add_to_group("Marine")
@@ -72,7 +72,7 @@ func _process(delta: float) -> void:
 	if is_dead:
 		return
 
-	# --- regen auto (NEW) ---
+	# --- regen auto ---
 	if hp < max_hp and regen_per_sec > 0:
 		_regen_buffer += regen_per_sec * delta
 		if _regen_buffer >= 1.0:
@@ -85,6 +85,7 @@ func _process(delta: float) -> void:
 	if is_moving:
 		return
 
+	# --- Si la cible est morte ou supprimée, on arrête ---
 	if engaged_enemy and not is_instance_valid(engaged_enemy):
 		engaged_enemy = null
 
@@ -117,10 +118,12 @@ func _process(delta: float) -> void:
 func _pick_target() -> Node2D:
 	if engaged_enemy:
 		return engaged_enemy
+
 	var engaged_nearby := _enemies_in_radius(support_radius).filter(func(e):
 		return ("engaged_by" in e) and e.engaged_by != null)
 	if not engaged_nearby.is_empty():
 		return _closest_enemy(engaged_nearby)
+
 	var all := _enemies_in_radius(support_radius)
 	return _closest_enemy(all) if not all.is_empty() else null
 
@@ -130,6 +133,11 @@ func _pick_target() -> Node2D:
 func _on_body_entered(b: Node) -> void:
 	if not b.is_in_group("Enemy"):
 		return
+
+	# ✅ Connexion au signal de mort pour couper le tir immédiatement
+	if b.has_signal("died"):
+		b.died.connect(_on_enemy_died, CONNECT_ONE_SHOT)
+
 	if engaged_enemy == null:
 		if b.has_method("request_engage") and b.call("request_engage", self):
 			engaged_enemy = b
@@ -171,6 +179,7 @@ func _hit_flash() -> void:
 func _die() -> void:
 	is_dead = true
 	_attack_timer.stop()
+
 	if engaged_enemy and is_instance_valid(engaged_enemy) and engaged_enemy.has_method("release_engage"):
 		engaged_enemy.call("release_engage", self)
 	engaged_enemy = null
@@ -193,6 +202,20 @@ func _die() -> void:
 func release_target_from_enemy(enemy: Node) -> void:
 	if enemy == engaged_enemy:
 		engaged_enemy = null
+
+# =========================================================
+#                 Gestion mort ennemi
+# =========================================================
+func _on_enemy_died(dead_enemy: Node) -> void:
+	if engaged_enemy == dead_enemy:
+		engaged_enemy = null
+		if anim:
+			anim.play("idle")
+		if not _attack_timer.is_stopped():
+			_attack_timer.stop()
+		if muzzle:
+			muzzle.stop()
+			muzzle.visible = false
 
 # =========================================================
 #                 Outils utilitaires

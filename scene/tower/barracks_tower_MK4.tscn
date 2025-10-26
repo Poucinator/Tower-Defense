@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3 uid="uid://dei4mje64sqxx"]
+
+[ext_resource type="Script" uid="uid://ckvwm1scqodry" path="res://scene/tower/barracks_tower.gd" id="1_3wonn"]
+[ext_resource type="PackedScene" uid="uid://5juit6jqfoq3" path="res://units/marine_MK4.tscn" id="2_hso74"]
+[ext_resource type="PackedScene" uid="uid://dsvva8u68odsm" path="res://scene/tower/barracks_tower_MK5.tscn" id="3_q34r8"]
+[ext_resource type="Texture2D" uid="uid://b02w1ceil2ef3" path="res://scene/Barrack/Untitled_design-removebg-preview.png" id="4_wxeg8"]
+[ext_resource type="Texture2D" uid="uid://dir8uda3a6mrr" path="res://scene/Barrack/_Untitled_2_design-removebg-preview.png" id="5_ftcrs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j1ifm"]
+size = Vector2(28, 28)
+
+[node name="StaticBody2D" type="StaticBody2D" groups=["Barracks", "Tower"]]
+collision_mask = 2
+input_pickable = true
+script = ExtResource("1_3wonn")
+marine_scene = ExtResource("2_hso74")
+marine_count = 5
+ring_radius = 30.0
+move_speed = 40.0
+respawn_delay = 6.0
+upgrade_scene = ExtResource("3_q34r8")
+upgrade_cost = 1500
+upgrade_icon = ExtResource("4_wxeg8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_j1ifm")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 7
+scale = Vector2(0.101229, 0.101429)
+texture = ExtResource("5_ftcrs")
+
+[node name="Rally" type="Node2D" parent="."]

@@ -1,29 +1,29 @@
-[gd_scene load_steps=33 format=3 uid="uid://boh5s28fkmwle"]
+[gd_scene load_steps=33 format=3 uid="uid://dg5x2rg3rupmu"]
 
 [ext_resource type="Script" uid="uid://vb14fhah0dek" path="res://units/marine.gd" id="1_5vis3"]
-[ext_resource type="Texture2D" uid="uid://cdpa7d30msaam" path="res://units/Sprites/MK2/attack/marine 2 rifle_shoot_0.png" id="2_5vis3"]
-[ext_resource type="Texture2D" uid="uid://bg67qjkwjd7d4" path="res://units/Sprites/MK2/attack/marine 2 rifle_shoot_1.png" id="3_fs23d"]
-[ext_resource type="Texture2D" uid="uid://bbodv8eohxc4" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_0.png" id="4_iqghi"]
-[ext_resource type="Texture2D" uid="uid://b8xs42bwwtw67" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_1.png" id="5_q3c3x"]
-[ext_resource type="Texture2D" uid="uid://t43st14hxkqu" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_2.png" id="6_guxvq"]
-[ext_resource type="Texture2D" uid="uid://2rclu0vx8vor" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_3.png" id="7_t461l"]
-[ext_resource type="Texture2D" uid="uid://ciw7ykfowon6m" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_4.png" id="8_lr7gm"]
-[ext_resource type="Texture2D" uid="uid://cktsie2l7huf6" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_5.png" id="9_2kf36"]
-[ext_resource type="Texture2D" uid="uid://dlolfxj0hqqb8" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_6.png" id="10_d82wa"]
-[ext_resource type="Texture2D" uid="uid://bp2kvwl60lumw" path="res://units/Sprites/MK2/dead/marine 2 rifle_dead_7.png" id="11_rwlfe"]
-[ext_resource type="Texture2D" uid="uid://br2gaycv2r1nm" path="res://units/Sprites/MK2/idle/marine 2 rifle_idle_0.png" id="12_v8ojg"]
-[ext_resource type="Texture2D" uid="uid://dutxyopcxyy7x" path="res://units/Sprites/MK2/idle/marine 2 rifle_idle_1.png" id="13_rc5aw"]
-[ext_resource type="Texture2D" uid="uid://b0ikwya0pgmib" path="res://units/Sprites/MK2/idle/marine 2 rifle_idle_2.png" id="14_hkxyw"]
-[ext_resource type="Texture2D" uid="uid://clsqh50e1pdlj" path="res://units/Sprites/MK2/idle/marine 2 rifle_idle_3.png" id="15_yo45f"]
-[ext_resource type="Texture2D" uid="uid://dnwk0ioqtumdw" path="res://units/Sprites/MK2/idle/marine 2 rifle_idle_4.png" id="16_x3fdo"]
-[ext_resource type="Texture2D" uid="uid://bwqvrnypdmxvw" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_0.png" id="17_xfscw"]
-[ext_resource type="Texture2D" uid="uid://ct3amcq2xmwl7" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_1.png" id="18_rshyq"]
-[ext_resource type="Texture2D" uid="uid://6rith6pvnh7h" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_2.png" id="19_3w4hg"]
-[ext_resource type="Texture2D" uid="uid://qxftcmohnakn" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_3.png" id="20_mu1qf"]
-[ext_resource type="Texture2D" uid="uid://du0tg3jf3pcnj" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_4.png" id="21_uabs1"]
-[ext_resource type="Texture2D" uid="uid://bj5iwlrdkhjil" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_5.png" id="22_k27fb"]
-[ext_resource type="Texture2D" uid="uid://btxuwbu1d5sav" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_6.png" id="23_16snr"]
-[ext_resource type="Texture2D" uid="uid://60k2onn7dkhn" path="res://units/Sprites/MK2/walk/marine 2 rifle_run_7.png" id="24_uykt3"]
+[ext_resource type="Texture2D" uid="uid://cq6f1lx0cu35r" path="res://units/Sprites/MK2/attack/marine 2 pistol_shoot_0.png" id="2_5vis3"]
+[ext_resource type="Texture2D" uid="uid://d13wwugu3qxfr" path="res://units/Sprites/MK2/attack/marine 2 pistol_shoot_1.png" id="3_fs23d"]
+[ext_resource type="Texture2D" uid="uid://lo4o4yexs4nv" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_0.png" id="4_iqghi"]
+[ext_resource type="Texture2D" uid="uid://bwcak6wn3v7uh" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_1.png" id="5_q3c3x"]
+[ext_resource type="Texture2D" uid="uid://bu6c675hl3ebl" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_2.png" id="6_guxvq"]
+[ext_resource type="Texture2D" uid="uid://cn1fyu3dlvmq5" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_3.png" id="7_t461l"]
+[ext_resource type="Texture2D" uid="uid://c6uyvc1f7v0uk" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_4.png" id="8_lr7gm"]
+[ext_resource type="Texture2D" uid="uid://b8fdhaj15yjfn" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_5.png" id="9_2kf36"]
+[ext_resource type="Texture2D" uid="uid://b6u4857uyucqg" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_6.png" id="10_d82wa"]
+[ext_resource type="Texture2D" uid="uid://10w1iq8ia1xd" path="res://units/Sprites/MK2/dead/marine 2 pistol_dead_7.png" id="11_rwlfe"]
+[ext_resource type="Texture2D" uid="uid://cwhrs6lcv082m" path="res://units/Sprites/MK2/idle/marine 2 pistol_idle_0.png" id="12_v8ojg"]
+[ext_resource type="Texture2D" uid="uid://cgoo7adqnri5d" path="res://units/Sprites/MK2/idle/marine 2 pistol_idle_1.png" id="13_rc5aw"]
+[ext_resource type="Texture2D" uid="uid://b260f4i5c8rpq" path="res://units/Sprites/MK2/idle/marine 2 pistol_idle_2.png" id="14_hkxyw"]
+[ext_resource type="Texture2D" uid="uid://dta76eh0evhxe" path="res://units/Sprites/MK2/idle/marine 2 pistol_idle_3.png" id="15_yo45f"]
+[ext_resource type="Texture2D" uid="uid://t7s3lbo55lsg" path="res://units/Sprites/MK2/idle/marine 2 pistol_idle_4.png" id="16_x3fdo"]
+[ext_resource type="Texture2D" uid="uid://lsteyimpxxok" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_0.png" id="17_xfscw"]
+[ext_resource type="Texture2D" uid="uid://bkjo6mpadicft" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_1.png" id="18_rshyq"]
+[ext_resource type="Texture2D" uid="uid://bwjh602smlx6f" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_2.png" id="19_3w4hg"]
+[ext_resource type="Texture2D" uid="uid://62k2gownwbpe" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_3.png" id="20_mu1qf"]
+[ext_resource type="Texture2D" uid="uid://ckkoepfoxyo03" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_4.png" id="21_uabs1"]
+[ext_resource type="Texture2D" uid="uid://clac56ytslfhy" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_5.png" id="22_k27fb"]
+[ext_resource type="Texture2D" uid="uid://dnj0meeqythp" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_6.png" id="23_16snr"]
+[ext_resource type="Texture2D" uid="uid://3nur7oghvkha" path="res://units/Sprites/MK2/walk/marine 2 pistol_run_7.png" id="24_uykt3"]
 [ext_resource type="Texture2D" uid="uid://sdjhk3s508hk" path="res://units/Sprites/tile012.png" id="25_51u17"]
 [ext_resource type="Texture2D" uid="uid://cirkf3ojnni8h" path="res://units/Sprites/muzzle flash.png" id="26_ah82p"]
 
@@ -38,7 +38,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"attack",
-"speed": 10.0
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -119,7 +119,7 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5vis3"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_leiwa"]
 bg_color = Color(0.788954, 0.533671, 0.354743, 1)
 border_width_left = 1
 border_width_top = 1
@@ -127,7 +127,7 @@ border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.07, 0.07, 0.07, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fs23d"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y70m1"]
 bg_color = Color(0.013718, 0.728269, 9.62615e-07, 1)
 border_width_left = 1
 border_width_top = 1
@@ -149,23 +149,23 @@ animations = [{
 }],
 "loop": true,
 "name": &"flash",
-"speed": 10.0
+"speed": 5.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_5vis3"]
-radius = 19.0263
+[sub_resource type="CircleShape2D" id="CircleShape2D_leiwa"]
+radius = 21.095
 
 [node name="Marine" type="Node2D" groups=["Marine"]]
 script = ExtResource("1_5vis3")
-attack_damage = 5
-attack_interval = 0.3
+max_hp = 150
+attack_damage = 3
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.999996, -19)
 scale = Vector2(0.78125, 1.17969)
 sprite_frames = SubResource("SpriteFrames_4p05y")
-animation = &"walk"
-frame_progress = 0.819258
+animation = &"attack"
+frame_progress = 0.163896
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 z_index = 9
@@ -173,8 +173,8 @@ offset_left = -15.0
 offset_top = -34.0
 offset_right = 15.0
 offset_bottom = -26.0
-theme_override_styles/background = SubResource("StyleBoxFlat_5vis3")
-theme_override_styles/fill = SubResource("StyleBoxFlat_fs23d")
+theme_override_styles/background = SubResource("StyleBoxFlat_leiwa")
+theme_override_styles/fill = SubResource("StyleBoxFlat_y70m1")
 show_percentage = false
 
 [node name="Aggro" type="Area2D" parent="."]
@@ -184,12 +184,12 @@ collision_mask = 2
 shape = SubResource("CircleShape2D_2w5wj")
 
 [node name="MuzzleFlash" type="AnimatedSprite2D" parent="."]
-position = Vector2(18, -8)
+position = Vector2(10, -8)
 sprite_frames = SubResource("SpriteFrames_y70m1")
 animation = &"flash"
-frame_progress = 0.122719
+frame_progress = 0.8322
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CircleShape2D_5vis3")
+shape = SubResource("CircleShape2D_leiwa")

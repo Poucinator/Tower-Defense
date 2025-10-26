@@ -256,7 +256,11 @@ func _calculate_refund(tower: Node) -> int:
 		if "mk3" in scene_name or "MK3" in name_lower:
 			base_price = 150
 		elif "mk2" in scene_name or "MK2" in name_lower:
-			base_price = 100
+			base_price = 300
+		elif "mk4" in scene_name or "MK4" in name_lower:
+			base_price = 500
+		elif "mk5" in scene_name or "MK5" in name_lower:
+			base_price = 1000		
 		else:
 			base_price = 50
 
@@ -317,10 +321,18 @@ func _place_on_slot(slot: Node) -> void:
 		slot.set_occupied(t)
 
 	# ✅ Quand la tour est supprimée, libérer le slot
+# Quand la tour est supprimée, libérer le slot
 	t.tree_exited.connect(func ():
-		if is_instance_valid(slot) and slot.has_method("clear_if"):
-			slot.call_deferred("clear_if", t)
-	)
+		if not is_instance_valid(slot):
+			return
+		if not slot.has_method("clear_if"):
+			return
+
+	# ✅ Appel différé SANS argument, plus d’erreur
+		slot.call_deferred("clear_if")
+)
+
+
 
 	cancel()
 

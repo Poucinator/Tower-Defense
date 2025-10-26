@@ -5,9 +5,17 @@ extends Area2D
 
 @onready var highlight: Node2D = null
 
-var tower: Node = null          # Tour actuellement posée
-var path2d: Path2D = null       # Instance locale du path
+# ==========================================
+#              VARIABLES
+# ==========================================
+var occupied: bool = false       # ✅ État d’occupation du slot
+var tower: Node = null           # Tour actuellement posée
+var path2d: Path2D = null        # Instance locale du path
 
+
+# ==========================================
+#                 READY
+# ==========================================
 func _ready() -> void:
 	add_to_group("BuildSlot")
 	input_pickable = true
@@ -22,6 +30,7 @@ func _ready() -> void:
 		else:
 			push_error("[BuildSlot] La stage_scene n’est pas un Path2D")
 
+
 # ==========================================
 #            OCCUPATION DU SLOT
 # ==========================================
@@ -30,7 +39,9 @@ func set_occupied(t: Node) -> void:
 		push_warning("[BuildSlot] ⚠️ set_occupied appelé avec un Node nul")
 		return
 
+	occupied = true
 	tower = t
+
 	if highlight:
 		highlight.visible = false
 
@@ -38,29 +49,28 @@ func set_occupied(t: Node) -> void:
 	if tower and path2d and tower.has_method("set_path"):
 		tower.call("set_path", path2d)
 
+
 # ==========================================
 #            LIBÉRATION DU SLOT
 # ==========================================
-func clear_if(t: Node) -> void:
-	# 🧠 Si la tour du slot n'existe plus → reset complet
+func clear_if(t: Node = null) -> void:
+	# Si la tour actuelle n'est plus valide → on libère tout
 	if not is_instance_valid(tower):
+		occupied = false
 		tower = null
-		if highlight:
-			highlight.visible = true
 		return
 
-	# 🧩 Si aucune tour précisée, on nettoie de toute façon
-	if t == null:
+	# Si aucun argument ou un argument invalide → on libère aussi
+	if t == null or not is_instance_valid(t):
+		occupied = false
 		tower = null
-		if highlight:
-			highlight.visible = true
 		return
 
-	# 💡 Si c’est bien la même tour → on libère
+	# Si la tour correspond à celle enregistrée → on libère
 	if t == tower:
+		occupied = false
 		tower = null
-		if highlight:
-			highlight.visible = true
+
 
 # ==========================================
 #             UTILITAIRES
@@ -69,5 +79,7 @@ func _set_highlight(on: bool) -> void:
 	if highlight:
 		highlight.visible = on
 
+
 func is_free() -> bool:
-	return tower == null or not is_instance_valid(tower)
+	# ✅ Un slot est libre si non occupé ou si la tour n'est plus valide
+	return not occupied or tower == null or not is_instance_valid(tower)
