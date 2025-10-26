@@ -164,8 +164,8 @@ attack_interval = 0.3
 position = Vector2(0.999996, -19)
 scale = Vector2(0.78125, 1.17969)
 sprite_frames = SubResource("SpriteFrames_4p05y")
-animation = &"attack"
-frame_progress = 0.935618
+animation = &"walk"
+frame_progress = 0.819258
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 z_index = 9

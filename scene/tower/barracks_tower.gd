@@ -64,7 +64,7 @@ func _ready() -> void:
 
 	call_deferred("_spawn_marines")
 	set_process_unhandled_input(true)
-
+	tree_exited.connect(_on_tree_exited)  # ✅ auto cleanup quand la tour quitte la scène
 # ========================
 #       PATH
 # ========================
@@ -214,15 +214,9 @@ func _open_upgrade_menu() -> void:
 	_menu_ref = menu
 
 func _on_upgrade_clicked() -> void:
-	# 🔒 Empêche les upgrades pendant le mode vente
 	if "is_selling_mode" in Game and Game.is_selling_mode:
-		print("[Barracks] Upgrade bloqué : mode vente actif.")
 		return
-
-	if not _try_spend(upgrade_cost):
-		print("[Barracks] Or insuffisant")
-		return
-	if upgrade_scene == null:
+	if not _try_spend(upgrade_cost) or upgrade_scene == null:
 		return
 
 	# Nettoyer les anciens marines avant la transition
@@ -236,16 +230,19 @@ func _on_upgrade_clicked() -> void:
 	if new_tower == null:
 		return
 
-	# Réassigne le slot
 	var slot := _find_build_slot_under_me()
-	if slot and slot.has_method("set_occupied"):
-		slot.call("set_occupied", new_tower)
+	if slot:
+		if slot.has_method("clear_if"):
+			slot.call("clear_if", self)
+		if slot.has_method("set_occupied"):
+			slot.call("set_occupied", new_tower)
 
 	parent.add_child(new_tower)
 	new_tower.global_position = global_position
 	new_tower.rotation = rotation
 
 	queue_free()
+
 
 
 func _try_spend(amount: int) -> bool:
@@ -271,3 +268,16 @@ func _find_build_slot_under_me() -> Node:
 		if n and n.get_parent() and n.get_parent().is_in_group("BuildSlot"):
 			return n.get_parent()
 	return null
+
+# ============================================================
+#          AUTO-CLEANUP : suppression des marines
+# ============================================================
+func _on_tree_exited() -> void:
+	# Si la tour est retirée de la scène (vente, destruction, etc.)
+	if _marines.is_empty():
+		return
+	print("[Barracks] 💀 Suppression de", _marines.size(), "marines (vente/destruction)")
+	for m in _marines:
+		if m and is_instance_valid(m):
+			m.queue_free()
+	_marines.clear()

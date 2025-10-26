@@ -171,25 +171,32 @@ func _find_tower_root(n: Node) -> Node:
 
 	return null
 
-
-
-
-func _sell_tower(tower: Node) -> void:
-	if tower == null:
+func _sell_tower(any_node: Node) -> void:
+	if any_node == null:
 		return
 
+	var tower := _find_tower_root(any_node)
+	if tower == null:
+		print("[Build] ❌ Impossible de trouver la tour à vendre")
+		_cancel_sell_mode()
+		return
+
+	# 💰 Calcul du remboursement
 	var refund := _calculate_refund(tower)
 	if refund > 0 and "add_gold" in Game:
 		Game.add_gold(refund)
+	print("💸 Tour vendue pour ", refund, " PO")
 
-	if is_instance_valid(tower):
-		tower.queue_free()
+	# 🔓 Libère explicitement le slot
+	var slot := _find_slot_for_tower(tower)
+	if slot and slot.has_method("clear_if"):
+		slot.call_deferred("clear_if", tower)
 
-	# ✅ one unified exit path (resets cursor, Game flag, and notifies HUD)
+	# 🪦 Suppression de la tour
+	tower.queue_free()
+
+	# 🛑 Sortie du mode vente
 	_cancel_sell_mode()
-
-	# (optional safety) eat residual click this frame
-	await get_tree().process_frame
 
 
 
@@ -404,3 +411,23 @@ func _fit_cursor_texture(tex: Texture2D) -> Texture2D:
 	var out := ImageTexture.new()
 	out.set_image(img)
 	return out
+	
+# ============================================================
+#               Trouver le slot d'une tour
+# ============================================================
+func _find_slot_for_tower(tower: Node) -> Node:
+	var slots := get_tree().get_nodes_in_group("BuildSlot")
+	for s in slots:
+		# Si ton slot stocke la tour dans une variable "occupied"
+		if "occupied" in s:
+			var occ = s.occupied
+			if occ != null and occ is Node and occ == tower:
+				return s
+
+		# Ou si ton slot a une méthode pour la récupérer
+		if s.has_method("get_occupied"):
+			var occ2 = s.call("get_occupied")
+			if occ2 != null and occ2 is Node and occ2 == tower:
+				return s
+
+	return null

@@ -9,7 +9,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j1ifm"]
 size = Vector2(28, 28)
 
-[node name="StaticBody2D" type="StaticBody2D" groups=["Tower"]]
+[node name="StaticBody2D" type="StaticBody2D" groups=["Barracks", "Tower"]]
 collision_mask = 2
 input_pickable = true
 script = ExtResource("1_kdibp")

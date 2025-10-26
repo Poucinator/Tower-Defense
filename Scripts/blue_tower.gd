@@ -101,34 +101,27 @@ func _open_upgrade_menu() -> void:
 
 
 func _on_upgrade_clicked() -> void:
-	# 🔒 Empêche les upgrades pendant le mode vente
 	if "is_selling_mode" in Game and Game.is_selling_mode:
-		print("[BlueTower] Upgrade bloqué : mode vente actif.")
+		return
+	if not _try_spend(upgrade_cost) or upgrade_scene == null:
 		return
 
-	# Vérifie l'or et paie
-	if not _try_spend(upgrade_cost):
-		print("[Tower] Or insuffisant pour upgrade")
-		return
-
-	# Instancie la tour améliorée
-	if upgrade_scene == null:
-		return
 	var parent := get_parent()
 	var new_tower := upgrade_scene.instantiate() as Node2D
 	if new_tower == null:
 		return
 
-	# Avant de supprimer l'ancienne tour, ré-associer le BuildSlot au nouvel objet
 	var slot := _find_build_slot_under_me()
-	if slot and slot.has_method("set_occupied"):
-		slot.call("set_occupied", new_tower)
+	if slot:
+		if slot.has_method("clear_if"):
+			slot.call("clear_if", self)
+		if slot.has_method("set_occupied"):
+			slot.call("set_occupied", new_tower)
 
 	parent.add_child(new_tower)
 	new_tower.global_position = global_position
 	new_tower.rotation = rotation
 
-	# Détruit cette tour
 	queue_free()
 
 

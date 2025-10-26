@@ -5,9 +5,8 @@ extends Area2D
 
 @onready var highlight: Node2D = null
 
-var occupied := false
-var tower: Node = null
-var path2d: Path2D = null   # instance locale du path
+var tower: Node = null          # Tour actuellement posée
+var path2d: Path2D = null       # Instance locale du path
 
 func _ready() -> void:
 	add_to_group("BuildSlot")
@@ -31,7 +30,6 @@ func set_occupied(t: Node) -> void:
 		push_warning("[BuildSlot] ⚠️ set_occupied appelé avec un Node nul")
 		return
 
-	occupied = true
 	tower = t
 	if highlight:
 		highlight.visible = false
@@ -43,26 +41,26 @@ func set_occupied(t: Node) -> void:
 # ==========================================
 #            LIBÉRATION DU SLOT
 # ==========================================
-# ✅ Corrigé pour ne JAMAIS planter, même si la tour est déjà détruite
-func clear_if(t = null) -> void:
-	# Sécurité : si le tower actuel n’est plus valide → on reset tout
+func clear_if(t: Node) -> void:
+	# 🧠 Si la tour du slot n'existe plus → reset complet
 	if not is_instance_valid(tower):
-		occupied = false
 		tower = null
+		if highlight:
+			highlight.visible = true
 		return
 
-	# Si un argument est passé, on vérifie sa validité
-	if t == null or not is_instance_valid(t):
-		# Si t est nul (ou déjà libéré), on compare autrement
-		if not is_instance_valid(tower):
-			occupied = false
-			tower = null
+	# 🧩 Si aucune tour précisée, on nettoie de toute façon
+	if t == null:
+		tower = null
+		if highlight:
+			highlight.visible = true
 		return
 
-	# Si l’argument correspond bien à la tour du slot → on la libère
+	# 💡 Si c’est bien la même tour → on libère
 	if t == tower:
-		occupied = false
 		tower = null
+		if highlight:
+			highlight.visible = true
 
 # ==========================================
 #             UTILITAIRES
@@ -72,4 +70,4 @@ func _set_highlight(on: bool) -> void:
 		highlight.visible = on
 
 func is_free() -> bool:
-	return not occupied
+	return tower == null or not is_instance_valid(tower)

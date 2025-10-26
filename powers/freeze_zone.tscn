@@ -188,4 +188,4 @@ position = Vector2(0, -193)
 scale = Vector2(0.93695, 0.75)
 sprite_frames = SubResource("SpriteFrames_j21ea")
 animation = &"ice"
-frame_progress = 0.646368
+frame_progress = 0.162317
