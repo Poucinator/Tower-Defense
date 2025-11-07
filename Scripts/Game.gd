@@ -4,7 +4,7 @@ signal gold_changed(amount: int)
 signal health_changed(amount: int)
 signal wave_countdown_changed(seconds_left: int)
 
-var gold: int = 30000
+var gold: int = 300
 var health: int = 20
 var wave_countdown: float = 0.0
 var is_selling_mode := false

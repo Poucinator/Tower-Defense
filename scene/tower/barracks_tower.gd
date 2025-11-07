@@ -276,7 +276,6 @@ func _on_tree_exited() -> void:
 	# Si la tour est retirée de la scène (vente, destruction, etc.)
 	if _marines.is_empty():
 		return
-	print("[Barracks] 💀 Suppression de", _marines.size(), "marines (vente/destruction)")
 	for m in _marines:
 		if m and is_instance_valid(m):
 			m.queue_free()

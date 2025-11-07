@@ -134,16 +134,21 @@ func _on_body_entered(b: Node) -> void:
 	if not b.is_in_group("Enemy"):
 		return
 
-	# ✅ Connexion au signal de mort pour couper le tir immédiatement
+	# ✅ Connexion au signal de mort sans duplication
 	if b.has_signal("died"):
-		b.died.connect(_on_enemy_died, CONNECT_ONE_SHOT)
+		if not b.died.is_connected(_on_enemy_died):
+			b.died.connect(_on_enemy_died)
 
 	if engaged_enemy == null:
 		if b.has_method("request_engage") and b.call("request_engage", self):
 			engaged_enemy = b
 
-func _on_body_exited(_b: Node) -> void:
-	pass
+
+func _on_body_exited(b: Node) -> void:
+	# ✅ Déconnexion du signal quand l’ennemi sort de la zone
+	if b.has_signal("died") and b.died.is_connected(_on_enemy_died):
+		b.died.disconnect(_on_enemy_died)
+
 
 # =========================================================
 #                        Combat

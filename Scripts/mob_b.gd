@@ -100,10 +100,21 @@ func _hit_flash() -> void:
 		tw.tween_property(anim, "modulate", Color(1, 0.5, 0.5), 0.06)
 		tw.tween_property(anim, "modulate", Color(1, 1, 1), 0.06)
 
+var _is_dead := false  # ⚠️ À placer tout en haut du script, hors fonction
+
 func _die() -> void:
+	if _is_dead:
+		return
+	_is_dead = true
+
+	# Retire du groupe pour que les tours/marines cessent de le cibler
+	remove_from_group("Enemy")
+
+	# Désactive les collisions immédiatement
 	set_collision_layer(0)
 	set_collision_mask(0)
-	# libère le Marine engagé
+
+	# Libère le Marine engagé s'il y en a un
 	if engaged_by and is_instance_valid(engaged_by) and engaged_by.has_method("release_target_from_enemy"):
 		engaged_by.call("release_target_from_enemy", self)
 	engaged_by = null
@@ -113,6 +124,7 @@ func _die() -> void:
 		Game.add_gold(gold_reward)
 	gold_reward = 0
 
+	# Émet le signal de mort
 	emit_signal("died", self)
 
 	# Animation de mort
@@ -125,14 +137,14 @@ func _die() -> void:
 	if hp_bar:
 		hp_bar.visible = false
 
-
-	# Arrête ses attaques éventuelles
+	# Arrête toute attaque en cours
 	if _attack_timer:
 		_attack_timer.stop()
 
-	# Attend la fin de l’animation avant de supprimer
+	# Attend la fin de l’animation avant suppression
 	await get_tree().create_timer(2.6).timeout
 	queue_free()
+
 
 
 # -------- Mouvement (modificateurs) --------

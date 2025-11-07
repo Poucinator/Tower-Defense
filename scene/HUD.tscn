@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bu8ql60gnhsad"]
+[gd_scene load_steps=14 format=3 uid="uid://bu8ql60gnhsad"]
 
 [ext_resource type="Script" uid="uid://bue551sw22h6u" path="res://ui/hud.gd" id="1_5nt5s"]
 [ext_resource type="Texture2D" uid="uid://dk7kexs0ssyii" path="res://Sprite/coin-removebg-preview.png" id="2_4nxdm"]
@@ -7,8 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://0x02fxs4iccg" path="res://scene/Barrack/_Untitled_design-removebg-preview.png" id="4_yxe7t"]
 [ext_resource type="Texture2D" uid="uid://b06sbfyfa2yi8" path="res://scene/Snipe_tower/Turrets_g9.png" id="5_yx4hk"]
 [ext_resource type="Texture2D" uid="uid://cf583wphcy202" path="res://Sprite/New Tower/Turrets_g21.png" id="6_ldol0"]
-[ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="7_0qwpj"]
+[ext_resource type="Texture2D" uid="uid://g6uq0woy700x" path="res://ui/ico_2.png" id="8_ys10w"]
 [ext_resource type="Texture2D" uid="uid://dl2jay081erp" path="res://ui/cursor_sell.png" id="9_0twk8"]
+[ext_resource type="Texture2D" uid="uid://duo6gib8jg3fc" path="res://ui/ChatGPT_Image_27_oct._2025__19_01_01-removebg-preview.png" id="9_s4g46"]
+[ext_resource type="Texture2D" uid="uid://dql11b26r0cf1" path="res://ui/ChatGPT_Image_27_oct._2025__18_58_26-removebg-preview.png" id="10_7w78f"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldol0"]
 bg_color = Color(0.289058, 0.679883, 0.586034, 1)
@@ -142,7 +144,7 @@ grow_vertical = 0
 
 [node name="FreezeBtn" type="TextureButton" parent="BottomBar"]
 layout_mode = 2
-texture_normal = ExtResource("7_0qwpj")
+texture_normal = ExtResource("8_ys10w")
 stretch_mode = 4
 
 [node name="Label" type="Label" parent="BottomBar/FreezeBtn"]
@@ -153,7 +155,7 @@ offset_right = 79.0
 
 [node name="HealBtn" type="TextureButton" parent="BottomBar"]
 layout_mode = 2
-texture_normal = ExtResource("7_0qwpj")
+texture_normal = ExtResource("9_s4g46")
 
 [node name="Label" type="Label" parent="BottomBar/HealBtn"]
 layout_mode = 0
@@ -164,7 +166,7 @@ offset_bottom = -5.0
 
 [node name="SummonBtn" type="TextureButton" parent="BottomBar"]
 layout_mode = 2
-texture_normal = ExtResource("7_0qwpj")
+texture_normal = ExtResource("10_7w78f")
 
 [node name="Label" type="Label" parent="BottomBar/SummonBtn"]
 layout_mode = 0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=114 format=4 uid="uid://b7e6bo6ttaigf"]
+[gd_scene load_steps=115 format=4 uid="uid://b7e6bo6ttaigf"]
 
 [ext_resource type="Texture2D" uid="uid://drfwn32oe7glp" path="res://Tilemaps/tileset.png" id="2_wscrc"]
 [ext_resource type="Texture2D" uid="uid://bqlc45dj12b8h" path="res://Tilemaps/trees & stuff.png" id="3_mswub"]
@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://b8o5n0qs56kn2" path="res://scene/stage4.tscn" id="13_0vlqb"]
 [ext_resource type="PackedScene" uid="uid://h0hcq3wmwfw4" path="res://scene/buildslot.tscn" id="13_mswub"]
 [ext_resource type="PackedScene" uid="uid://scksmccjri8o" path="res://scene/stage6.tscn" id="15_fdqew"]
+[ext_resource type="PackedScene" uid="uid://dqj31xjqif3a5" path="res://scene/mobQ.tscn" id="15_gj7ui"]
 [ext_resource type="PackedScene" uid="uid://c17x4prr8nycm" path="res://scene/mobB.tscn" id="18_vneqc"]
 [ext_resource type="PackedScene" uid="uid://dbefcj3cm6iu0" path="res://scene/stage5.tscn" id="19_4jm02"]
 [ext_resource type="Script" uid="uid://db8xblng2lp20" path="res://powers/power_controller.gd" id="21_fdqew"]
@@ -1534,7 +1535,7 @@ script = ExtResource("6_b5f6u")
 path2d_path = NodePath("")
 stage_scene = ExtResource("6_of57s")
 mob_scene = ExtResource("7_b5f6u")
-count = 3
+count = 0
 interval = 1.0
 rotates = false
 loop = false
@@ -1544,8 +1545,8 @@ metadata/_custom_type_script = "uid://bgbah0klh7wbu"
 script = ExtResource("6_b5f6u")
 path2d_path = NodePath("")
 stage_scene = ExtResource("8_b5f6u")
-mob_scene = ExtResource("7_b5f6u")
-count = 3
+mob_scene = ExtResource("15_gj7ui")
+count = 1
 interval = 1.0
 rotates = false
 loop = false
@@ -2299,7 +2300,6 @@ first_delay = 10.0
 
 [node name="PathSpawnerMultiLVL5" type="Node2D" parent="WaveSequence_2"]
 script = ExtResource("4_brvut")
-first_wave_delay = 30.0
 lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_bmc2w"), SubResource("Resource_io27d"), SubResource("Resource_216wm"), SubResource("Resource_jey2d")])
 autostart = false
 

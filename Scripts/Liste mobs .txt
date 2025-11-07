@@ -1,0 +1,4 @@
+A : mob V1 (slime)
+B : Mob V1 (golem)
+C : Mob Multi direction (UP and Down)
+D : Mob Split (Multi direction + Export mobs enfants)
