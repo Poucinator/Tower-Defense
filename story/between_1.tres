@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bcjeefnoptf8y" path="res://Slime/ChatGPT_Image_22_sept._2025__19_38_14-removebg-preview.png" id="4_uf5y2"]
 [ext_resource type="Texture2D" uid="uid://c2hja7rr02n4a" path="res://Sprite/Personnage 2/Open Peeps - Bust (17).png" id="5_7xp7p"]
 [ext_resource type="Texture2D" uid="uid://pyxu7dqfkltc" path="res://Sprite/Personnage 1/Open Peeps - Sitting (5).png" id="6_a7l64"]
-[ext_resource type="Texture2D" uid="uid://c6lgr64ya2jpu" path="res://Golem/ChatGPT_Image_23_sept._2025__13_44_23-removebg-preview.png" id="6_k6cmj"]
+[ext_resource type="Texture2D" uid="uid://c6lgr64ya2jpu" path="res://scene/Ennemies/2D/Golem/ChatGPT_Image_23_sept._2025__13_44_23-removebg-preview.png" id="6_k6cmj"]
 [ext_resource type="Texture2D" uid="uid://bun42d1hfn1kf" path="res://Sprite/Personnage 1/Open Peeps - Sitting (2).png" id="7_ah43w"]
 [ext_resource type="Script" uid="uid://cx62ga41ymge4" path="res://story/story_sequence.gd" id="8_ycexo"]
 
