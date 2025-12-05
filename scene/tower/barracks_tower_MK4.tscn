@@ -21,6 +21,7 @@ respawn_delay = 6.0
 upgrade_scene = ExtResource("3_q34r8")
 upgrade_cost = 1500
 upgrade_icon = ExtResource("4_wxeg8")
+tower_tier = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_j1ifm")

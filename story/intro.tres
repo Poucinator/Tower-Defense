@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="StorySequence" load_steps=9 format=3 uid="uid://byeehi02hueer"]
+[gd_resource type="Resource" script_class="StorySequence" load_steps=11 format=3 uid="uid://byeehi02hueer"]
 
 [ext_resource type="Texture2D" uid="uid://bf8ufuajl6aia" path="res://Sprite/Personnage 1/Open Peeps - Sitting (4).png" id="1_6obys"]
 [ext_resource type="Script" uid="uid://cx62ga41ymge4" path="res://story/story_sequence.gd" id="2_6us42"]
@@ -8,8 +8,10 @@
 [ext_resource type="Texture2D" uid="uid://c2hja7rr02n4a" path="res://Sprite/Personnage 2/Open Peeps - Bust (17).png" id="5_rm7o3"]
 [ext_resource type="Texture2D" uid="uid://pyxu7dqfkltc" path="res://Sprite/Personnage 1/Open Peeps - Sitting (5).png" id="6_2awsd"]
 [ext_resource type="Texture2D" uid="uid://bun42d1hfn1kf" path="res://Sprite/Personnage 1/Open Peeps - Sitting (2).png" id="7_5skgb"]
+[ext_resource type="Texture2D" uid="uid://0x02fxs4iccg" path="res://scene/Barrack/_Untitled_design-removebg-preview.png" id="8_kenhf"]
+[ext_resource type="Texture2D" uid="uid://vbtyrm0ixcf7" path="res://Sprite/New Tower/Turrets_g3.png" id="9_wvgsa"]
 
 [resource]
 script = ExtResource("2_6us42")
-images = Array[Texture2D]([ExtResource("1_6obys"), ExtResource("2_t1p5y"), ExtResource("3_t1p5y"), ExtResource("4_elntn"), ExtResource("5_rm7o3"), ExtResource("6_2awsd"), ExtResource("7_5skgb")])
-texts = Array[String](["Bon ! Le créneau n'est pas trop dégueu. C'était pas la peine d'en chier une brique!", "Alcoolique de merde ! T'as encore planté le vaisseau ! ", "Roh ça va ! T'as qu'à réparer et je nous sors de là ! Colossale flipette ! ", "................................", "Putain ! Et c'est quoi ça ? Encore un truc chelou que tu as vomi ? ", "Alors déjà  non et y'en a une tétrachié qui arrivent ici !!! Le radar chie dans son froc...   Ah non c'est moi ... ", "Va chercher une tourelle et fous là sur un plot, on va les flinguer ! "])
+images = Array[Texture2D]([ExtResource("1_6obys"), ExtResource("2_t1p5y"), ExtResource("3_t1p5y"), ExtResource("4_elntn"), ExtResource("5_rm7o3"), ExtResource("6_2awsd"), ExtResource("7_5skgb"), ExtResource("8_kenhf"), ExtResource("9_wvgsa")])
+texts = Array[String](["Bon ! Le créneau n'est pas trop dégueu. C'était pas la peine d'en chier une brique!", "Alcoolique de merde ! T'as encore planté le vaisseau ! ", "Roh ça va ! T'as qu'à réparer et je nous sors de là ! Colossale flipette ! ", "................................", "Putain ! Et c'est quoi ça ? Encore un truc chelou que tu as vomi ? ", "Alors déjà  non et y'en a une tétrachié qui arrivent ici !!! Le radar chie dans son froc...   Ah non c'est moi ... ", "Va chercher une tourelle et fous là sur un plot, on va les flinguer ! ", "La barraque à robots génére des défenseurs qui engageront les attaquants", "La tourelle Gunner  attaque les ennemis à proximité"])

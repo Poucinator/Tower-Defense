@@ -18,6 +18,7 @@ ring_radius = 30.0
 move_speed = 40.0
 respawn_delay = 10.0
 upgrade_scene = ExtResource("3_488rp")
+upgrade_cost = 300
 upgrade_icon = ExtResource("4_488rp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

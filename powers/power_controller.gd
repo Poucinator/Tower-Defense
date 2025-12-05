@@ -18,6 +18,9 @@ class_name PowerController
 @export var summon_marine_scene: PackedScene = preload("res://units/marine.tscn")
 @export var summon_marine_count: int = 3
 @export var summon_duration: float = 10.0
+@export_range(0.0, 10.0, 0.5, "suffix:s") var heal_invincible_duration: float = 3.0
+
+
 
 # =========================================================
 #                     VARIABLES INTERNES
@@ -140,6 +143,7 @@ func activate_heal_all() -> void:
 
 	for m in get_tree().get_nodes_in_group("Marine"):
 		if m and is_instance_valid(m) and "hp" in m and "max_hp" in m:
+			# Soins
 			m.hp = m.max_hp
 			if m.hp_bar:
 				m.hp_bar.value = m.max_hp
@@ -147,16 +151,13 @@ func activate_heal_all() -> void:
 				var anim = m.get_node("AnimatedSprite2D")
 				if anim.animation != "idle":
 					anim.play("idle")
-	print("[Power] Tous les marines ont été soignés !")
 
-func get_heal_cooldown_left() -> float:
-	return _heal_cooldown_left
+			# ---- INVINCIBILITÉ TEMPORAIRE ----
+			if heal_invincible_duration > 0.0 and m.has_method("set_invincible_for"):
+				m.set_invincible_for(heal_invincible_duration)
 
-func is_heal_ready() -> bool:
-	return _heal_cooldown_left <= 0.0
+	print("[Power] Tous les marines ont été soignés et sont invincibles pendant %s s !" % heal_invincible_duration)
 
-func set_heal_cooldown(v: float) -> void:
-	heal_cooldown = v
 
 # =========================================================
 #                     INVOCATION DE MARINES

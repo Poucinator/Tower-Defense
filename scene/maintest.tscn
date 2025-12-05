@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://cgt35wd8d6mxu" path="res://Scripts/path_spawner.gd" id="11_01b4r"]
 [ext_resource type="Script" uid="uid://bgbah0klh7wbu" path="res://Scripts/spawn_lane.gd" id="12_pb4oo"]
 [ext_resource type="PackedScene" uid="uid://c0npdhpfl2otv" path="res://scene/Ennemies/2D/mobA.tscn" id="13_c5wgo"]
-[ext_resource type="PackedScene" uid="uid://cq5tk2w1duw1c" path="res://scene/Ennemies/4D/slime/Slime rock.tscn" id="13_x4til"]
+[ext_resource type="PackedScene" uid="uid://bqup7qp10cdxt" path="res://scene/Ennemies/4D/slime/Slime purple.tscn" id="13_gmdby"]
 [ext_resource type="PackedScene" uid="uid://ht74ldyft11f" path="res://scene/stage7.tscn" id="14_gmdby"]
 [ext_resource type="PackedScene" uid="uid://rdfi74et5cod" path="res://scene/stage1.tscn" id="14_gxott"]
 [ext_resource type="PackedScene" uid="uid://l8dsynwr7rqo" path="res://scene/Ennemies/4D/slime/Slime Ice.tscn" id="15_x4til"]
@@ -1535,9 +1535,9 @@ metadata/_custom_type_script = "uid://6hr8nrey163n"
 [sub_resource type="Resource" id="Resource_wscrc"]
 script = ExtResource("12_pb4oo")
 path2d_path = NodePath("")
-stage_scene = ExtResource("14_gmdby")
-mob_scene = ExtResource("13_x4til")
-count = 2
+stage_scene = ExtResource("14_gxott")
+mob_scene = ExtResource("13_gmdby")
+count = 1
 interval = 1.0
 rotates = false
 loop = false
@@ -1548,7 +1548,7 @@ script = ExtResource("12_pb4oo")
 path2d_path = NodePath("")
 stage_scene = ExtResource("14_gmdby")
 mob_scene = ExtResource("15_x4til")
-count = 2
+count = 0
 interval = 1.0
 rotates = false
 loop = false
@@ -1559,7 +1559,7 @@ script = ExtResource("12_pb4oo")
 path2d_path = NodePath("")
 stage_scene = ExtResource("14_gxott")
 mob_scene = ExtResource("13_c5wgo")
-count = 4
+count = 0
 interval = 1.0
 rotates = false
 loop = false
@@ -1570,7 +1570,7 @@ script = ExtResource("12_pb4oo")
 path2d_path = NodePath("")
 stage_scene = ExtResource("16_h4ses")
 mob_scene = ExtResource("13_c5wgo")
-count = 4
+count = 1
 interval = 1.0
 rotates = false
 loop = false

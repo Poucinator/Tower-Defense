@@ -487,8 +487,10 @@ border_color = Color(0.02, 0.02, 0.02, 1)
 [node name="CharacterBody2D" type="CharacterBody2D" groups=["Enemy"]]
 collision_layer = 2
 script = ExtResource("1_qyh36")
-max_hp = 150
-attack_damage = 10
+speed = 60.0
+max_hp = 350
+gold_reward = 40
+attack_damage = 100
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, -39.625)
@@ -499,9 +501,8 @@ z_index = 8
 position = Vector2(10, -21)
 scale = Vector2(1.775, 1.88194)
 sprite_frames = SubResource("SpriteFrames_fjf2u")
-animation = &"walk_down"
-frame = 7
-frame_progress = 0.0720472
+animation = &"walk_right"
+frame_progress = 0.545532
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 z_index = 4

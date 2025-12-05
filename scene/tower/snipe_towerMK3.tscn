@@ -42,6 +42,7 @@ fire_interval = 0.7
 bullet_damage = 300
 detector_path = NodePath("Tower")
 muzzle_path = NodePath("Muzzle")
+tower_tier = 3
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.011832, 0.0214193)

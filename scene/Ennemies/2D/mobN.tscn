@@ -174,7 +174,7 @@ border_color = Color(0.02, 0.02, 0.02, 1)
 [node name="CharacterBody2D" type="CharacterBody2D" groups=["Enemy"]]
 collision_layer = 2
 script = ExtResource("1_h0d0r")
-speed = 180.0
+speed = 160.0
 max_hp = 20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

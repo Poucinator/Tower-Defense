@@ -503,7 +503,7 @@ position = Vector2(10, -21)
 scale = Vector2(1.775, 1.88194)
 sprite_frames = SubResource("SpriteFrames_fjf2u")
 animation = &"walk_down"
-frame_progress = 0.599031
+frame_progress = 0.121895
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 z_index = 4

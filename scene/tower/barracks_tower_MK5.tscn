@@ -14,6 +14,7 @@ marine_scene = ExtResource("2_q6eu0")
 marine_count = 5
 ring_radius = 30.0
 move_speed = 60.0
+tower_tier = 5
 max_rally_distance = 4000.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

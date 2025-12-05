@@ -15,6 +15,8 @@ var _pending_respawns: int = 0
 @export var upgrade_scene: PackedScene
 @export var upgrade_cost: int = 100
 @export var upgrade_icon: Texture2D
+@export var tower_tier: int = 1   # MK1=1, MK2=2, MK3=3...
+
 
 # --- Références ---
 @onready var rally: Node2D = null
@@ -203,6 +205,15 @@ func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
 func _open_upgrade_menu() -> void:
 	if upgrade_scene == null:
 		return
+
+	# Tier de la tour vers laquelle on veut upgrader :
+	var next_tier := tower_tier + 1
+
+	# Tant que le LevelDirector n'a pas autorisé ce tier, on bloque
+	if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
+		print("[Barracks] Upgrade vers MK%d encore verrouillé." % next_tier)
+		return
+
 	if _menu_ref and is_instance_valid(_menu_ref):
 		_menu_ref.queue_free()
 		_menu_ref = null
@@ -212,6 +223,8 @@ func _open_upgrade_menu() -> void:
 	menu.setup(upgrade_icon, upgrade_cost, global_position, self)
 	menu.option_chosen.connect(_on_upgrade_clicked, CONNECT_ONE_SHOT)
 	_menu_ref = menu
+
+
 
 func _on_upgrade_clicked() -> void:
 	if "is_selling_mode" in Game and Game.is_selling_mode:

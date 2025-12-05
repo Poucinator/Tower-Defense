@@ -29,8 +29,12 @@ var _attack_timer: Timer
 var is_dead: bool = false
 var is_moving: bool = false
 
+# --- Invincibilité ---
+var _invincible_time_left: float = 0.0
+
 # --- Regen interne ---
 var _regen_buffer: float = 0.0   # cumule la regen partielle
+
 
 func _ready() -> void:
 	add_to_group("Marine")
@@ -72,6 +76,12 @@ func _process(delta: float) -> void:
 	if is_dead:
 		return
 
+	# --- Mise à jour de l'invincibilité ---
+	if _invincible_time_left > 0.0:
+		_invincible_time_left = max(0.0, _invincible_time_left - delta)
+		if _invincible_time_left == 0.0:
+			_end_invincibility_visual()
+
 	# --- regen auto ---
 	if hp < max_hp and regen_per_sec > 0:
 		_regen_buffer += regen_per_sec * delta
@@ -112,6 +122,7 @@ func _process(delta: float) -> void:
 			muzzle.frame = 0
 			muzzle.visible = false
 
+
 # =========================================================
 #             Sélection des cibles
 # =========================================================
@@ -127,6 +138,7 @@ func _pick_target() -> Node2D:
 	var all := _enemies_in_radius(support_radius)
 	return _closest_enemy(all) if not all.is_empty() else null
 
+
 # =========================================================
 #                     Aggro
 # =========================================================
@@ -134,7 +146,7 @@ func _on_body_entered(b: Node) -> void:
 	if not b.is_in_group("Enemy"):
 		return
 
-	# ✅ Connexion au signal de mort sans duplication
+	# Connexion au signal de mort sans duplication
 	if b.has_signal("died"):
 		if not b.died.is_connected(_on_enemy_died):
 			b.died.connect(_on_enemy_died)
@@ -145,7 +157,7 @@ func _on_body_entered(b: Node) -> void:
 
 
 func _on_body_exited(b: Node) -> void:
-	# ✅ Déconnexion du signal quand l’ennemi sort de la zone
+	# Déconnexion du signal quand l’ennemi sort de la zone
 	if b.has_signal("died") and b.died.is_connected(_on_enemy_died):
 		b.died.disconnect(_on_enemy_died)
 
@@ -163,10 +175,15 @@ func _do_attack() -> void:
 		muzzle.visible = true
 		muzzle.play("flash")
 
+
 # =========================================================
 #                 Dégâts subis / mort
 # =========================================================
 func take_damage(amount: int) -> void:
+	# --- Invincibilité : aucun dégât ---
+	if _invincible_time_left > 0.0:
+		return
+
 	hp -= amount
 	if hp_bar:
 		hp_bar.value = clampi(hp, 0, max_hp)
@@ -175,11 +192,13 @@ func take_damage(amount: int) -> void:
 	else:
 		_hit_flash()
 
+
 func _hit_flash() -> void:
 	if anim:
 		var t := create_tween()
-		t.tween_property(anim, "modulate", Color(1,0.6,0.6), 0.06)
-		t.tween_property(anim, "modulate", Color(1,1,1), 0.06)
+		t.tween_property(anim, "modulate", Color(1, 0.6, 0.6), 0.06)
+		t.tween_property(anim, "modulate", Color(1, 1, 1), 0.06)
+
 
 func _die() -> void:
 	is_dead = true
@@ -204,9 +223,11 @@ func _die() -> void:
 	await get_tree().create_timer(0.8).timeout
 	queue_free()
 
+
 func release_target_from_enemy(enemy: Node) -> void:
 	if enemy == engaged_enemy:
 		engaged_enemy = null
+
 
 # =========================================================
 #                 Gestion mort ennemi
@@ -222,6 +243,7 @@ func _on_enemy_died(dead_enemy: Node) -> void:
 			muzzle.stop()
 			muzzle.visible = false
 
+
 # =========================================================
 #                 Outils utilitaires
 # =========================================================
@@ -235,6 +257,7 @@ func _enemies_in_radius(radius: float) -> Array[Node2D]:
 			out.append(e)
 	return out
 
+
 func _closest_enemy(enemies: Array[Node2D]) -> Node2D:
 	var best: Node2D = null
 	var best_d2 := INF
@@ -245,6 +268,7 @@ func _closest_enemy(enemies: Array[Node2D]) -> Node2D:
 			best = e
 	return best
 
+
 # =========================================================
 #              Sélection via clic
 # =========================================================
@@ -252,3 +276,22 @@ func _on_input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if barrack and barrack.has_method("select_group"):
 			barrack.select_group()
+
+
+# =========================================================
+#              Invincibilité temporaire
+# =========================================================
+func set_invincible_for(duration: float) -> void:
+	# Si on enchaîne plusieurs heals, on garde le plus long
+	_invincible_time_left = max(_invincible_time_left, duration)
+	_start_invincibility_visual()
+
+
+func _start_invincibility_visual() -> void:
+	if has_node("AnimatedSprite2D"):
+		$AnimatedSprite2D.modulate = Color(1, 1, 1, 0.5)  # semi-transparent
+
+
+func _end_invincibility_visual() -> void:
+	if has_node("AnimatedSprite2D"):
+		$AnimatedSprite2D.modulate = Color(1, 1, 1, 1.0)  # normal

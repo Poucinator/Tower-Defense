@@ -15,6 +15,9 @@ extends StaticBody2D
 @export var upgrade_cost: int = 60
 @export var upgrade_icon: Texture2D
 
+# Tier de la tour (MK1=1, MK2=2, MK3=3...)
+@export var tower_tier: int = 1
+
 const BULLET_SCN := preload("res://scene/tower/snipe_bullet.tscn")
 
 var detector: Area2D
@@ -79,6 +82,13 @@ func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
 func _open_upgrade_menu() -> void:
 	if upgrade_scene == null:
 		return
+
+	# 🔒 Vérifie si le prochain tier est autorisé par Game.max_tower_tier
+	var next_tier := tower_tier + 1
+	if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
+		print("[SnipeTower] Upgrade vers MK%d verrouillé (max_tower_tier=%d)" % [next_tier, Game.max_tower_tier])
+		return
+
 	if _menu_ref and is_instance_valid(_menu_ref):
 		_menu_ref.queue_free()
 		_menu_ref = null

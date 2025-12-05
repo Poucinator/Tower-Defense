@@ -506,10 +506,10 @@ animation = &"dead_right"
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 z_index = 4
-offset_left = -15.0
-offset_top = -104.0
-offset_right = 14.0
-offset_bottom = -96.0
+offset_left = -45.0
+offset_top = -158.0
+offset_right = 45.0
+offset_bottom = -150.0
 theme_override_styles/background = SubResource("StyleBoxFlat_ij5d4")
 theme_override_styles/fill = SubResource("StyleBoxFlat_2ctxp")
 show_percentage = false

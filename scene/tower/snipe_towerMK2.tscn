@@ -46,6 +46,7 @@ muzzle_path = NodePath("Muzzle")
 upgrade_scene = ExtResource("2_kgyrs")
 upgrade_cost = 1500
 upgrade_icon = ExtResource("3_mcdj0")
+tower_tier = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.011832, 0.0214193)

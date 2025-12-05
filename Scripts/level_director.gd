@@ -4,12 +4,13 @@ extends Node
 ##              CONFIGURATION EXPORT
 ## ==========================================================
 @export var hud_path: NodePath
-@export var wave_paths: Array[NodePath] = []     # Liste des WaveSequence ou PathSpawnerMulti
+@export var wave_paths: Array[NodePath] = []
 @export var inter_level_delay: float = 30.0
 @export var start_first_on_ready: bool = true
 
-# Story optionnelle
 @export var story_director_path: NodePath
+@export var camera_path: NodePath   # Optionnel
+
 var story: Node = null
 
 ## ==========================================================
@@ -17,9 +18,11 @@ var story: Node = null
 ## ==========================================================
 var hud: Node = null
 var waves: Array[Node] = []
-var current_idx: int = -1
+var current_idx := -1
 var _skip_inter_delay := false
-var _inter_left: float = 0.0          # ⬅️ stocke le temps restant (pour la récompense)
+var _inter_left := 0.0
+var camera: Camera2D = null
+
 const DBG := true
 
 
@@ -27,12 +30,18 @@ const DBG := true
 ##                     READY
 ## ==========================================================
 func _ready() -> void:
+	# HUD
 	hud = get_node_or_null(hud_path)
 	if hud == null:
 		hud = get_tree().get_first_node_in_group("HUD")
 
+	# Story
 	story = get_node_or_null(story_director_path)
 
+	# Caméra
+	_init_camera()
+
+	# Chargement des waves
 	waves.clear()
 	for p in wave_paths:
 		var w := get_node_or_null(p)
@@ -40,17 +49,17 @@ func _ready() -> void:
 			push_warning("[LD] Vague introuvable : %s" % [p])
 			continue
 
-		# Neutralise tout autostart
 		if "autostart" in w:
 			w.autostart = false
 
-		# Connexion signaux
 		if w.has_signal("wave_sequence_finished"):
 			if not w.wave_sequence_finished.is_connected(_on_wave_finished):
 				w.wave_sequence_finished.connect(_on_wave_finished.bind(w))
+
 		elif w.has_signal("wave_cleared"):
 			if not w.wave_cleared.is_connected(_on_wave_finished):
 				w.wave_cleared.connect(_on_wave_finished.bind(w))
+
 		else:
 			push_warning("[LD] Aucun signal de fin pour %s" % [w.name])
 
@@ -65,76 +74,100 @@ func _ready() -> void:
 
 
 ## ==========================================================
+##     INIT CAMERA (robuste)
+## ==========================================================
+func _init_camera() -> void:
+	# 1) Assignée dans l'éditeur ?
+	if camera_path != NodePath(""):
+		camera = get_node_or_null(camera_path)
+
+	# 2) Sinon via groupe
+	if camera == null:
+		camera = get_tree().get_first_node_in_group("player_camera")
+
+	# 3) Sinon première Camera2D trouvée
+	if camera == null:
+		camera = get_tree().get_first_node_of_type(Camera2D)
+
+	if camera == null:
+		push_warning("[LD] ❌ Aucune caméra trouvée.")
+	elif DBG:
+		print("[LD] 🎥 Caméra trouvée :", camera.name)
+
+
+## ==========================================================
 ##                 INTRO OU DÉMARRAGE
 ## ==========================================================
 func _start_or_intro() -> void:
 	if story and story.has_method("play_intro_then"):
-		if DBG: print("[LD] 🎬 Intro demandée au StoryDirector")
 		story.call("play_intro_then", Callable(self, "_on_intro_finished"))
 	else:
-		if DBG: print("[LD] Pas de StoryDirector → on prépare la première vague")
 		_prepare_wave(0)
 
 func _on_intro_finished() -> void:
-	if DBG: print("[LD] ✅ Intro terminée → préparation de la première vague")
+	# 🔥 S'assurer que la caméra gameplay est bien active
+	if camera:
+		camera.make_current()
+
+		# 🔥 Fix zoom initial après la story
+		camera.zoom = Vector2(1.0, 1.0)
+
+
+
 	_prepare_wave(0)
 
 
+
 ## ==========================================================
-##          DÉCLENCHEMENT DU COMPTE À REBOURS
+##            PRÉPARATION DE CHAQUE VAGUE
 ## ==========================================================
 func _prepare_wave(index: int) -> void:
 	if index < 0 or index >= waves.size():
-		push_warning("[LD] Index de vague invalide : " + str(index))
+		push_warning("[LD] Index vague invalide : " + str(index))
 		return
 
 	current_idx = index
 	var wave := waves[index]
 
-	# --- Lie le HUD au premier spawner interne ---
+	# Liaison HUD
 	var first_spawner := _get_first_spawner_in_wave(wave)
 	if first_spawner and hud and hud.has_method("set_spawner"):
 		hud.call("set_spawner", first_spawner)
-		if DBG: print("[LD] HUD lié à ", first_spawner.name)
 
-	# --- Compte à rebours inter-vague ---
 	_skip_inter_delay = false
 	_inter_left = inter_level_delay
 
 	if hud and hud.has_signal("next_clicked"):
-		# On connecte avec récompense intégrée
 		if not hud.next_clicked.is_connected(_on_hud_next_clicked):
 			hud.next_clicked.connect(_on_hud_next_clicked, CONNECT_ONE_SHOT)
 
 	if hud and hud.has_method("director_countdown_start"):
 		hud.call("director_countdown_start", inter_level_delay)
 
-	# 🔓 AJOUT : débloquer dès le début du compte à rebours
+	# Déblocages HUD / pouvoirs
 	_unlock_progression(index)
+
+
 
 	while _inter_left > 0.0 and not _skip_inter_delay:
 		await get_tree().create_timer(0.1).timeout
-		_inter_left = max(0.0, _inter_left - 0.1)
+		_inter_left = max(_inter_left - 0.1, 0.0)
 		if hud and hud.has_method("director_countdown_tick"):
 			hud.call("director_countdown_tick", _inter_left)
 
 	if hud and hud.has_method("director_countdown_done"):
 		hud.call("director_countdown_done")
 
-	# --- Démarre la WaveSequence ---
-	if DBG: print("[LD] ▶️ Lancement WaveSequence ", wave.name)
 	if "begin" in wave:
 		wave.begin(0.0, index)
 	else:
-		push_warning("[LD] ⚠️ ", wave.name, " n’a pas de méthode begin()")
-
+		push_warning("[LD] ⚠️ ", wave.name, " n’a pas begin()")
 
 
 ## ==========================================================
-##          GESTION DU BOUTON "LANCER (+X PO)"
+##          CLICK NEXT (+X PO)
 ## ==========================================================
 func _on_hud_next_clicked() -> void:
-	# ✅ Donne la récompense basée sur le temps restant du compte à rebours
 	var reward := int(ceil(max(_inter_left, 0.0)))
 	if reward > 0 and "add_gold" in Game:
 		Game.add_gold(reward)
@@ -143,67 +176,77 @@ func _on_hud_next_clicked() -> void:
 
 
 ## ==========================================================
-##          ENCHAÎNEMENT ENTRE LES WAVESEQUENCES
+##               FIN DES WAVES ET ENCHAÎNEMENT
 ## ==========================================================
 func _on_wave_finished(_wave_index: int, finished_wave: Node) -> void:
 	var idx := waves.find(finished_wave)
 	if idx == -1:
 		return
 
-	if DBG: print("[LD] ✅ Fin de ", finished_wave.name)
-
 	var next_idx := idx + 1
+
 	if next_idx >= waves.size():
 		if hud and hud.has_method("show_victory"):
 			hud.call("show_victory")
-		if DBG: print("[LD] 🏁 Toutes les vagues sont terminées 🎉")
 		return
 
-	# --- Story inter-WaveSequence éventuelle ---
 	if story and story.has_method("has_between_for_wave") and story.call("has_between_for_wave", next_idx):
-		if DBG: print("[LD] 📖 Story avant WaveSequence ", next_idx)
-		story.call("play_between_then", next_idx,
-			Callable(self, "_prepare_wave").bind(next_idx))
+		story.call("play_between_then", next_idx, Callable(self, "_prepare_wave").bind(next_idx))
 	else:
-		if DBG: print("[LD] ⏱️ Transition classique vers WaveSequence ", next_idx)
 		_prepare_wave(next_idx)
 
 
 ## ==========================================================
-##                  HELPERS
+##                   HELPERS
 ## ==========================================================
 func _get_first_spawner_in_wave(wave: Node) -> Node:
 	if wave == null:
 		return null
+
 	if "events" in wave and wave.events.size() > 0:
-		var first_event = wave.events[0]
-		if first_event and first_event.path != NodePath(""):
-			var spawner := wave.get_node_or_null(first_event.path)
-			return spawner
+		var e = wave.events[0]
+		if e and e.path != NodePath(""):
+			return wave.get_node_or_null(e.path)
+
 	return null
 
 
-# ==========================================================
-#     🔓 Déblocage des tours/pouvoirs par numéro de vague
-# ==========================================================
+## ==========================================================
+##     🔓 Débloquage HUD
+## ==========================================================
 func _unlock_progression(index: int) -> void:
-	# On débloque au début de la WaveSequence N (index N)
-	# Mapping souhaité (index 0 = 1ère wave) :
-	# 1 → snipe, 2 → freeze, 3 → missile, 4 → heal+summon, 5 → barrack_mk2
+	# --- Débloquage global des niveaux d'upgrade ---
+	# À l'index 4, on autorise les upgrades vers MK2 (mais pas MK3,4,5...)
+	if index == 4:
+		if "max_tower_tier" in Game:
+			Game.max_tower_tier = max(Game.max_tower_tier, 2)
+			if DBG:
+				print("[LD] max_tower_tier ->", Game.max_tower_tier)
+
+	# --- Déblocage HUD ---
 	if hud == null or not hud.has_method("unlock_element"):
 		return
 
 	match index:
 		1:
-			hud.call("unlock_element", "snipe")
+			# Débloque la tour snipe
+			hud.unlock_element("snipe")
 		2:
-			hud.call("unlock_element", "freeze")
+			# Débloque le pouvoir freeze
+			hud.unlock_element("freeze")
 		3:
-			hud.call("unlock_element", "missile")
+			# Débloque la tour missile
+			hud.unlock_element("missile")
 		4:
-			hud.call("unlock_element", "heal")
-			hud.call("unlock_element", "summon")
-		5:
-			hud.call("unlock_element", "barrack_mk2")
-		_:
-			pass
+			# Débloque nouveaux pouvoirs + toutes les upgrades MK2
+			hud.unlock_element("summon")
+			hud.unlock_element("heal")
+
+			# Toutes les tours MK2
+			hud.unlock_element("blue_mk2")
+			hud.unlock_element("snipe_mk2")
+			hud.unlock_element("missile_mk2")
+			hud.unlock_element("barrack_mk2")
+
+	
+			

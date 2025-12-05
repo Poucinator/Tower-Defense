@@ -50,16 +50,19 @@ initial_velocity_max = 212.77
 gravity = Vector3(0, 0, 0)
 
 [node name="Explosion" type="Node2D"]
+z_index = 1000
 script = ExtResource("1_sarbb")
 flash_energy = 0.1
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1000
 sprite_frames = SubResource("SpriteFrames_s03pj")
 animation = &"Boom"
 frame = 7
 frame_progress = 1.0
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+z_index = 1000
 emitting = false
 amount = 30
 lifetime = 0.6

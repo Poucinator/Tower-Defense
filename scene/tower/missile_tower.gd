@@ -1,3 +1,4 @@
+# res://scene/tower/missile_tower.gd
 extends StaticBody2D
 
 # --- Tir ---
@@ -19,6 +20,9 @@ extends StaticBody2D
 @export var upgrade_cost: int = 70
 @export var upgrade_icon: Texture2D
 
+# Tier de la tour (MK1=1, MK2=2, MK3=3...)
+@export var tower_tier: int = 1
+
 const MISSILE_SCN := preload("res://scene/projectile/missile.tscn")
 
 var detector: Area2D
@@ -32,10 +36,12 @@ var current_target: Node2D = null
 var _click_ready_at_ms := 0
 var _menu_ref: Node = null
 
+
 func _ready() -> void:
 	detector = get_node_or_null(detector_path)
 	muzzle   = get_node_or_null(muzzle_path)
 
+	# Important pour que la tour soit cliquable
 	input_pickable = true
 
 	if anim:
@@ -62,12 +68,14 @@ func _ready() -> void:
 
 	_click_ready_at_ms = Time.get_ticks_msec() + click_cooldown_ms
 
+
 func _process(delta: float) -> void:
 	if current_target and is_instance_valid(current_target) and current_target.is_inside_tree():
 		var aim_angle := (current_target.global_position - global_position).angle()
 		rotation = lerp_angle(rotation, aim_angle, rotation_speed * delta)
 	elif anim and anim.animation != "idle":
 		anim.play("idle")
+
 
 # -------- Clic -> menu upgrade --------
 func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
@@ -76,9 +84,17 @@ func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
 			return
 		_open_upgrade_menu()
 
+
 func _open_upgrade_menu() -> void:
 	if upgrade_scene == null:
 		return
+
+	# 🔒 Vérifie si le prochain tier est autorisé par Game.max_tower_tier
+	var next_tier := tower_tier + 1
+	if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
+		print("[MissileTower] Upgrade vers MK%d verrouillé (max_tower_tier=%d)" % [next_tier, Game.max_tower_tier])
+		return
+
 	if _menu_ref and is_instance_valid(_menu_ref):
 		_menu_ref.queue_free()
 		_menu_ref = null
@@ -88,6 +104,7 @@ func _open_upgrade_menu() -> void:
 	menu.setup(upgrade_icon, upgrade_cost, global_position, self)
 	menu.option_chosen.connect(_on_upgrade_clicked, CONNECT_ONE_SHOT)
 	_menu_ref = menu
+
 
 func _on_upgrade_clicked() -> void:
 	if "is_selling_mode" in Game and Game.is_selling_mode:
@@ -111,8 +128,9 @@ func _on_upgrade_clicked() -> void:
 	new_tower.global_position = global_position
 	new_tower.rotation = rotation
 
-	if new_tower.has_variable("_click_ready_at_ms"):
-		new_tower._click_ready_at_ms = Time.get_ticks_msec()
+	# Même logique que la snipe_tower : on applique un petit cooldown
+	if "_click_ready_at_ms" in new_tower:
+		new_tower._click_ready_at_ms = Time.get_ticks_msec() + click_cooldown_ms
 
 	queue_free()
 
@@ -123,17 +141,20 @@ func _on_tower_body_entered(b: Node2D) -> void:
 	if b.is_in_group("Enemy"):
 		curr_targets.append(b)
 
+
 func _on_tower_body_exited(b: Node2D) -> void:
 	if b.is_in_group("Enemy"):
 		curr_targets.erase(b)
 		if b == current_target:
 			current_target = null
 
+
 func _on_shoot_timer_timeout() -> void:
 	if current_target == null or not is_instance_valid(current_target) or not (current_target in curr_targets):
 		current_target = _choose_target()
 	if current_target:
 		_shoot_at(current_target)
+
 
 func _choose_target() -> Node2D:
 	var list: Array[Node2D] = []
@@ -142,6 +163,7 @@ func _choose_target() -> Node2D:
 			list.append(e)
 	if list.is_empty():
 		return null
+
 	var best := list[0]
 	var best_prog := _progress_of(best)
 	for e in list:
@@ -151,11 +173,13 @@ func _choose_target() -> Node2D:
 			best_prog = p
 	return best
 
+
 func _progress_of(enemy: Node2D) -> float:
 	var pf := enemy.get_parent()
 	if pf is PathFollow2D:
 		return (pf as PathFollow2D).progress
 	return 0.0
+
 
 func _shoot_at(target: Node2D) -> void:
 	if anim:
@@ -184,9 +208,12 @@ func _shoot_at(target: Node2D) -> void:
 	if m.has_method("fire_at"):
 		m.call("fire_at", target.global_position, missile_damage, splash_radius)
 
+
 func _on_anim_finished() -> void:
 	if anim and anim.animation == "shoot":
 		anim.play("idle")
+
+
 
 # -------- Utils --------
 func _try_spend(amount: int) -> bool:
@@ -198,6 +225,7 @@ func _try_spend(amount: int) -> bool:
 			Game.gold_changed.emit(Game.gold)
 		return true
 	return false
+
 
 func _find_build_slot_under_me() -> Node:
 	var space := get_world_2d().direct_space_state
