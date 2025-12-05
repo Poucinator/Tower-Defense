@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="StorySequence" load_steps=8 format=3 uid="uid://q4inll20j1tr"]
+[gd_resource type="Resource" script_class="StorySequence" load_steps=9 format=3 uid="uid://q4inll20j1tr"]
 
 [ext_resource type="Texture2D" uid="uid://nxe8bae1yeaa" path="res://Sprite/Personnage 1/Open Peeps - Sitting (6).png" id="1_svw7l"]
 [ext_resource type="Texture2D" uid="uid://cpeh08dyyo5se" path="res://Sprite/Personnage 2/Open Peeps - Bust (7).png" id="2_3gve6"]
@@ -6,9 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://dsak283donx3i" path="res://Sprite/Personnage 2/Open Peeps - Bust (11).png" id="4_q01yr"]
 [ext_resource type="Texture2D" uid="uid://duo6gib8jg3fc" path="res://ui/ChatGPT_Image_27_oct._2025__19_01_01-removebg-preview.png" id="5_uf5y2"]
 [ext_resource type="Texture2D" uid="uid://dql11b26r0cf1" path="res://ui/ChatGPT_Image_27_oct._2025__18_58_26-removebg-preview.png" id="6_7xp7p"]
+[ext_resource type="Texture2D" uid="uid://cxgkvf3n2t0fc" path="res://scene/Barrack/ChatGPT_Image_4_oct._2025__09_42_57-removebg-preview (1).png" id="7_3gve6"]
 [ext_resource type="Script" uid="uid://cx62ga41ymge4" path="res://story/story_sequence.gd" id="8_ycexo"]
 
 [resource]
 script = ExtResource("8_ycexo")
-images = Array[Texture2D]([ExtResource("1_svw7l"), ExtResource("2_3gve6"), ExtResource("3_k6cmj"), ExtResource("4_q01yr"), ExtResource("5_uf5y2"), ExtResource("6_7xp7p")])
-texts = Array[String](["C'est toute la smala qui se ramène là ", "Ok, retiens les autant que tu peux, je vais trouver une solution ", "Et je fais comment s'ils se ramènent ici, je leur crache à la gueule ? ", "Ok je te donne tout ce que j'ai, retiens les juste un peu ! ", "Le soin redonne l'ensemble de la santé aux unités présentes sur le terrain et les rend invinsible pour une courte durée", "L'appel fait apparaitre des unités temporaires à l'endroit sélectionné "])
+images = Array[Texture2D]([ExtResource("1_svw7l"), ExtResource("2_3gve6"), ExtResource("3_k6cmj"), ExtResource("4_q01yr"), ExtResource("5_uf5y2"), ExtResource("6_7xp7p"), ExtResource("7_3gve6")])
+texts = Array[String](["C'est toute la smala qui se ramène là ", "Ok, retiens les autant que tu peux, je vais trouver une solution ", "Et je fais comment s'ils se ramènent ici, je leur crache à la gueule ? ", "Ok je te donne tout ce que j'ai, retiens les juste un peu ! ", "Le soin redonne l'ensemble de la santé aux unités présentes sur le terrain et les rend invinsible pour une courte durée", "L'appel fait apparaitre des unités temporaires à l'endroit sélectionné ", "Tu peux améliorer les tours au niveau 2 en payant son cout d'évolution"])
