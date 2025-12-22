@@ -15,7 +15,8 @@ var overlay: CanvasLayer = null
 	1: null,
 	2: null,
 	3: null,
-	4: null
+	4: null,
+	5: null
 }
 
 var _pending_cb: Callable = Callable()

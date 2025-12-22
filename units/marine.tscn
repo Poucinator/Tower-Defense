@@ -136,7 +136,7 @@ border_width_bottom = 1
 border_color = Color(0.02, 0.02, 0.02, 1)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2w5wj"]
-radius = 144.42
+radius = 61.2046
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_y70m1"]
 animations = [{

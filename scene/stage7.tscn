@@ -1,10 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://ce0p8pu2b4r26"]
+[gd_scene load_steps=2 format=3 uid="uid://beja42h4qa07k"]
 
 [sub_resource type="Curve2D" id="Curve2D_xth1g"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 1430, 79, 0, 0, 0, 0, 1428, 206, 0, 0, 0, 0, 1451, 253, 0, 0, 0, 0, 1426, 346, 0, 0, 0, 0, 1426, 451, 0, 0, 0, 0, 1557, 457, 0, 0, 0, 0, 1760, 460, 0, 0, 0, 0, 2011, 449)
+"points": PackedVector2Array(0, 0, 0, 0, -5282.25, -1224, 0, 0, 0, 0, -4895.06, -1231, 0, 0, 0, 0, -4899.07, -556, 0, 0, 0, 0, -4965.28, -537, 0, 0, 0, 0, -4949.23, -295, 0, 0, 0, 0, -4238.04, -292)
 }
-point_count = 8
+point_count = 6
 
 [node name="Path2D" type="Path2D"]
+position = Vector2(5454, 1351)
+scale = Vector2(0.996923, 1)
 curve = SubResource("Curve2D_xth1g")

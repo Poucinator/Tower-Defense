@@ -14,6 +14,15 @@ extends Node
 var story: Node = null
 
 ## ==========================================================
+##                PHASE 2 
+## ==========================================================
+
+@export var phase2_paths: Array[NodePath] = []   # Tous les TileMaps de la nouvelle zone
+@export var phase2_world_bottom: float = 1800.0  # Nouvelle limite bas de la caméra
+
+
+
+## ==========================================================
 ##                INTERNES
 ## ==========================================================
 var hud: Node = null
@@ -105,18 +114,12 @@ func _start_or_intro() -> void:
 		_prepare_wave(0)
 
 func _on_intro_finished() -> void:
-	# 🔥 S'assurer que la caméra gameplay est bien active
 	if camera:
-		camera.make_current()
-
-		# 🔥 Fix zoom initial après la story
-		camera.zoom = Vector2(1.0, 1.0)
-
-
-
+		if camera.has_method("reset_after_story"):
+			camera.reset_after_story()
+		else:
+			camera.make_current()
 	_prepare_wave(0)
-
-
 
 ## ==========================================================
 ##            PRÉPARATION DE CHAQUE VAGUE
@@ -210,18 +213,48 @@ func _get_first_spawner_in_wave(wave: Node) -> Node:
 
 	return null
 
+## ==========================================================
+##                   Phases 2 
+## ==========================================================
+
+func _reveal_phase2_zone() -> void:
+	# 1) Afficher les TileMaps de la phase 2
+	for p in phase2_paths:
+		var n := get_node_or_null(p) as Node2D
+		if n:
+			n.visible = true
+			if DBG:
+				print("[LD] Phase2 visible :", n.name)
+		else:
+			push_warning("[LD] Phase2 introuvable pour le path : %s" % [p])
+
+	# 2) Descendre la limite bas de la caméra
+	if camera:
+		if "world_bottom" in camera:
+			camera.world_bottom = phase2_world_bottom
+			if DBG:
+				print("[LD] Camera world_bottom ->", camera.world_bottom)
+		else:
+			push_warning("[LD] La caméra n'a pas de propriété 'world_bottom' (check camera_2d.gd)")
+
+const PHASE2_SLOT_GROUP := "Phase2BuildSlot"
 
 ## ==========================================================
-##     🔓 Débloquage HUD
+##     🔓 Débloquage HUD + progression
 ## ==========================================================
 func _unlock_progression(index: int) -> void:
 	# --- Débloquage global des niveaux d'upgrade ---
-	# À l'index 4, on autorise les upgrades vers MK2 (mais pas MK3,4,5...)
 	if index == 4:
+		# On autorise les upgrades vers MK2 (mais pas MK3,4,5...)
 		if "max_tower_tier" in Game:
 			Game.max_tower_tier = max(Game.max_tower_tier, 2)
 			if DBG:
 				print("[LD] max_tower_tier ->", Game.max_tower_tier)
+
+	# --- Révélation de la nouvelle zone en 5 ---
+	if index == 5:
+		_reveal_phase2_zone()          # ta fonction existante
+		_unlock_phase2_buildslots()    # 👉 fait apparaître les 2 nouveaux slots
 
 	# --- Déblocage HUD ---
 	if hud == null or not hud.has_method("unlock_element"):
@@ -229,24 +262,45 @@ func _unlock_progression(index: int) -> void:
 
 	match index:
 		1:
-			# Débloque la tour snipe
 			hud.unlock_element("snipe")
 		2:
-			# Débloque le pouvoir freeze
 			hud.unlock_element("freeze")
 		3:
-			# Débloque la tour missile
 			hud.unlock_element("missile")
 		4:
-			# Débloque nouveaux pouvoirs + toutes les upgrades MK2
 			hud.unlock_element("summon")
 			hud.unlock_element("heal")
-
-			# Toutes les tours MK2
 			hud.unlock_element("blue_mk2")
 			hud.unlock_element("snipe_mk2")
 			hud.unlock_element("missile_mk2")
 			hud.unlock_element("barrack_mk2")
+		5:
+			# éventuellement un message HUD "Nouvelle zone débloquée !" si tu veux
+			if hud.has_method("show_phase2_unlocked"):
+				hud.call("show_phase2_unlocked")
+			if hud:
+				print("[LD] index 5 => unlock crystals")
+				hud.unlock_element("crystals")
+			if hud.has_method("show_phase2_unlocked"):
+				hud.call("show_phase2_unlocked")
 
-	
-			
+## ==========================================================
+##   Phase 2 : BuildSlots supplémentaires
+## ==========================================================
+func _hide_phase2_buildslots_on_start() -> void:
+	# À appeler au démarrage si jamais certains slots sont visibles dans la scène
+	for slot in get_tree().get_nodes_in_group(PHASE2_SLOT_GROUP):
+		if slot is CanvasItem:
+			slot.visible = false
+
+func _unlock_phase2_buildslots() -> void:
+	for slot in get_tree().get_nodes_in_group(PHASE2_SLOT_GROUP):
+		if slot is CanvasItem:
+			slot.visible = true
+
+		# Si ton script de slot a une méthode d’activation, on la déclenche
+		if slot.has_method("enable"):
+			slot.enable()
+
+	if DBG:
+		print("[LD] Phase 2 : buildslots débloqués")

@@ -9,6 +9,8 @@ extends StaticBody2D
 
 @export var detector_path: NodePath
 @export var muzzle_path: NodePath
+@export var can_target_flying: bool = false  # 🚫 cette tour ne vise pas les volants
+
 
 # --------- Upgrade (scalable) ---------
 @export var upgrade_scene: PackedScene
@@ -30,6 +32,7 @@ var current_target: Node2D = null
 @export var click_cooldown_ms := 180
 var _click_ready_at_ms := 0
 var _menu_ref: Node = null
+
 
 func _ready() -> void:
 	detector = get_node_or_null(detector_path)
@@ -69,6 +72,18 @@ func _process(delta: float) -> void:
 		rotation = lerp_angle(rotation, aim, rotation_speed * delta)
 	elif anim and anim.animation != "idle":
 		anim.play("idle")
+
+
+# ---------- Filtrage des cibles ----------
+func _is_valid_target(e: Node2D) -> bool:
+	if e == null or not is_instance_valid(e):
+		return false
+
+	# Si l’ennemi est volant et que la tour ne peut pas viser les volants -> on l’ignore
+	if ("is_flying" in e) and e.is_flying and not can_target_flying:
+		return false
+
+	return true
 
 
 # ---------- Clic : ouvrir le menu ----------
@@ -129,10 +144,9 @@ func _on_upgrade_clicked() -> void:
 
 
 
-
 # --------- détection / tir ----------
 func _on_tower_body_entered(b: Node2D) -> void:
-	if b.is_in_group("Enemy"):
+	if b.is_in_group("Enemy") and _is_valid_target(b):
 		curr_targets.append(b)
 
 func _on_tower_body_exited(b: Node2D) -> void:
@@ -142,7 +156,10 @@ func _on_tower_body_exited(b: Node2D) -> void:
 			current_target = null
 
 func _on_shoot_timer_timeout() -> void:
-	if current_target == null or not is_instance_valid(current_target) or not (current_target in curr_targets):
+	if current_target == null \
+			or not is_instance_valid(current_target) \
+			or not (current_target in curr_targets) \
+			or not _is_valid_target(current_target):
 		current_target = _choose_target()
 	if current_target:
 		_shoot_at(current_target)
@@ -150,7 +167,7 @@ func _on_shoot_timer_timeout() -> void:
 func _choose_target() -> Node2D:
 	var list: Array[Node2D] = []
 	for e in curr_targets:
-		if is_instance_valid(e) and e.is_inside_tree():
+		if is_instance_valid(e) and e.is_inside_tree() and _is_valid_target(e):
 			list.append(e)
 	if list.is_empty():
 		return null
@@ -164,6 +181,7 @@ func _choose_target() -> Node2D:
 			best = e
 			best_prog = p
 	return best
+
 
 func _progress_of(enemy: Node2D) -> float:
 	var pf := enemy.get_parent()

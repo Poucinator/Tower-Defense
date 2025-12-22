@@ -24,9 +24,11 @@ var _radius_override: float = -1.0
 
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
 
+
 func _ready() -> void:
 	if anim:
 		anim.play("fly")
+
 
 func fire_at(target_pos: Vector2, damage_override: int = -1, radius_override: float = -1.0) -> void:
 	_target_pos = target_pos
@@ -37,6 +39,7 @@ func fire_at(target_pos: Vector2, damage_override: int = -1, radius_override: fl
 	rotation = _direction.angle() + deg_to_rad(rotation_offset_deg)
 	_armed = true
 
+
 func _physics_process(delta: float) -> void:
 	if not _armed:
 		return
@@ -44,8 +47,17 @@ func _physics_process(delta: float) -> void:
 	velocity = _direction * speed
 	var collision := move_and_collide(velocity * delta)
 	if collision:
-		_explode()
-		return
+		var col := collision.get_collider()
+		var enemy := _get_enemy_from_collider(col)
+
+		# ⚠️ Si on a touché un ennemi volant, on ignore la collision :
+		# pas d'explosion, le missile continue sa route.
+		if enemy and ("is_flying" in enemy) and enemy.is_flying:
+			# On ne return pas : au prochain frame le missile repartira.
+			pass
+		else:
+			_explode()
+			return
 
 	if proximity_trigger > 0.0:
 		var dist: float = global_position.distance_to(_target_pos)
@@ -56,6 +68,7 @@ func _physics_process(delta: float) -> void:
 	_time_alive += delta
 	if _time_alive >= lifetime:
 		_explode()
+
 
 func _explode() -> void:
 	# --------- DÉGÂTS DE ZONE ----------
@@ -79,13 +92,13 @@ func _explode() -> void:
 		if n == null:
 			continue
 
-		var enemy: Node2D = null
-		if n.is_in_group("Enemy"):
-			enemy = n
-		elif n.get_parent() and n.get_parent().is_in_group("Enemy"):
-			enemy = n.get_parent() as Node2D
+		var enemy := _get_enemy_from_collider(n)
 
 		if enemy:
+			# 🚫 On ignore totalement les ennemis volants dans l'aoe
+			if ("is_flying" in enemy) and enemy.is_flying:
+				continue
+
 			var dist: float = (enemy.global_position - global_position).length()
 			if dist <= radius:
 				var ratio: float = 1.0
@@ -107,3 +120,13 @@ func _explode() -> void:
 		ex.play(radius)
 
 	queue_free()
+
+
+# --------- Utilitaire : récupérer un ennemi à partir d'un collider ----------
+func _get_enemy_from_collider(obj: Object) -> Node2D:
+	var node := obj as Node
+	while node:
+		if node.is_in_group("Enemy"):
+			return node as Node2D
+		node = node.get_parent()
+	return null

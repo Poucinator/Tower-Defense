@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bu8ql60gnhsad"]
+[gd_scene load_steps=15 format=3 uid="uid://bu8ql60gnhsad"]
 
 [ext_resource type="Script" uid="uid://bue551sw22h6u" path="res://ui/hud.gd" id="1_5nt5s"]
 [ext_resource type="Texture2D" uid="uid://dk7kexs0ssyii" path="res://Sprite/coin-removebg-preview.png" id="2_4nxdm"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://dl2jay081erp" path="res://ui/cursor_sell.png" id="9_0twk8"]
 [ext_resource type="Texture2D" uid="uid://duo6gib8jg3fc" path="res://ui/ChatGPT_Image_27_oct._2025__19_01_01-removebg-preview.png" id="9_s4g46"]
 [ext_resource type="Texture2D" uid="uid://dql11b26r0cf1" path="res://ui/ChatGPT_Image_27_oct._2025__18_58_26-removebg-preview.png" id="10_7w78f"]
+[ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="12_s4g46"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldol0"]
 bg_color = Color(0.289058, 0.679883, 0.586034, 1)
@@ -194,3 +195,31 @@ alignment = 2
 clip_contents = true
 layout_mode = 2
 texture_normal = ExtResource("9_0twk8")
+
+[node name="CrystalPanel" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+pivot_offset = Vector2(-220, 10)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CrystalPanel"]
+layout_mode = 0
+offset_left = -100.0
+offset_right = 42.0
+offset_bottom = 128.0
+
+[node name="CrystalLabel" type="Label" parent="CrystalPanel/HBoxContainer"]
+layout_mode = 2
+text = "0"
+
+[node name="CrystalIcon" type="TextureRect" parent="CrystalPanel/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("12_s4g46")
+
+[node name="CrystalTimer" type="Timer" parent="."]
+wait_time = 5.0

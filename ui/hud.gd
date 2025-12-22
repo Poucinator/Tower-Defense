@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const DBG_CRYSTAL := true
+
 # --- Références UI (haut) ---
 @onready var gold_label:       Label          = $"HBoxContainer/GoldLabel"
 @onready var health_label:     Label          = $"HBoxContainer/HealthLabel"
@@ -33,6 +35,15 @@ var powers: Node = null
 var build:   Node = null
 var spawner: Node = null
 
+# --- Cristaux (phase finale) ---
+@export_range(0.1, 60.0, 0.1, "or_greater") var crystal_tick_seconds: float = 2.0
+
+@onready var crystal_panel: Control = $"CrystalPanel"
+@onready var crystal_label2: Label = $"CrystalPanel/HBoxContainer/CrystalLabel"
+@onready var crystal_timer: Timer = $"CrystalTimer"
+
+var _crystal_running := false
+
 # --- États locaux ---
 var _last_left: float = 0.0
 var _is_sell_mode: bool = false
@@ -51,6 +62,7 @@ const MISSILE_TOWER_SCN   := preload("res://scene/tower/missile_tower.tscn")
 const MISSILE_TOWER_PRICE := 300
 const BARRACKS_TOWER_SCN  := preload("res://scene/tower/barracks_tower.tscn")
 const BARRACKS_TOWER_PRICE := 50
+
 
 func _ready() -> void:
 	# Or
@@ -92,6 +104,55 @@ func _ready() -> void:
 
 	timer_label.text = ""
 
+	# =========================
+	# Cristaux : init + debug
+	# =========================
+	if DBG_CRYSTAL:
+		print("[CRYSTAL] _ready() tick_seconds=", crystal_tick_seconds)
+		print("[CRYSTAL] nodes:", "panel=", crystal_panel, " label=", crystal_label2, " timer=", crystal_timer)
+
+	if crystal_panel:
+		crystal_panel.visible = false
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] panel forced invisible at start")
+
+	# Connect signal Game -> HUD
+	if Game.has_signal("crystals_changed"):
+		if not Game.crystals_changed.is_connected(_on_crystals_changed):
+			Game.crystals_changed.connect(_on_crystals_changed)
+			if DBG_CRYSTAL:
+				print("[CRYSTAL] connected Game.crystals_changed -> _on_crystals_changed")
+	else:
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] WARNING: Game has no signal crystals_changed")
+
+	# Valeur initiale
+		# Valeur initiale (ultra safe)
+	var init_val := 0
+	if Game != null and ("crystals" in Game):
+		init_val = int(Game.get("crystals"))
+	else:
+		init_val = 0
+
+	if DBG_CRYSTAL:
+		print("[CRYSTAL] init crystals from Game =", init_val)
+
+	_on_crystals_changed(init_val)
+
+
+	# Timer
+	if crystal_timer:
+		crystal_timer.wait_time = crystal_tick_seconds
+		if not crystal_timer.timeout.is_connected(_on_crystal_timer_timeout):
+			crystal_timer.timeout.connect(_on_crystal_timer_timeout)
+			if DBG_CRYSTAL:
+				print("[CRYSTAL] connected crystal_timer.timeout -> _on_crystal_timer_timeout")
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] timer configured wait_time=", crystal_timer.wait_time, " one_shot=", crystal_timer.one_shot, " autostart=", crystal_timer.autostart)
+	else:
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] WARNING: CrystalTimer node is null (path issue?)")
+
 	# Pouvoirs
 	powers = get_node_or_null(power_controller_path)
 	if freeze_btn: freeze_btn.pressed.connect(_on_freeze_pressed)
@@ -109,6 +170,7 @@ func _ready() -> void:
 	_init_locked_elements()
 
 	set_process(true)
+
 
 # =========================================================
 #         Mode "piloté par LevelDirector"
@@ -129,6 +191,7 @@ func director_countdown_done() -> void:
 	_director_cd_active = false
 	timer_label.text = "Vague en cours…"
 	_update_next_button_state()
+
 
 # =========================================================
 #         Bascule dynamique du spawner
@@ -159,6 +222,7 @@ func set_spawner(new_spawner: Node) -> void:
 	timer_label.text = ""
 	_update_next_button_state()
 
+
 # =========================================================
 #                     Game callbacks
 # =========================================================
@@ -167,6 +231,7 @@ func _on_gold_changed(amount: int) -> void:
 
 func _on_health_changed(hp: int) -> void:
 	health_label.text = str(max(hp, 0))
+
 
 # =========================================================
 #                     Build
@@ -183,20 +248,17 @@ func _on_build_missile_pressed() -> void:
 func _on_build_barracks_pressed() -> void:
 	if build: build.call("start_placing", BARRACKS_TOWER_SCN, BARRACKS_TOWER_PRICE)
 
+
 # =========================================================
 #                   Vente des tours
 # =========================================================
 func _on_sell_pressed() -> void:
-	print("[HUD] Sell button pressed")
 	if not build:
 		push_warning("[HUD] Aucun BuildController lié.")
 		return
-	# ✅ hand authority to the controller; no local toggle here
 	var target := not Game.is_selling_mode
 	build.call("start_sell_mode", target)
 
-
-# Visuel du bouton Vente (activé/désactivé)
 func _update_sell_visual(active: bool) -> void:
 	if not sell_btn:
 		return
@@ -206,6 +268,7 @@ func _update_sell_visual(active: bool) -> void:
 	else:
 		sell_btn.add_theme_color_override("font_color", Color(1, 1, 1))
 		sell_btn.modulate = Color(1, 1, 1)
+
 
 # =========================================================
 #          Spawner callbacks (timer à droite)
@@ -231,6 +294,7 @@ func _on_wave_started(_index: int, _count: int) -> void:
 func _on_wave_finished(_index: int) -> void:
 	timer_label.text = "Vague terminée"
 	_update_next_button_state()
+
 
 # =========================================================
 #             Bouton "Prochaine vague" (skip)
@@ -274,6 +338,7 @@ func _on_next_wave_pressed() -> void:
 			spawner.call("skip_countdown_and_start")
 		next_btn.disabled = true
 
+
 # =========================================================
 #                   Pouvoirs
 # =========================================================
@@ -305,6 +370,7 @@ func _process(_delta: float) -> void:
 			summon_btn.disabled = false
 			summon_label.text = "Appel"
 
+
 # =========================================================
 #                   Actions des pouvoirs
 # =========================================================
@@ -320,8 +386,9 @@ func _on_summon_pressed() -> void:
 	if powers and powers.has_method("start_place_summon"):
 		powers.call("start_place_summon")
 
+
 # =========================================================
-#            AJOUTS : visibilité initiale & déblocage
+#            Visibilité initiale & déblocage
 # =========================================================
 func _init_locked_elements() -> void:
 	build_barracks_btn.visible = true
@@ -331,8 +398,14 @@ func _init_locked_elements() -> void:
 	freeze_btn.visible = false
 	heal_btn.visible = false
 	summon_btn.visible = false
+	# NB: CrystalPanel est déjà forcé invisible au _ready()
+
 
 func unlock_element(name: String) -> void:
+	# Debug centralisé
+	if DBG_CRYSTAL:
+		print("[CRYSTAL] unlock_element called with:", name)
+
 	match name:
 		"snipe":
 			build_snipe_btn.visible = true
@@ -344,8 +417,21 @@ func unlock_element(name: String) -> void:
 			heal_btn.visible = true
 		"summon":
 			summon_btn.visible = true
-		"barrack_mk2":
-			print("[HUD] Amélioration Barrack MK2 débloquée (à implémenter)")
+
+		# ✅ IMPORTANT : ce case doit être AVANT "_:"
+		"crystals":
+			if DBG_CRYSTAL:
+				print("[CRYSTAL] -> enabling panel + starting income")
+			if crystal_panel:
+				crystal_panel.visible = true
+				if DBG_CRYSTAL:
+					print("[CRYSTAL] panel is now visible =", crystal_panel.visible)
+			else:
+				if DBG_CRYSTAL:
+					print("[CRYSTAL] ERROR: crystal_panel is null")
+
+			_start_crystal_income()
+
 		_:
 			push_warning("[HUD] Élément inconnu : %s" % name)
 
@@ -353,3 +439,46 @@ func unlock_element(name: String) -> void:
 func _on_sell_mode_changed(active: bool) -> void:
 	_is_sell_mode = active
 	_update_sell_visual(active)
+
+
+# =========================================================
+#                   Cristaux
+# =========================================================
+func _on_crystals_changed(v: int) -> void:
+	if DBG_CRYSTAL:
+		print("[CRYSTAL] Game.crystals_changed ->", v)
+	if crystal_label2:
+		crystal_label2.text = str(v)
+	else:
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] WARNING: crystal_label2 is null")
+
+func _on_crystal_timer_timeout() -> void:
+	if DBG_CRYSTAL:
+		print("[CRYSTAL] timer timeout -> add_crystals(1)")
+	if "add_crystals" in Game:
+		Game.add_crystals(1)
+	else:
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] ERROR: Game has no method add_crystals")
+
+func _start_crystal_income() -> void:
+	if _crystal_running:
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] income already running -> skip")
+		return
+
+	_crystal_running = true
+
+	if DBG_CRYSTAL:
+		print("[CRYSTAL] start income tick every", crystal_tick_seconds, "seconds")
+
+	if crystal_timer:
+		crystal_timer.stop()
+		crystal_timer.wait_time = crystal_tick_seconds
+		crystal_timer.start()
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] timer started. is_stopped? =", crystal_timer.is_stopped())
+	else:
+		if DBG_CRYSTAL:
+			print("[CRYSTAL] ERROR: crystal_timer is null")

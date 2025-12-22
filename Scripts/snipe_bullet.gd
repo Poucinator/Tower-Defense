@@ -15,14 +15,26 @@ func fire_at(target_pos: Vector2, override_damage: int = -1) -> void:
 	# Auto-destroy au cas où rien n’est touché
 	get_tree().create_timer(lifetime).timeout.connect(queue_free)
 
+
 func _physics_process(delta: float) -> void:
 	var collision := move_and_collide(_dir * speed * delta)
 	if collision:
 		var hit := collision.get_collider()
 		var mob := _find_enemy_on(hit)
+
+		# ⚠️ On ignore complètement les ennemis volants
+		if mob and ("is_flying" in mob) and mob.is_flying:
+			# Pas de dégâts, pas de queue_free ici.
+			# Pour que la balle TRAVERSE vraiment, il faut aussi
+			# que les layers/masks empêchent la collision (voir plus bas).
+			return
+
 		if mob and mob.has_method("apply_damage"):
 			mob.apply_damage(damage)
-		queue_free()  # toujours supprimer la balle à l’impact
+
+		# toujours supprimer la balle à l’impact sur une cible valide
+		queue_free()
+
 
 # Remonte la hiérarchie jusqu’à trouver un node dans le groupe "Enemy"
 func _find_enemy_on(n: Object) -> Node:

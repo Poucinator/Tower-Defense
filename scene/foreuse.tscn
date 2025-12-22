@@ -1,0 +1,81 @@
+[gd_scene load_steps=12 format=3 uid="uid://dhmcue5su3hm0"]
+
+[ext_resource type="Script" uid="uid://kiheiybqhvt" path="res://Scripts/foreuse.gd" id="1_fq8ux"]
+[ext_resource type="Texture2D" uid="uid://btfd4wbu1hkpr" path="res://Sprite/decort/tile003.png" id="2_mb2p6"]
+[ext_resource type="Texture2D" uid="uid://dn0nb8smjff86" path="res://Sprite/decort/tile004.png" id="3_r03ys"]
+[ext_resource type="Texture2D" uid="uid://dgm3ndffvygse" path="res://Sprite/decort/tile005.png" id="4_yvwj1"]
+[ext_resource type="Texture2D" uid="uid://7wmeg7j6nf6y" path="res://Sprite/decort/tile006.png" id="5_3q8q0"]
+[ext_resource type="Texture2D" uid="uid://uw7qx682ohqj" path="res://Sprite/decort/tile007.png" id="6_25lnq"]
+[ext_resource type="Texture2D" uid="uid://b2eoc5v4uk2i5" path="res://Sprite/decort/tile008.png" id="7_vaj2r"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_64s40"]
+bg_color = Color(0.788954, 0.533671, 0.354743, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.07, 0.07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d30j0"]
+bg_color = Color(0.013718, 0.728269, 9.62615e-07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.02, 0.02, 0.02, 1)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_iacfa"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_mb2p6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_r03ys")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_yvwj1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_3q8q0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_25lnq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_vaj2r")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_eowk3"]
+radius = 113.745
+
+[node name="Foreuse" type="Node2D"]
+script = ExtResource("1_fq8ux")
+max_hp = 400
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+z_index = 9
+offset_left = -64.0
+offset_top = -63.0
+offset_right = 65.0
+offset_bottom = -55.0
+theme_override_styles/background = SubResource("StyleBoxFlat_64s40")
+theme_override_styles/fill = SubResource("StyleBoxFlat_d30j0")
+show_percentage = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(4.54747e-13, 0)
+scale = Vector2(0.869762, 0.518024)
+sprite_frames = SubResource("SpriteFrames_iacfa")
+autoplay = "default"
+frame_progress = 0.559518
+
+[node name="Aggro" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Aggro"]
+shape = SubResource("CircleShape2D_eowk3")

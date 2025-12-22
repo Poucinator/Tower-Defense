@@ -5,6 +5,8 @@ extends StaticBody2D
 @export var fire_interval: float = 0.5
 @export var bullet_speed: float = 300.0
 @export var rotation_speed: float = 5.0
+@export var can_target_flying: bool = true   # 👈 Blue Tower peut viser les volants
+
 
 # ---------- Nœuds ----------
 @export var detector_path: NodePath
@@ -75,6 +77,18 @@ func _process(delta: float) -> void:
 		anim.play("idle")
 
 
+# 🔹 Vérifie si une cible est valide pour cette tour
+func _is_valid_target(e: Node2D) -> bool:
+	if e == null or not is_instance_valid(e):
+		return false
+
+	# Si l’ennemi est volant et que la tour ne peut pas toucher les volants → on l’ignore
+	if ("is_flying" in e) and e.is_flying and not can_target_flying:
+		return false
+
+	return true
+
+
 # ---------- Clic : ouvrir le menu ----------
 func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -137,7 +151,7 @@ func _on_upgrade_clicked() -> void:
 
 # ---------- Détection / tir ----------
 func _on_tower_body_entered(b: Node2D) -> void:
-	if b.is_in_group("Enemy"):
+	if b.is_in_group("Enemy") and _is_valid_target(b):   # 🔹 filtrage ici
 		curr_targets.append(b)
 
 func _on_tower_body_exited(b: Node2D) -> void:
@@ -155,7 +169,7 @@ func _on_shoot_timer_timeout() -> void:
 func _choose_target() -> Node2D:
 	var list: Array[Node2D] = []
 	for e in curr_targets:
-		if is_instance_valid(e) and e.is_inside_tree():
+		if is_instance_valid(e) and e.is_inside_tree() and _is_valid_target(e):  # 🔹 re-filtrage
 			list.append(e)
 	if list.is_empty():
 		return null
