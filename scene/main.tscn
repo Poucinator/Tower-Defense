@@ -1,4 +1,4 @@
-[gd_scene load_steps=178 format=4 uid="uid://b7e6bo6ttaigf"]
+[gd_scene load_steps=215 format=4 uid="uid://b7e6bo6ttaigf"]
 
 [ext_resource type="Texture2D" uid="uid://drfwn32oe7glp" path="res://Tilemaps/tileset.png" id="2_wscrc"]
 [ext_resource type="Texture2D" uid="uid://bqlc45dj12b8h" path="res://Tilemaps/trees & stuff.png" id="3_mswub"]
@@ -35,11 +35,14 @@
 [ext_resource type="PackedScene" uid="uid://b6ik3p7i6rsum" path="res://scene/stage8.tscn" id="29_cv4lv"]
 [ext_resource type="Resource" uid="uid://bibnovkr3r115" path="res://story/between_1.tres" id="29_fa8t4"]
 [ext_resource type="PackedScene" uid="uid://nldwxep66nuu" path="res://scene/stage9.tscn" id="29_vc5kc"]
+[ext_resource type="PackedScene" uid="uid://bbv6v8sp7exw7" path="res://scene/Ennemies/4D/Golem/Golem Boss run.tscn" id="30_fyltn"]
 [ext_resource type="PackedScene" uid="uid://dyrkvmi664ll" path="res://scene/Ennemies/4D/Golem/Golem Pink.tscn" id="30_mbros"]
 [ext_resource type="Resource" uid="uid://dprod66lxw0a0" path="res://story/between_3.tres" id="30_mjuaj"]
 [ext_resource type="Resource" uid="uid://byeehi02hueer" path="res://story/intro.tres" id="30_rg6nf"]
+[ext_resource type="PackedScene" uid="uid://bs1x4yc8advtt" path="res://scene/stage10.tscn" id="31_2km5d"]
 [ext_resource type="Resource" uid="uid://q4inll20j1tr" path="res://story/between_4.tres" id="34_bmc2w"]
 [ext_resource type="Resource" uid="uid://qqxrlbwqpmpn" path="res://story/between_5.tres" id="37_jey2d"]
+[ext_resource type="AudioStream" uid="uid://bmwkphubvyqn6" path="res://audio/StarCraft 1 Terran Theme Compilation  StarCraft + StarCraft Brood War OST.mp3" id="43_2km5d"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_216wm"]
 texture = ExtResource("2_wscrc")
@@ -1935,7 +1938,7 @@ metadata/_custom_type_script = "uid://6hr8nrey163n"
 [sub_resource type="Resource" id="Resource_mjuaj"]
 script = ExtResource("10_rg6nf")
 path = NodePath("PathSpawnerMultiLVL3")
-delay = 8.0
+delay = 1.0
 wait_clear = false
 metadata/_custom_type_script = "uid://6hr8nrey163n"
 
@@ -3012,7 +3015,42 @@ metadata/_custom_type_script = "uid://6hr8nrey163n"
 [sub_resource type="Resource" id="Resource_mkwnn"]
 script = ExtResource("10_rg6nf")
 path = NodePath("PathSpawnerMultiLVL26")
+delay = 5.0
+wait_clear = false
+metadata/_custom_type_script = "uid://6hr8nrey163n"
+
+[sub_resource type="Resource" id="Resource_71b7n"]
+script = ExtResource("10_rg6nf")
+path = NodePath("PathSpawnerMultiLVL27")
+delay = 40.0
+wait_clear = false
+metadata/_custom_type_script = "uid://6hr8nrey163n"
+
+[sub_resource type="Resource" id="Resource_xpupp"]
+script = ExtResource("10_rg6nf")
+path = NodePath("PathSpawnerMultiLVL28")
 delay = 0.0
+wait_clear = true
+metadata/_custom_type_script = "uid://6hr8nrey163n"
+
+[sub_resource type="Resource" id="Resource_pqjmc"]
+script = ExtResource("10_rg6nf")
+path = NodePath("PathSpawnerMultiLVL29")
+delay = 5.0
+wait_clear = false
+metadata/_custom_type_script = "uid://6hr8nrey163n"
+
+[sub_resource type="Resource" id="Resource_jgjk3"]
+script = ExtResource("10_rg6nf")
+path = NodePath("PathSpawnerMultiLVL30")
+delay = 30.0
+wait_clear = false
+metadata/_custom_type_script = "uid://6hr8nrey163n"
+
+[sub_resource type="Resource" id="Resource_bv6f7"]
+script = ExtResource("10_rg6nf")
+path = NodePath("PathSpawnerMultiLVL31")
+delay = 60.0
 wait_clear = false
 metadata/_custom_type_script = "uid://6hr8nrey163n"
 
@@ -3087,7 +3125,7 @@ script = ExtResource("6_b5f6u")
 path2d_path = NodePath("")
 stage_scene = ExtResource("19_4jm02")
 mob_scene = ExtResource("26_216wm")
-count = 10
+count = 5
 interval = 1.0
 rotates = false
 loop = false
@@ -3098,7 +3136,7 @@ script = ExtResource("6_b5f6u")
 path2d_path = NodePath("")
 stage_scene = ExtResource("15_fdqew")
 mob_scene = ExtResource("26_216wm")
-count = 10
+count = 5
 interval = 1.0
 rotates = false
 loop = false
@@ -3133,6 +3171,325 @@ stage_scene = ExtResource("29_vc5kc")
 mob_scene = ExtResource("13_bmc2w")
 count = 10
 interval = 2.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_wp6kk"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("6_of57s")
+mob_scene = ExtResource("22_rg6nf")
+count = 80
+interval = 0.1
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_vnygs"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("12_tv8i1")
+mob_scene = ExtResource("26_216wm")
+count = 10
+interval = 0.6
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_tamxo"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("15_fdqew")
+mob_scene = ExtResource("26_216wm")
+count = 10
+interval = 0.6
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_bbjv4"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("29_cv4lv")
+mob_scene = ExtResource("22_rg6nf")
+count = 20
+interval = 0.2
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_qya7h"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("6_of57s")
+mob_scene = ExtResource("30_mbros")
+count = 20
+interval = 3.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_61e88"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("8_b5f6u")
+mob_scene = ExtResource("30_mbros")
+count = 20
+interval = 3.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_8ay17"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("12_tv8i1")
+mob_scene = ExtResource("23_gj7ui")
+count = 20
+interval = 2.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_dwb1d"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("13_0vlqb")
+mob_scene = ExtResource("23_gj7ui")
+count = 20
+interval = 2.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_mi204"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("29_vc5kc")
+mob_scene = ExtResource("26_216wm")
+count = 10
+interval = 0.6
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_os5nh"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("19_4jm02")
+mob_scene = ExtResource("26_216wm")
+count = 15
+interval = 0.6
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_1ipns"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("15_fdqew")
+mob_scene = ExtResource("26_216wm")
+count = 15
+interval = 0.6
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_k4tpy"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("6_of57s")
+mob_scene = ExtResource("30_fyltn")
+count = 50
+interval = 10.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_xv1as"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("8_b5f6u")
+mob_scene = ExtResource("30_fyltn")
+count = 50
+interval = 10.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_b30gg"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("12_tv8i1")
+mob_scene = ExtResource("22_rg6nf")
+count = 60
+interval = 0.1
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_objsx"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("13_0vlqb")
+mob_scene = ExtResource("22_rg6nf")
+count = 80
+interval = 0.1
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_2pq6g"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("19_4jm02")
+mob_scene = ExtResource("30_mbros")
+count = 60
+interval = 5.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_k33ij"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("15_fdqew")
+mob_scene = ExtResource("30_mbros")
+count = 60
+interval = 5.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_7no0g"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("13_0vlqb")
+mob_scene = ExtResource("23_gj7ui")
+count = 20
+interval = 0.6
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_1yv58"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("22_rg6nf")
+mob_scene = ExtResource("8_b5f6u")
+count = 20
+interval = 0.05
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_n2lvx"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("15_fdqew")
+mob_scene = ExtResource("26_216wm")
+count = 20
+interval = 0.6
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_omgyl"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("29_vc5kc")
+mob_scene = ExtResource("26_216wm")
+count = 10
+interval = 1.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_n2jho"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("31_2km5d")
+mob_scene = ExtResource("23_gj7ui")
+count = 2
+interval = 2.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_ruqsr"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("6_of57s")
+mob_scene = ExtResource("30_fyltn")
+count = 20
+interval = 4.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_htrwt"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("8_b5f6u")
+mob_scene = ExtResource("30_fyltn")
+count = 20
+interval = 4.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_uruwo"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("12_tv8i1")
+mob_scene = ExtResource("30_fyltn")
+count = 20
+interval = 4.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_8r1u1"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("13_0vlqb")
+mob_scene = ExtResource("30_fyltn")
+count = 20
+interval = 4.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_fona3"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("19_4jm02")
+mob_scene = ExtResource("30_fyltn")
+count = 20
+interval = 4.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_516o6"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("15_fdqew")
+mob_scene = ExtResource("30_fyltn")
+count = 20
+interval = 4.0
+rotates = false
+loop = false
+metadata/_custom_type_script = "uid://bgbah0klh7wbu"
+
+[sub_resource type="Resource" id="Resource_7olld"]
+script = ExtResource("6_b5f6u")
+path2d_path = NodePath("")
+stage_scene = ExtResource("29_cv4lv")
+mob_scene = ExtResource("30_fyltn")
+count = 20
+interval = 4.0
 rotates = false
 loop = false
 metadata/_custom_type_script = "uid://bgbah0klh7wbu"
@@ -3445,7 +3802,7 @@ lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_52ta4"), SubResourc
 
 [node name="WaveSequence_6" type="Node2D" parent="."]
 script = ExtResource("9_fa8t4")
-events = Array[ExtResource("10_rg6nf")]([SubResource("Resource_xi4b0"), SubResource("Resource_mkwnn")])
+events = Array[ExtResource("10_rg6nf")]([SubResource("Resource_xi4b0"), SubResource("Resource_mkwnn"), SubResource("Resource_71b7n"), SubResource("Resource_xpupp"), SubResource("Resource_pqjmc"), SubResource("Resource_jgjk3"), SubResource("Resource_bv6f7")])
 
 [node name="PathSpawnerMultiLVL25" type="Node2D" parent="WaveSequence_6"]
 script = ExtResource("4_brvut")
@@ -3458,6 +3815,36 @@ script = ExtResource("4_brvut")
 lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_7wmpx"), SubResource("Resource_mxqqa"), SubResource("Resource_fd7h0"), SubResource("Resource_b8i3e"), SubResource("Resource_hhdt1"), SubResource("Resource_ha6st"), SubResource("Resource_ujbyg"), SubResource("Resource_hcg1w"), SubResource("Resource_4miyu")])
 
 [node name="Timer" type="Timer" parent="WaveSequence_6/PathSpawnerMultiLVL26"]
+
+[node name="PathSpawnerMultiLVL27" type="Node2D" parent="WaveSequence_6"]
+script = ExtResource("4_brvut")
+lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_wp6kk"), SubResource("Resource_vnygs"), SubResource("Resource_tamxo"), SubResource("Resource_bbjv4")])
+
+[node name="Timer" type="Timer" parent="WaveSequence_6/PathSpawnerMultiLVL27"]
+
+[node name="PathSpawnerMultiLVL28" type="Node2D" parent="WaveSequence_6"]
+script = ExtResource("4_brvut")
+lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_qya7h"), SubResource("Resource_61e88"), SubResource("Resource_8ay17"), SubResource("Resource_dwb1d"), SubResource("Resource_mi204"), SubResource("Resource_os5nh"), SubResource("Resource_1ipns")])
+
+[node name="Timer" type="Timer" parent="WaveSequence_6/PathSpawnerMultiLVL28"]
+
+[node name="PathSpawnerMultiLVL29" type="Node2D" parent="WaveSequence_6"]
+script = ExtResource("4_brvut")
+lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_k4tpy"), SubResource("Resource_xv1as"), SubResource("Resource_b30gg"), SubResource("Resource_objsx"), SubResource("Resource_2pq6g"), SubResource("Resource_k33ij")])
+
+[node name="Timer" type="Timer" parent="WaveSequence_6/PathSpawnerMultiLVL29"]
+
+[node name="PathSpawnerMultiLVL30" type="Node2D" parent="WaveSequence_6"]
+script = ExtResource("4_brvut")
+lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_7no0g"), SubResource("Resource_1yv58"), SubResource("Resource_n2lvx"), SubResource("Resource_omgyl"), SubResource("Resource_n2jho")])
+
+[node name="Timer" type="Timer" parent="WaveSequence_6/PathSpawnerMultiLVL30"]
+
+[node name="PathSpawnerMultiLVL31" type="Node2D" parent="WaveSequence_6"]
+script = ExtResource("4_brvut")
+lanes = Array[ExtResource("6_b5f6u")]([SubResource("Resource_ruqsr"), SubResource("Resource_htrwt"), SubResource("Resource_uruwo"), SubResource("Resource_8r1u1"), SubResource("Resource_fona3"), SubResource("Resource_516o6"), SubResource("Resource_7olld")])
+
+[node name="Timer" type="Timer" parent="WaveSequence_6/PathSpawnerMultiLVL31"]
 
 [node name="BuildController" type="Node2D" parent="."]
 script = ExtResource("6_p1hux")
@@ -3597,3 +3984,12 @@ stage_scene = ExtResource("29_cv4lv")
 visible = false
 position = Vector2(589, 979)
 stage_scene = ExtResource("29_cv4lv")
+
+[node name="BuildSlot9" parent="." instance=ExtResource("13_mswub")]
+position = Vector2(1156, 982)
+stage_scene = ExtResource("29_cv4lv")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("43_2km5d")
+volume_db = -20.428
+autoplay = true

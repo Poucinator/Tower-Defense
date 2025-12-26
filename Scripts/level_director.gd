@@ -34,11 +34,22 @@ var camera: Camera2D = null
 
 const DBG := true
 
+## ==========================================================
+##                     VICTORY
+## ==========================================================
+@export var victory_overlay_scene: PackedScene = preload("res://scene/Victory_Overlay.tscn")
+@export var main_menu_scene_path: String = "res://scene/MainMenu.tscn" # adapte à ton projet
+
+var _victory_ui: CanvasLayer = null
+
+
 
 ## ==========================================================
 ##                     READY
 ## ==========================================================
 func _ready() -> void:
+	add_to_group("LevelDirector")
+
 	# HUD
 	hud = get_node_or_null(hud_path)
 	if hud == null:
@@ -304,3 +315,70 @@ func _unlock_phase2_buildslots() -> void:
 
 	if DBG:
 		print("[LD] Phase 2 : buildslots débloqués")
+		
+## ==========================================================
+##   Fin de jeu
+## ==========================================================
+
+var _victory_reward_applied := false
+
+func end_level_victory(crystals_earned: int) -> void:
+	# Si déjà affiché, on ne recrée pas
+	if _victory_ui != null and is_instance_valid(_victory_ui):
+		return
+
+	# 1) Pause du jeu
+	get_tree().paused = true
+
+	# 2) Instancier l'overlay
+	if victory_overlay_scene == null:
+		push_warning("[LD] victory_overlay_scene non assignée dans l'inspector.")
+		return
+
+	_victory_ui = victory_overlay_scene.instantiate() as CanvasLayer
+	# Godot 4 : pour que l'UI marche même en pause
+	_victory_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_victory_ui)
+
+	# Remplir le texte
+	if _victory_ui.has_method("set_crystals"):
+		_victory_ui.call("set_crystals", crystals_earned)
+
+	# Brancher les boutons (safe)
+	if _victory_ui.has_signal("continue_pressed") and not _victory_ui.continue_pressed.is_connected(_on_victory_continue):
+		_victory_ui.continue_pressed.connect(_on_victory_continue)
+	if _victory_ui.has_signal("menu_pressed") and not _victory_ui.menu_pressed.is_connected(_on_victory_menu):
+		_victory_ui.menu_pressed.connect(_on_victory_menu)
+	if _victory_ui.has_signal("quit_pressed") and not _victory_ui.quit_pressed.is_connected(_on_victory_quit):
+		_victory_ui.quit_pressed.connect(_on_victory_quit)
+
+	# 3) Créditer la banque UNE FOIS
+	if not _victory_reward_applied and ("add_bank_crystals" in Game):
+		_victory_reward_applied = true
+		Game.add_bank_crystals(crystals_earned)
+
+
+func _on_victory_continue() -> void:
+	# Continuer = fermer overlay + reprendre
+	if _victory_ui and is_instance_valid(_victory_ui):
+		_victory_ui.queue_free()
+	_victory_ui = null
+	get_tree().paused = false
+
+
+func _on_victory_menu() -> void:
+	# Menu = reprendre (sinon change_scene peut être pénible) + changer de scène
+	get_tree().paused = false
+
+	if _victory_ui and is_instance_valid(_victory_ui):
+		_victory_ui.queue_free()
+	_victory_ui = null
+
+	if main_menu_scene_path != "":
+		get_tree().change_scene_to_file(main_menu_scene_path)
+	else:
+		push_warning("[LD] main_menu_scene_path est vide.")
+
+
+func _on_victory_quit() -> void:
+	get_tree().quit()

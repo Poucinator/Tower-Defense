@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://dl2jay081erp" path="res://ui/cursor_sell.png" id="9_0twk8"]
 [ext_resource type="Texture2D" uid="uid://duo6gib8jg3fc" path="res://ui/ChatGPT_Image_27_oct._2025__19_01_01-removebg-preview.png" id="9_s4g46"]
 [ext_resource type="Texture2D" uid="uid://dql11b26r0cf1" path="res://ui/ChatGPT_Image_27_oct._2025__18_58_26-removebg-preview.png" id="10_7w78f"]
-[ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="12_s4g46"]
+[ext_resource type="Texture2D" uid="uid://sqg2285mbqw6" path="res://scene/ui/Victory Overlay/259.png" id="12_s4g46"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldol0"]
 bg_color = Color(0.289058, 0.679883, 0.586034, 1)
@@ -220,6 +220,7 @@ text = "0"
 [node name="CrystalIcon" type="TextureRect" parent="CrystalPanel/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("12_s4g46")
+expand_mode = 2
 
 [node name="CrystalTimer" type="Timer" parent="."]
 wait_time = 5.0

@@ -1,0 +1,74 @@
+[gd_scene load_steps=9 format=3 uid="uid://6q674d83nxnd"]
+
+[ext_resource type="Script" uid="uid://do6vjcpwbsr3s" path="res://scene/victory_overlay.gd" id="1_ts3bi"]
+[ext_resource type="Texture2D" uid="uid://d1g3bq5wb57oy" path="res://scene/ui/Victory Overlay/222.png" id="2_4viqq"]
+[ext_resource type="Texture2D" uid="uid://5ufb6jrc74n2" path="res://scene/ui/Victory Overlay/277.png" id="3_3lgjy"]
+[ext_resource type="Texture2D" uid="uid://cpqcumrts20su" path="res://scene/ui/Victory Overlay/303.png" id="4_73487"]
+[ext_resource type="Texture2D" uid="uid://sqg2285mbqw6" path="res://scene/ui/Victory Overlay/259.png" id="5_2qceq"]
+[ext_resource type="Texture2D" uid="uid://drw2temntf7lr" path="res://scene/ui/Victory Overlay/269.png" id="6_vc87o"]
+[ext_resource type="Texture2D" uid="uid://cjq524i3sgabc" path="res://scene/ui/Victory Overlay/271.png" id="7_eufel"]
+[ext_resource type="Texture2D" uid="uid://3so1vf02kw0j" path="res://scene/ui/Victory Overlay/17.png" id="8_c2skw"]
+
+[node name="VictoryOverlay" type="CanvasLayer"]
+script = ExtResource("1_ts3bi")
+
+[node name="222" type="Sprite2D" parent="."]
+position = Vector2(235.25, 245.25)
+scale = Vector2(1.10143, 1.13232)
+texture = ExtResource("2_4viqq")
+
+[node name="277" type="Sprite2D" parent="."]
+position = Vector2(241.938, 153)
+scale = Vector2(0.0837053, 0.0918233)
+texture = ExtResource("3_3lgjy")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 172.0
+offset_top = 157.0
+offset_right = 323.0
+offset_bottom = 180.0
+text = "Extraction réussie !"
+
+[node name="303" type="Sprite2D" parent="."]
+position = Vector2(240.875, 240)
+scale = Vector2(0.225, 0.146318)
+texture = ExtResource("4_73487")
+
+[node name="259" type="Sprite2D" parent="."]
+position = Vector2(136, 250)
+scale = Vector2(0.180664, 0.151899)
+texture = ExtResource("5_2qceq")
+
+[node name="CrystalLabel" type="Label" parent="."]
+offset_left = 200.0
+offset_top = 227.0
+offset_right = 397.0
+offset_bottom = 250.0
+text = "Cristaux récupérés : 123"
+
+[node name="QuitBtn" type="TextureButton" parent="."]
+offset_left = 65.0
+offset_top = 305.0
+offset_right = 169.0
+offset_bottom = 400.0
+texture_normal = ExtResource("6_vc87o")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="ContinueBtn" type="TextureButton" parent="."]
+offset_left = 172.0
+offset_top = 306.0
+offset_right = 269.0
+offset_bottom = 399.0
+texture_normal = ExtResource("7_eufel")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MenuBtn" type="TextureButton" parent="."]
+offset_left = 278.0
+offset_top = 303.0
+offset_right = 382.0
+offset_bottom = 398.0
+texture_normal = ExtResource("8_c2skw")
+ignore_texture_size = true
+stretch_mode = 0

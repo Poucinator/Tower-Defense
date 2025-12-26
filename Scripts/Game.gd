@@ -4,7 +4,7 @@ signal gold_changed(amount: int)
 signal health_changed(amount: int)
 signal wave_countdown_changed(seconds_left: int)
 
-var gold: int = 30000
+var gold: int = 300
 var health: int = 20
 var wave_countdown: float = 0.0
 var is_selling_mode := false
@@ -50,3 +50,10 @@ func game_over() -> void:
 func set_wave_countdown(v: float) -> void:
 	wave_countdown = max(v, 0.0)
 	emit_signal("wave_countdown_changed", int(ceil(wave_countdown)))
+
+var bank_crystals: int = 0
+signal bank_crystals_changed(amount: int)
+
+func add_bank_crystals(amount: int) -> void:
+	bank_crystals += max(amount, 0)
+	emit_signal("bank_crystals_changed", bank_crystals)

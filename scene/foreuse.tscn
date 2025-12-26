@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dhmcue5su3hm0"]
+[gd_scene load_steps=14 format=3 uid="uid://dhmcue5su3hm0"]
 
 [ext_resource type="Script" uid="uid://kiheiybqhvt" path="res://Scripts/foreuse.gd" id="1_fq8ux"]
 [ext_resource type="Texture2D" uid="uid://btfd4wbu1hkpr" path="res://Sprite/decort/tile003.png" id="2_mb2p6"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://7wmeg7j6nf6y" path="res://Sprite/decort/tile006.png" id="5_3q8q0"]
 [ext_resource type="Texture2D" uid="uid://uw7qx682ohqj" path="res://Sprite/decort/tile007.png" id="6_25lnq"]
 [ext_resource type="Texture2D" uid="uid://b2eoc5v4uk2i5" path="res://Sprite/decort/tile008.png" id="7_vaj2r"]
+[ext_resource type="Texture2D" uid="uid://o0k505iiy7uv" path="res://scene/ui/ChatGPT_Image_23_déc._2025__13_33_35-removebg-preview.png" id="8_mb2p6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_64s40"]
 bg_color = Color(0.788954, 0.533671, 0.354743, 1)
@@ -53,6 +54,9 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_eowk3"]
 radius = 113.745
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r03ys"]
+size = Vector2(69, 61)
+
 [node name="Foreuse" type="Node2D"]
 script = ExtResource("1_fq8ux")
 max_hp = 400
@@ -79,3 +83,14 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Aggro"]
 shape = SubResource("CircleShape2D_eowk3")
+
+[node name="ExitArea" type="Area2D" parent="."]
+
+[node name="ExitSprite" type="Sprite2D" parent="ExitArea"]
+position = Vector2(7.62939e-06, 58)
+scale = Vector2(0.211344, 0.227812)
+texture = ExtResource("8_mb2p6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitArea"]
+position = Vector2(-0.5, 56.5)
+shape = SubResource("RectangleShape2D_r03ys")

@@ -116,7 +116,7 @@
 [ext_resource type="Texture2D" uid="uid://diknawtocmbbe" path="res://Sprite/Enemy/4D/Slime 4D/Purple Slime/without Shadow/walk/Up/tile015.png" id="114_qtelq"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_dj3h8"]
-radius = 34.0588
+radius = 21.0
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_fjf2u"]
 animations = [{
@@ -550,8 +550,8 @@ shape = SubResource("CircleShape2D_dj3h8")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 8
-position = Vector2(1.90735e-06, -25)
-scale = Vector2(3.0543, 3.05317)
+position = Vector2(3.8147e-06, -20)
+scale = Vector2(1.94903, 2.35471)
 sprite_frames = SubResource("SpriteFrames_fjf2u")
 animation = &"walk_up"
 frame_progress = 0.672535
