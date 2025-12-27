@@ -158,6 +158,15 @@ func activate_heal_all() -> void:
 
 	print("[Power] Tous les marines ont été soignés et sont invincibles pendant %s s !" % heal_invincible_duration)
 
+func get_heal_cooldown_left() -> float:
+	return _heal_cooldown_left
+
+func is_heal_ready() -> bool:
+	return _heal_cooldown_left <= 0.0
+
+func set_heal_cooldown(v: float) -> void:
+	heal_cooldown = v
+
 
 # =========================================================
 #                     INVOCATION DE MARINES

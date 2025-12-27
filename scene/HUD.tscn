@@ -1,8 +1,8 @@
 [gd_scene load_steps=15 format=3 uid="uid://bu8ql60gnhsad"]
 
 [ext_resource type="Script" uid="uid://bue551sw22h6u" path="res://ui/hud.gd" id="1_5nt5s"]
-[ext_resource type="Texture2D" uid="uid://dk7kexs0ssyii" path="res://Sprite/coin-removebg-preview.png" id="2_4nxdm"]
-[ext_resource type="Texture2D" uid="uid://bnc1d23waxkth" path="res://Sprite/4874329-red-heart-vector-line-for-web-presentation-logo-icon-symbol-gratuit-vectoriel-removebg-preview.png" id="4_pgw44"]
+[ext_resource type="Texture2D" uid="uid://dvue8ktplr8if" path="res://scene/ui/Victory Overlay/258.png" id="2_s4g46"]
+[ext_resource type="Texture2D" uid="uid://cfwmueuhjl0e" path="res://scene/ui/Victory Overlay/256.png" id="3_7w78f"]
 [ext_resource type="Texture2D" uid="uid://bpljadse7l2fm" path="res://Sprite/New Tower/Turrets_g2.png" id="4_yx4hk"]
 [ext_resource type="Texture2D" uid="uid://0x02fxs4iccg" path="res://scene/Barrack/_Untitled_design-removebg-preview.png" id="4_yxe7t"]
 [ext_resource type="Texture2D" uid="uid://b06sbfyfa2yi8" path="res://scene/Snipe_tower/Turrets_g9.png" id="5_yx4hk"]
@@ -52,7 +52,7 @@ text = "10"
 
 [node name="CoinIcon" type="TextureRect" parent="HBoxContainer"]
 layout_mode = 2
-texture = ExtResource("2_4nxdm")
+texture = ExtResource("2_s4g46")
 expand_mode = 2
 
 [node name="HealthLabel" type="Label" parent="HBoxContainer"]
@@ -60,7 +60,7 @@ layout_mode = 2
 
 [node name="HeartIcon" type="TextureRect" parent="HBoxContainer"]
 layout_mode = 2
-texture = ExtResource("4_pgw44")
+texture = ExtResource("3_7w78f")
 expand_mode = 2
 
 [node name="BuildBarracksBtn" type="TextureButton" parent="HBoxContainer"]
