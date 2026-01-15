@@ -14,13 +14,12 @@ extends Node
 var story: Node = null
 
 ## ==========================================================
-##                PHASE 2 
+##                PHASE 2
 ## ==========================================================
-
-@export var phase2_paths: Array[NodePath] = []   # Tous les TileMaps de la nouvelle zone
-@export var phase2_world_bottom: float = 1800.0  # Nouvelle limite bas de la caméra
-
-
+@export var phase2_paths: Array[NodePath] = []
+@export var phase2_world_bottom: float = 1800.0
+@export var phase2_world_top: float = -200.0
+const PHASE2_SLOT_GROUP := "Phase2BuildSlot"
 
 ## ==========================================================
 ##                INTERNES
@@ -32,17 +31,27 @@ var _skip_inter_delay := false
 var _inter_left := 0.0
 var camera: Camera2D = null
 
-const DBG := true
+## ==========================================================
+##        DEBUG (uniquement lié à defeat hooks)
+## ==========================================================
+const DBG_DEFEAT := true
 
 ## ==========================================================
 ##                     VICTORY
 ## ==========================================================
 @export var victory_overlay_scene: PackedScene = preload("res://scene/Victory_Overlay.tscn")
-@export var main_menu_scene_path: String = "res://scene/MainMenu.tscn" # adapte à ton projet
+@export var main_menu_scene_path: String = "res://scene/MainMenu.tscn"
 
 var _victory_ui: CanvasLayer = null
+var _victory_reward_applied := false
 
+## ==========================================================
+##                     DEFEAT
+## ==========================================================
+@export var defeat_overlay_scene: PackedScene = preload("res://scene/defeat_overlay.tscn")
 
+var _defeat_ui: CanvasLayer = null
+var _defeat_shown := false
 
 ## ==========================================================
 ##                     READY
@@ -61,6 +70,9 @@ func _ready() -> void:
 	# Caméra
 	_init_camera()
 
+	# ✅ Defeat hooks (robuste, late + node_added)
+	call_deferred("_connect_defeat_objectives_late")
+
 	# Chargement des waves
 	waves.clear()
 	for p in wave_paths:
@@ -75,11 +87,9 @@ func _ready() -> void:
 		if w.has_signal("wave_sequence_finished"):
 			if not w.wave_sequence_finished.is_connected(_on_wave_finished):
 				w.wave_sequence_finished.connect(_on_wave_finished.bind(w))
-
 		elif w.has_signal("wave_cleared"):
 			if not w.wave_cleared.is_connected(_on_wave_finished):
 				w.wave_cleared.connect(_on_wave_finished.bind(w))
-
 		else:
 			push_warning("[LD] Aucun signal de fin pour %s" % [w.name])
 
@@ -97,22 +107,88 @@ func _ready() -> void:
 ##     INIT CAMERA (robuste)
 ## ==========================================================
 func _init_camera() -> void:
-	# 1) Assignée dans l'éditeur ?
 	if camera_path != NodePath(""):
 		camera = get_node_or_null(camera_path)
 
-	# 2) Sinon via groupe
 	if camera == null:
 		camera = get_tree().get_first_node_in_group("player_camera")
 
-	# 3) Sinon première Camera2D trouvée
 	if camera == null:
 		camera = get_tree().get_first_node_of_type(Camera2D)
 
 	if camera == null:
 		push_warning("[LD] ❌ Aucune caméra trouvée.")
-	elif DBG:
-		print("[LD] 🎥 Caméra trouvée :", camera.name)
+
+
+## ==========================================================
+##          DEFEAT : branche Drill + Ship (robuste)
+## ==========================================================
+func _connect_defeat_objectives_late() -> void:
+	# laisse Godot finir de monter la scène
+	await get_tree().process_frame
+
+	_connect_defeat_objectives_once()
+
+	# si un objectif arrive après (instanciation / load tardif), on le catch
+	if not get_tree().node_added.is_connected(_on_node_added_for_defeat):
+		get_tree().node_added.connect(_on_node_added_for_defeat)
+
+	if DBG_DEFEAT:
+		print("[LD/DEFEAT] hooks armed (late + node_added)")
+
+
+func _connect_defeat_objectives_once() -> void:
+	if _defeat_shown:
+		return
+
+	# Foreuse
+	var drill := get_tree().get_first_node_in_group("Drill")
+	if drill and drill.has_signal("drill_destroyed"):
+		if not drill.drill_destroyed.is_connected(_on_objective_destroyed):
+			drill.drill_destroyed.connect(_on_objective_destroyed)
+			if DBG_DEFEAT:
+				print("[LD/DEFEAT] connected Drill.drill_destroyed ->", drill.name)
+	else:
+		if DBG_DEFEAT:
+			print("[LD/DEFEAT] Drill not found yet (group=Drill)")
+
+	# Vaisseau
+	var ship := get_tree().get_first_node_in_group("Ship")
+	if ship and ship.has_signal("ship_destroyed"):
+		if not ship.ship_destroyed.is_connected(_on_objective_destroyed):
+			ship.ship_destroyed.connect(_on_objective_destroyed)
+			if DBG_DEFEAT:
+				print("[LD/DEFEAT] connected Ship.ship_destroyed ->", ship.name)
+	else:
+		if DBG_DEFEAT:
+			print("[LD/DEFEAT] Ship not found yet (group=Ship)")
+
+
+func _on_node_added_for_defeat(n: Node) -> void:
+	if _defeat_shown:
+		return
+	if n == null or not is_instance_valid(n):
+		return
+
+	# Foreuse
+	if n.is_in_group("Drill") and n.has_signal("drill_destroyed"):
+		if not n.drill_destroyed.is_connected(_on_objective_destroyed):
+			n.drill_destroyed.connect(_on_objective_destroyed)
+			if DBG_DEFEAT:
+				print("[LD/DEFEAT] (late) connected Drill.drill_destroyed ->", n.name)
+
+	# Vaisseau
+	if n.is_in_group("Ship") and n.has_signal("ship_destroyed"):
+		if not n.ship_destroyed.is_connected(_on_objective_destroyed):
+			n.ship_destroyed.connect(_on_objective_destroyed)
+			if DBG_DEFEAT:
+				print("[LD/DEFEAT] (late) connected Ship.ship_destroyed ->", n.name)
+
+
+func _on_objective_destroyed(obj: Node) -> void:
+	if DBG_DEFEAT:
+		print("[LD/DEFEAT] objective destroyed ->", obj.name, " => defeat")
+	end_level_defeat()
 
 
 ## ==========================================================
@@ -131,6 +207,7 @@ func _on_intro_finished() -> void:
 		else:
 			camera.make_current()
 	_prepare_wave(0)
+
 
 ## ==========================================================
 ##            PRÉPARATION DE CHAQUE VAGUE
@@ -158,10 +235,7 @@ func _prepare_wave(index: int) -> void:
 	if hud and hud.has_method("director_countdown_start"):
 		hud.call("director_countdown_start", inter_level_delay)
 
-	# Déblocages HUD / pouvoirs
 	_unlock_progression(index)
-
-
 
 	while _inter_left > 0.0 and not _skip_inter_delay:
 		await get_tree().create_timer(0.1).timeout
@@ -175,7 +249,7 @@ func _prepare_wave(index: int) -> void:
 	if "begin" in wave:
 		wave.begin(0.0, index)
 	else:
-		push_warning("[LD] ⚠️ ", wave.name, " n’a pas begin()")
+		push_warning("[LD] ⚠️ %s n’a pas begin()" % wave.name)
 
 
 ## ==========================================================
@@ -185,7 +259,6 @@ func _on_hud_next_clicked() -> void:
 	var reward := int(ceil(max(_inter_left, 0.0)))
 	if reward > 0 and "add_gold" in Game:
 		Game.add_gold(reward)
-
 	_skip_inter_delay = true
 
 
@@ -224,50 +297,40 @@ func _get_first_spawner_in_wave(wave: Node) -> Node:
 
 	return null
 
-## ==========================================================
-##                   Phases 2 
-## ==========================================================
 
+## ==========================================================
+##                   PHASE 2
+## ==========================================================
 func _reveal_phase2_zone() -> void:
-	# 1) Afficher les TileMaps de la phase 2
 	for p in phase2_paths:
 		var n := get_node_or_null(p) as Node2D
 		if n:
 			n.visible = true
-			if DBG:
-				print("[LD] Phase2 visible :", n.name)
-		else:
-			push_warning("[LD] Phase2 introuvable pour le path : %s" % [p])
 
-	# 2) Descendre la limite bas de la caméra
 	if camera:
-		if "world_bottom" in camera:
+		# ✅ Nouvelle caméra (ton script) : propriétés world_bottom / world_top
+		if ("world_bottom" in camera) and ("world_top" in camera):
 			camera.world_bottom = phase2_world_bottom
-			if DBG:
-				print("[LD] Camera world_bottom ->", camera.world_bottom)
+			camera.world_top = phase2_world_top
+
+		# ✅ Compat fallback : si ta caméra utilise les limites Camera2D natives
+		elif camera is Camera2D:
+			camera.limit_bottom = int(phase2_world_bottom)
+			camera.limit_top = int(phase2_world_top)
+
 		else:
-			push_warning("[LD] La caméra n'a pas de propriété 'world_bottom' (check camera_2d.gd)")
+			push_warning("[LD] La caméra n'a ni world_bottom/world_top ni limites Camera2D.")
 
-const PHASE2_SLOT_GROUP := "Phase2BuildSlot"
 
-## ==========================================================
-##     🔓 Débloquage HUD + progression
-## ==========================================================
 func _unlock_progression(index: int) -> void:
-	# --- Débloquage global des niveaux d'upgrade ---
 	if index == 4:
-		# On autorise les upgrades vers MK2 (mais pas MK3,4,5...)
 		if "max_tower_tier" in Game:
 			Game.max_tower_tier = max(Game.max_tower_tier, 2)
-			if DBG:
-				print("[LD] max_tower_tier ->", Game.max_tower_tier)
 
-	# --- Révélation de la nouvelle zone en 5 ---
 	if index == 5:
-		_reveal_phase2_zone()          # ta fonction existante
-		_unlock_phase2_buildslots()    # 👉 fait apparaître les 2 nouveaux slots
+		_reveal_phase2_zone()
+		_unlock_phase2_buildslots()
 
-	# --- Déblocage HUD ---
 	if hud == null or not hud.has_method("unlock_element"):
 		return
 
@@ -286,65 +349,45 @@ func _unlock_progression(index: int) -> void:
 			hud.unlock_element("missile_mk2")
 			hud.unlock_element("barrack_mk2")
 		5:
-			# éventuellement un message HUD "Nouvelle zone débloquée !" si tu veux
-			if hud.has_method("show_phase2_unlocked"):
-				hud.call("show_phase2_unlocked")
-			if hud:
-				print("[LD] index 5 => unlock crystals")
-				hud.unlock_element("crystals")
+			hud.unlock_element("crystals")
 			if hud.has_method("show_phase2_unlocked"):
 				hud.call("show_phase2_unlocked")
 
-## ==========================================================
-##   Phase 2 : BuildSlots supplémentaires
-## ==========================================================
+
 func _hide_phase2_buildslots_on_start() -> void:
-	# À appeler au démarrage si jamais certains slots sont visibles dans la scène
 	for slot in get_tree().get_nodes_in_group(PHASE2_SLOT_GROUP):
 		if slot is CanvasItem:
 			slot.visible = false
+
 
 func _unlock_phase2_buildslots() -> void:
 	for slot in get_tree().get_nodes_in_group(PHASE2_SLOT_GROUP):
 		if slot is CanvasItem:
 			slot.visible = true
-
-		# Si ton script de slot a une méthode d’activation, on la déclenche
 		if slot.has_method("enable"):
 			slot.enable()
 
-	if DBG:
-		print("[LD] Phase 2 : buildslots débloqués")
-		
-## ==========================================================
-##   Fin de jeu
-## ==========================================================
 
-var _victory_reward_applied := false
-
+## ==========================================================
+##   FIN DE JEU : VICTOIRE
+## ==========================================================
 func end_level_victory(crystals_earned: int) -> void:
-	# Si déjà affiché, on ne recrée pas
 	if _victory_ui != null and is_instance_valid(_victory_ui):
 		return
 
-	# 1) Pause du jeu
 	get_tree().paused = true
 
-	# 2) Instancier l'overlay
 	if victory_overlay_scene == null:
 		push_warning("[LD] victory_overlay_scene non assignée dans l'inspector.")
 		return
 
 	_victory_ui = victory_overlay_scene.instantiate() as CanvasLayer
-	# Godot 4 : pour que l'UI marche même en pause
 	_victory_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_victory_ui)
 
-	# Remplir le texte
 	if _victory_ui.has_method("set_crystals"):
 		_victory_ui.call("set_crystals", crystals_earned)
 
-	# Brancher les boutons (safe)
 	if _victory_ui.has_signal("continue_pressed") and not _victory_ui.continue_pressed.is_connected(_on_victory_continue):
 		_victory_ui.continue_pressed.connect(_on_victory_continue)
 	if _victory_ui.has_signal("menu_pressed") and not _victory_ui.menu_pressed.is_connected(_on_victory_menu):
@@ -352,28 +395,19 @@ func end_level_victory(crystals_earned: int) -> void:
 	if _victory_ui.has_signal("quit_pressed") and not _victory_ui.quit_pressed.is_connected(_on_victory_quit):
 		_victory_ui.quit_pressed.connect(_on_victory_quit)
 
-	# 3) Créditer la banque UNE FOIS
 	if not _victory_reward_applied and ("add_bank_crystals" in Game):
 		_victory_reward_applied = true
 		Game.add_bank_crystals(crystals_earned)
 
 
 func _on_victory_continue() -> void:
-	# Continuer = fermer overlay + reprendre
-	if _victory_ui and is_instance_valid(_victory_ui):
-		_victory_ui.queue_free()
-	_victory_ui = null
+	# ✅ "Continuer" = relancer le niveau
 	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 
 func _on_victory_menu() -> void:
-	# Menu = reprendre (sinon change_scene peut être pénible) + changer de scène
 	get_tree().paused = false
-
-	if _victory_ui and is_instance_valid(_victory_ui):
-		_victory_ui.queue_free()
-	_victory_ui = null
-
 	if main_menu_scene_path != "":
 		get_tree().change_scene_to_file(main_menu_scene_path)
 	else:
@@ -381,4 +415,53 @@ func _on_victory_menu() -> void:
 
 
 func _on_victory_quit() -> void:
+	get_tree().quit()
+
+
+## ==========================================================
+##   FIN DE JEU : DÉFAITE
+## ==========================================================
+func end_level_defeat() -> void:
+	if _defeat_shown:
+		return
+	_defeat_shown = true
+
+	# ferme victoire si jamais (sécurité)
+	if _victory_ui and is_instance_valid(_victory_ui):
+		_victory_ui.queue_free()
+	_victory_ui = null
+
+	get_tree().paused = true
+
+	if defeat_overlay_scene == null:
+		push_warning("[LD] defeat_overlay_scene non assignée dans l'inspector.")
+		return
+
+	_defeat_ui = defeat_overlay_scene.instantiate() as CanvasLayer
+	_defeat_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_defeat_ui)
+
+	if _defeat_ui.has_signal("continue_pressed") and not _defeat_ui.continue_pressed.is_connected(_on_defeat_continue):
+		_defeat_ui.continue_pressed.connect(_on_defeat_continue)
+	if _defeat_ui.has_signal("menu_pressed") and not _defeat_ui.menu_pressed.is_connected(_on_defeat_menu):
+		_defeat_ui.menu_pressed.connect(_on_defeat_menu)
+	if _defeat_ui.has_signal("quit_pressed") and not _defeat_ui.quit_pressed.is_connected(_on_defeat_quit):
+		_defeat_ui.quit_pressed.connect(_on_defeat_quit)
+
+
+func _on_defeat_continue() -> void:
+	# ✅ Relancer le niveau
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+
+func _on_defeat_menu() -> void:
+	get_tree().paused = false
+	if main_menu_scene_path != "":
+		get_tree().change_scene_to_file(main_menu_scene_path)
+	else:
+		push_warning("[LD] main_menu_scene_path est vide.")
+
+
+func _on_defeat_quit() -> void:
 	get_tree().quit()

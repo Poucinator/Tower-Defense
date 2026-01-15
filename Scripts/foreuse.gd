@@ -284,9 +284,15 @@ func _die() -> void:
 	if anim:
 		anim.play("dead")
 
+	# ✅ Explosions d'abord
+	await _play_death_explosions()
+
+	# ✅ petite attente cinématique
+	await get_tree().create_timer(1.0).timeout
+
+	# ✅ Seulement maintenant on déclenche la défaite
 	emit_signal("drill_destroyed", self)
 
-	await _play_death_explosions()
 	queue_free()
 
 

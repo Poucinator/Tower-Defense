@@ -1,0 +1,47 @@
+[gd_scene load_steps=6 format=3 uid="uid://cl05uens3k6fa"]
+
+[ext_resource type="Script" uid="uid://c5nagr7m8su1n" path="res://Scripts/ship.gd" id="1_gnaqg"]
+[ext_resource type="Texture2D" uid="uid://ccotvk0n75unb" path="res://Sprite/ChatGPT Image 18 sept. 2025, 11_00_35.png" id="1_t11qm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bf7x5"]
+bg_color = Color(0.788954, 0.533671, 0.354743, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.07, 0.07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fbih1"]
+bg_color = Color(0.013718, 0.728269, 9.62615e-07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.02, 0.02, 0.02, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_l7n8u"]
+radius = 127.0
+
+[node name="ship" type="Node2D"]
+script = ExtResource("1_gnaqg")
+
+[node name="ChatGptImage18Sept_2025,110035" type="Sprite2D" parent="."]
+position = Vector2(0.999985, -0.999992)
+scale = Vector2(0.231934, 0.217773)
+texture = ExtResource("1_t11qm")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+z_index = 9
+offset_left = -64.0
+offset_top = -63.0
+offset_right = 65.0
+offset_bottom = -55.0
+theme_override_styles/background = SubResource("StyleBoxFlat_bf7x5")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fbih1")
+show_percentage = false
+
+[node name="Aggro" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Aggro"]
+shape = SubResource("CircleShape2D_l7n8u")

@@ -43,7 +43,7 @@ shadow_size = 9
 script = ExtResource("1_5nt5s")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-offset_right = 756.0
+offset_right = 607.0
 offset_bottom = 152.0
 
 [node name="GoldLabel" type="Label" parent="HBoxContainer"]
@@ -56,9 +56,11 @@ texture = ExtResource("2_s4g46")
 expand_mode = 2
 
 [node name="HealthLabel" type="Label" parent="HBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HeartIcon" type="TextureRect" parent="HBoxContainer"]
+visible = false
 layout_mode = 2
 texture = ExtResource("3_7w78f")
 expand_mode = 2

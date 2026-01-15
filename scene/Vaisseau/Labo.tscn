@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://f6c0dgfhdlyr"]
+
+[ext_resource type="VideoStream" uid="uid://d3gsnpqpmu6c6" path="res://Sprite/decort/Labo-Idle-vidéo.ogv" id="1_ef10h"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+stream = ExtResource("1_ef10h")
+volume_db = 2.05
+autoplay = true
+expand = true
+loop = true

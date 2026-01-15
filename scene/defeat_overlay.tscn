@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3 uid="uid://c1i2vwcxvupe0"]
+
+[ext_resource type="Script" uid="uid://da0llovi46e7v" path="res://Scripts/defeat_overlay.gd" id="1_ye66j"]
+[ext_resource type="Texture2D" uid="uid://d1g3bq5wb57oy" path="res://scene/ui/Victory Overlay/222.png" id="2_lq8sk"]
+[ext_resource type="Texture2D" uid="uid://5ufb6jrc74n2" path="res://scene/ui/Victory Overlay/277.png" id="3_ye8sn"]
+[ext_resource type="Texture2D" uid="uid://drw2temntf7lr" path="res://scene/ui/Victory Overlay/269.png" id="6_efpsw"]
+[ext_resource type="Texture2D" uid="uid://cjq524i3sgabc" path="res://scene/ui/Victory Overlay/271.png" id="7_cp38v"]
+[ext_resource type="Texture2D" uid="uid://3so1vf02kw0j" path="res://scene/ui/Victory Overlay/17.png" id="8_b1jwd"]
+
+[node name="VictoryOverlay" type="CanvasLayer"]
+script = ExtResource("1_ye66j")
+
+[node name="222" type="Sprite2D" parent="."]
+position = Vector2(235.25, 245.25)
+scale = Vector2(1.10143, 1.13232)
+texture = ExtResource("2_lq8sk")
+
+[node name="277" type="Sprite2D" parent="."]
+position = Vector2(241.938, 153)
+scale = Vector2(0.0837053, 0.0918233)
+texture = ExtResource("3_ye8sn")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 172.0
+offset_top = 157.0
+offset_right = 323.0
+offset_bottom = 180.0
+text = "Echec de la mission !"
+
+[node name="QuitBtn" type="TextureButton" parent="."]
+offset_left = 65.0
+offset_top = 305.0
+offset_right = 169.0
+offset_bottom = 400.0
+texture_normal = ExtResource("6_efpsw")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="ContinueBtn" type="TextureButton" parent="."]
+offset_left = 172.0
+offset_top = 306.0
+offset_right = 269.0
+offset_bottom = 399.0
+texture_normal = ExtResource("7_cp38v")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MenuBtn" type="TextureButton" parent="."]
+offset_left = 278.0
+offset_top = 303.0
+offset_right = 382.0
+offset_bottom = 398.0
+texture_normal = ExtResource("8_b1jwd")
+ignore_texture_size = true
+stretch_mode = 0
