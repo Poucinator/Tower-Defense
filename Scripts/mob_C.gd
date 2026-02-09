@@ -4,7 +4,11 @@ extends CharacterBody2D
 @onready var hp_bar: Range = $HealthBar
 
 @export var speed: float = 100.0
-var _speed_mods := {}
+
+# --- Modificateurs de vitesse (slow, etc.) ---
+# source_id -> multiplier (ex: 0.85 = -15% vitesse)
+var _speed_mods: Dictionary = {}            # source_id -> float
+var _speed_mod_timers: Dictionary = {}      # source_id -> Timer
 
 @export var max_hp: int = 5
 var hp: int
@@ -25,6 +29,8 @@ signal reached_end(mob: Node)
 var _prev_pos: Vector2 = Vector2.INF
 var _current_dir: String = "down"  # "up", "down", "left", "right"
 
+var _is_dead := false
+
 
 # ======================================================
 #                       READY
@@ -33,14 +39,16 @@ func _ready() -> void:
 	if anim:
 		anim.play("walk_down")
 		# --- Debug : liste les animations disponibles ---
-		var names := anim.sprite_frames.get_animation_names()
-		print("[Mob] Animations trouvées :", names)
+		if anim.sprite_frames:
+			var names := anim.sprite_frames.get_animation_names()
+			print("[Mob] Animations trouvées :", names)
 
 	hp = max_hp
 	if hp_bar:
 		hp_bar.max_value = max_hp
 		hp_bar.value = hp
 		hp_bar.visible = false
+
 	add_to_group("Enemy")
 
 	global_rotation = 0.0
@@ -60,6 +68,9 @@ func _ready() -> void:
 #                      PROCESS
 # ======================================================
 func _process(delta: float) -> void:
+	if _is_dead:
+		return
+
 	var follower := get_parent() as PathFollow2D
 	if follower == null:
 		return
@@ -101,6 +112,54 @@ func _process(delta: float) -> void:
 
 
 # ======================================================
+#                    SLOW API (NEW)
+# ======================================================
+# Convention (bluebullet):
+# apply_slow(duration_sec, factor, source_id)
+# factor < 1.0 = ralentit ; duration sec ; source_id sert à empiler proprement.
+func apply_slow(duration_sec: float, factor: float, source_id: StringName) -> void:
+	if _is_dead:
+		return
+	if duration_sec <= 0.0:
+		return
+	if factor >= 1.0:
+		remove_speed_modifier(source_id)
+		return
+
+	add_speed_modifier(source_id, factor)
+
+	# Timer par source : refresh la durée si on re-hit
+	var t: Timer = _speed_mod_timers.get(source_id, null)
+	if t == null or not is_instance_valid(t):
+		t = Timer.new()
+		t.one_shot = true
+		add_child(t)
+		_speed_mod_timers[source_id] = t
+		t.timeout.connect(func():
+			remove_speed_modifier(source_id)
+			if _speed_mod_timers.has(source_id):
+				_speed_mod_timers.erase(source_id)
+			if t and is_instance_valid(t):
+				t.queue_free()
+		)
+
+	t.stop()
+	t.wait_time = duration_sec
+	t.start()
+
+	# Optionnel : feedback léger (flash bleu)
+	# _slow_flash()
+
+
+func _slow_flash() -> void:
+	if not anim:
+		return
+	var tw := create_tween()
+	tw.tween_property(anim, "modulate", Color(0.7, 0.85, 1.0), 0.05)
+	tw.tween_property(anim, "modulate", Color(1, 1, 1), 0.10)
+
+
+# ======================================================
 #             DIRECTION ET ANIMATIONS
 # ======================================================
 func _get_dir_from_vector(vec: Vector2) -> String:
@@ -130,6 +189,8 @@ func _play_anim(base_name: String) -> void:
 #                     DÉGÂTS
 # ======================================================
 func apply_damage(amount: int) -> void:
+	if _is_dead:
+		return
 	hp -= amount
 	if hp_bar:
 		hp_bar.visible = true
@@ -149,9 +210,6 @@ func _hit_flash() -> void:
 # ======================================================
 #                    MORT DU MOB
 # ======================================================
-var _is_dead := false  # ⚠️ ajoute cette variable tout en haut du script, hors fonction
-
-
 func _die() -> void:
 	if _is_dead:
 		return
@@ -164,6 +222,9 @@ func _die() -> void:
 	set_collision_layer(0)
 	set_collision_mask(0)
 
+	# Nettoyage slows
+	_clear_speed_mods()
+
 	# Libère le marine engagé
 	if engaged_by and is_instance_valid(engaged_by) and engaged_by.has_method("release_target_from_enemy"):
 		engaged_by.call("release_target_from_enemy", self)
@@ -174,7 +235,7 @@ func _die() -> void:
 		Game.add_gold(gold_reward)
 	gold_reward = 0
 
-	# Envoie le signal de mort (pour effets ou score)
+	# Envoie le signal de mort
 	emit_signal("died", self)
 
 	# Animation de mort
@@ -189,7 +250,7 @@ func _die() -> void:
 	if _attack_timer:
 		_attack_timer.stop()
 
-	# Attend la fin de l'animation avant destruction
+	# Attend la fin avant destruction
 	await get_tree().create_timer(2.6).timeout
 	queue_free()
 
@@ -204,18 +265,29 @@ func get_effective_speed() -> float:
 	return speed * mult
 
 
-func add_speed_modifier(id: String, multiplier: float) -> void:
+func add_speed_modifier(id: StringName, multiplier: float) -> void:
 	_speed_mods[id] = multiplier
 
 
-func remove_speed_modifier(id: String) -> void:
+func remove_speed_modifier(id: StringName) -> void:
 	_speed_mods.erase(id)
+
+
+func _clear_speed_mods() -> void:
+	_speed_mods.clear()
+	for t in _speed_mod_timers.values():
+		if t and is_instance_valid(t):
+			t.stop()
+			t.queue_free()
+	_speed_mod_timers.clear()
 
 
 # ======================================================
 #              ENGAGEMENT MARINE ↔ ENNEMI
 # ======================================================
 func request_engage(marine: Node) -> bool:
+	if _is_dead:
+		return false
 	if engaged_by == null:
 		engaged_by = marine
 		_attack_timer.wait_time = attack_interval
@@ -234,6 +306,8 @@ func release_engage(marine: Node) -> void:
 
 
 func _enemy_attack_tick() -> void:
+	if _is_dead:
+		return
 	if engaged_by == null or not is_instance_valid(engaged_by):
 		if _attack_timer:
 			_attack_timer.stop()

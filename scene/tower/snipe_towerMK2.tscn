@@ -40,6 +40,7 @@ rotation = 1.5708
 collision_layer = 5
 input_pickable = true
 script = ExtResource("1_4ypvp")
+bullet_speed = 3000.0
 bullet_damage = 150
 detector_path = NodePath("Tower")
 muzzle_path = NodePath("Muzzle")

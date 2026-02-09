@@ -1,0 +1,128 @@
+[gd_resource type="Resource" script_class="UpgradeTexts" load_steps=20 format=3 uid="uid://cahlnn814gfxl"]
+
+[ext_resource type="Script" uid="uid://suowf2fgmn73" path="res://ui/upgrade_texts.gd" id="1_175as"]
+[ext_resource type="Script" uid="uid://bwu416omd06gg" path="res://ui/UpgradeInfo.gd" id="1_fncy1"]
+
+[sub_resource type="Resource" id="Resource_6awwi"]
+script = ExtResource("1_fncy1")
+title = "Amélioratoin de la barrack"
+description = "La barrack générent des unités plus puissantes "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_key0m"]
+script = ExtResource("1_fncy1")
+title = "Amélioration de la tour de tire"
+description = "La tour tire plus vite et inflige plus de dégats "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_xjfh3"]
+script = ExtResource("1_fncy1")
+title = "Amélioratoin de la tour missile"
+description = "La tour missile tire plus vite, plus loin et inflige plus de dégats de zone "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_q3y86"]
+script = ExtResource("1_fncy1")
+title = "Embrasement du feu de l'enfer "
+description = "L'impact d'un missile a une chance d'embraser la zone, infligeant des dégats aux ennemies pris dans les flammes. "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_ntn3g"]
+script = ExtResource("1_fncy1")
+title = "Amélioratoin de la tour sniper"
+description = "La tour sniper tire plus vite, plus loin et inflige plus de dégats "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_tk6ka"]
+script = ExtResource("1_fncy1")
+title = "Rien ne sert de se cacher"
+description = "Les tires de la tour snipe traversent les ennemies pour toucher les ennemies qui les prédèdent "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_nddue"]
+script = ExtResource("1_fncy1")
+title = "Pour les copains ! "
+description = "La barrack améliore les dégats des 3 tours les plus proches. "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_2kvgw"]
+script = ExtResource("1_fncy1")
+title = "Temps de recharge "
+description = "Réduit le temps de recharge du pouvoir "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_lvuqf"]
+script = ExtResource("1_fncy1")
+title = "Encore plus de glace"
+description = "Augmente le nombre de pouvoirs de glace pouvant être utilisés simultanément "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_yhvom"]
+script = ExtResource("1_fncy1")
+title = "Il fait froid, non?"
+description = "Diminue davantage le déplacement des ennemies pris dans la glace"
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_xqxmc"]
+script = ExtResource("1_fncy1")
+title = "Doucement toi ! "
+description = "Les tires de la tour ralentissent l'ennemie ciblé"
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_seiap"]
+script = ExtResource("1_fncy1")
+title = "Temps de recharge "
+description = "Réduit le temps de recharge du pouvoir "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_uyjlv"]
+script = ExtResource("1_fncy1")
+title = "Supermen "
+description = "Augmente le temps d'invicibilité des unités. "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_4alac"]
+script = ExtResource("1_fncy1")
+title = "Déjà de retour ? "
+description = "Fait réapparaître une unité supplémentaire pour chaque barrack à chaque utilisations "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_tpit3"]
+script = ExtResource("1_fncy1")
+title = "Temps de recharge "
+description = "Réduit le temps de recharge du pouvoir "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_7ub75"]
+script = ExtResource("1_fncy1")
+title = "Space Marines"
+description = "Augmente la puissance des unités invoquées "
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[sub_resource type="Resource" id="Resource_ddnrr"]
+script = ExtResource("1_fncy1")
+title = "Le pouvoir de la horde"
+description = "Augmente le nombre d'unités invoquées"
+metadata/_custom_type_script = "uid://bwu416omd06gg"
+
+[resource]
+script = ExtResource("1_175as")
+entries = {
+&"Barrack_Upgrade": SubResource("Resource_6awwi"),
+&"Gun_Upgrade": SubResource("Resource_key0m"),
+&"Missile_Upgrade": SubResource("Resource_xjfh3"),
+&"Missile_fire": SubResource("Resource_q3y86"),
+&"Snipe_Upgrade": SubResource("Resource_ntn3g"),
+&"Snipe_break": SubResource("Resource_tk6ka"),
+&"barracks_aura": SubResource("Resource_nddue"),
+&"freeze_cooldown": SubResource("Resource_2kvgw"),
+&"freeze_number": SubResource("Resource_lvuqf"),
+&"freeze_strength": SubResource("Resource_yhvom"),
+&"gun_slow": SubResource("Resource_xqxmc"),
+&"heal_cooldown": SubResource("Resource_seiap"),
+&"heal_invincible": SubResource("Resource_uyjlv"),
+&"heal_revive": SubResource("Resource_4alac"),
+&"summon_cooldown": SubResource("Resource_tpit3"),
+&"summon_marine_level": SubResource("Resource_7ub75"),
+&"summon_number": SubResource("Resource_ddnrr")
+}

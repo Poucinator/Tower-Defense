@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://ux3xelre3iky" path="res://scene/tower/missile_tower_MK2.tscn" id="2_55epa"]
 [ext_resource type="Texture2D" uid="uid://cf583wphcy202" path="res://Sprite/New Tower/Turrets_g21.png" id="2_qw0ie"]
 [ext_resource type="Texture2D" uid="uid://don5po8yyg27u" path="res://Sprite/New Tower/Turrets_g20.png" id="3_51x1k"]
-[ext_resource type="Texture2D" uid="uid://bv4qnspal1s85" path="res://Sprite/New Tower/Missile_tower_MK2.png" id="3_na6wl"]
+[ext_resource type="Texture2D" uid="uid://bv4qnspal1s85" path="res://Sprite/New Tower/Turrets_g30.png" id="3_na6wl"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_58b7d"]
 animations = [{
@@ -43,8 +43,8 @@ script = ExtResource("1_qw0ie")
 fire_interval = 0.6
 missile_speed = 800.0
 missile_damage = 15
-splash_radius = 100.0
-splash_falloff = 1.0
+splash_radius = 60.0
+splash_falloff = 0.6
 detector_path = NodePath("Tower")
 muzzle_path = NodePath("Muzzle")
 upgrade_scene = ExtResource("2_55epa")

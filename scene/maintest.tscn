@@ -24,8 +24,8 @@
 [ext_resource type="PackedScene" uid="uid://dbefcj3cm6iu0" path="res://scene/stage5.tscn" id="21_qutli"]
 [ext_resource type="PackedScene" uid="uid://scksmccjri8o" path="res://scene/stage6.tscn" id="22_ftt00"]
 [ext_resource type="PackedScene" uid="uid://bf15hj0p5ykk0" path="res://scene/Ennemies/4D/Golem/Golem Boss.tscn" id="23_miiyk"]
-[ext_resource type="PackedScene" uid="uid://bf7qp34jo472o" path="res://scene/Ennemies/2D/mobN.tscn" id="24_v17hh"]
-[ext_resource type="PackedScene" uid="uid://dyrkvmi664ll" path="res://scene/Ennemies/4D/Golem/Golem Pink.tscn" id="25_bhr8j"]
+[ext_resource type="PackedScene" uid="uid://bf7qp34jo472o" path="res://scene/mobN.tscn" id="24_v17hh"]
+[ext_resource type="PackedScene" uid="uid://dyrkvmi664ll" path="res://scene/mobP.tscn" id="25_bhr8j"]
 [ext_resource type="PackedScene" uid="uid://beja42h4qa07k" path="res://scene/stage7.tscn" id="27_7kfrg"]
 [ext_resource type="PackedScene" uid="uid://blyeu4k715ylt" path="res://scene/Ennemies/4D/slime/Slime air.tscn" id="28_0i2po"]
 [ext_resource type="PackedScene" uid="uid://b6ik3p7i6rsum" path="res://scene/stage8.tscn" id="29_u38ek"]
@@ -3464,7 +3464,6 @@ visible = false
 
 [node name="power_controller" type="Node2D" parent="."]
 script = ExtResource("39_0unje")
-heal_invincible_duration = 5.0
 
 [node name="BuildSlot" parent="." instance=ExtResource("31_xguij")]
 position = Vector2(691, 1121)

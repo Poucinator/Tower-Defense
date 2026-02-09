@@ -1,3 +1,4 @@
+# res://scene/projectile/missile.gd
 extends CharacterBody2D
 
 # --- Réglages de gameplay ---
@@ -13,6 +14,7 @@ extends CharacterBody2D
 
 # --- FX ---
 const EXPLOSION_SCN := preload("res://fx/explosion_small.tscn")
+const FIRE_ZONE_SCN := preload("res://fx/missile_fire_zone.tscn") # adapte le chemin si besoin
 
 # --- État interne ---
 var _direction: Vector2 = Vector2.ZERO
@@ -30,6 +32,21 @@ func _ready() -> void:
 		anim.play("fly")
 
 
+# ✅ API optionnelle : permet à une tour de pousser tout d'un coup
+func configure(
+	new_speed: float,
+	new_damage: int,
+	new_radius: float,
+	new_falloff: float = -1.0
+) -> void:
+	speed = new_speed
+	damage = new_damage
+	splash_radius = new_radius
+	if new_falloff >= 0.0:
+		splash_falloff = new_falloff
+
+
+# fire_at(target_pos, damage_override, radius_override)
 func fire_at(target_pos: Vector2, damage_override: int = -1, radius_override: float = -1.0) -> void:
 	_target_pos = target_pos
 	_damage_override = damage_override
@@ -51,9 +68,8 @@ func _physics_process(delta: float) -> void:
 		var enemy := _get_enemy_from_collider(col)
 
 		# ⚠️ Si on a touché un ennemi volant, on ignore la collision :
-		# pas d'explosion, le missile continue sa route.
 		if enemy and ("is_flying" in enemy) and enemy.is_flying:
-			# On ne return pas : au prochain frame le missile repartira.
+			# le missile continue sa route
 			pass
 		else:
 			_explode()
@@ -71,7 +87,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _explode() -> void:
-	# --------- DÉGÂTS DE ZONE ----------
 	var dmg: int = (_damage_override if _damage_override >= 0 else damage)
 	var radius: float = (_radius_override if _radius_override >= 0.0 else splash_radius)
 
@@ -93,36 +108,68 @@ func _explode() -> void:
 			continue
 
 		var enemy := _get_enemy_from_collider(n)
+		if not enemy:
+			continue
 
-		if enemy:
-			# 🚫 On ignore totalement les ennemis volants dans l'aoe
-			if ("is_flying" in enemy) and enemy.is_flying:
-				continue
+		# 🚫 On ignore totalement les ennemis volants dans l'aoe
+		if ("is_flying" in enemy) and enemy.is_flying:
+			continue
 
-			var dist: float = (enemy.global_position - global_position).length()
-			if dist <= radius:
-				var ratio: float = 1.0
-				if splash_falloff > 0.0:
-					var lin: float = clamp(1.0 - (dist / radius), 0.0, 1.0)
-					ratio = pow(lin, splash_falloff)
-				var final_damage: int = int(round(float(dmg) * ratio))
-				if final_damage > 0 and enemy.has_method("apply_damage"):
-					enemy.call("apply_damage", final_damage)
+		var dist: float = (enemy.global_position - global_position).length()
+		if dist <= radius:
+			var ratio: float = 1.0
+			if splash_falloff > 0.0:
+				var lin: float = clamp(1.0 - (dist / radius), 0.0, 1.0)
+				ratio = pow(lin, splash_falloff)
+			var final_damage: int = int(round(float(dmg) * ratio))
+			if final_damage > 0 and enemy.has_method("apply_damage"):
+				enemy.call("apply_damage", final_damage)
 
-	# --------- FX D’EXPLOSION ----------
+	# FX explosion
 	var ex := EXPLOSION_SCN.instantiate()
 	ex.global_position = global_position
-
-	# IMPORTANT : ajouter à l'arbre AVANT d'appeler play()
-	get_tree().current_scene.add_child(ex)  # ou get_parent().add_child(ex)
+	get_tree().current_scene.add_child(ex)
 
 	if ex.has_method("play"):
 		ex.play(radius)
+	
+		# =========================================================
+	# 🔥 Fire zone (si pouvoir acheté + chance)
+	# =========================================================
+	if Game and Game.has_method("get_missile_fire_level"):
+		var lvl := int(Game.get_missile_fire_level())
+		if lvl > 0:
+			var chance := 0.0
+			var dur := 0.0
+			var pct := 0.0
+			var fire_radius := radius # par défaut on utilise le radius d'aoe du missile
 
+			if Game.has_method("get_missile_fire_chance_for_level"):
+				chance = float(Game.get_missile_fire_chance_for_level(lvl))
+			if Game.has_method("get_missile_fire_duration_for_level"):
+				dur = float(Game.get_missile_fire_duration_for_level(lvl))
+			if Game.has_method("get_missile_fire_dps_percent_for_level"):
+				pct = float(Game.get_missile_fire_dps_percent_for_level(lvl))
+			if Game.has_method("get_missile_fire_radius_for_level"):
+				fire_radius = float(Game.get_missile_fire_radius_for_level(lvl))
+
+			if randf() <= chance and FIRE_ZONE_SCN:
+				var z := FIRE_ZONE_SCN.instantiate()
+				if z:
+					z.global_position = global_position
+					get_tree().current_scene.add_child(z)
+
+					# dps = % des dégâts du missile (proxy des dégâts tour)
+					var dps := int(round(float(dmg) * pct))
+					if z.has_method("setup"):
+						z.call("setup", fire_radius, dps, dur)
+
+	
+	
+	
 	queue_free()
 
 
-# --------- Utilitaire : récupérer un ennemi à partir d'un collider ----------
 func _get_enemy_from_collider(obj: Object) -> Node2D:
 	var node := obj as Node
 	while node:

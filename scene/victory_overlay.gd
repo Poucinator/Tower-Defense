@@ -10,7 +10,6 @@ signal quit_pressed
 @onready var quit_btn: BaseButton = $"QuitBtn"
 
 func _ready() -> void:
-	# Important : si tu pauses le jeu, l'overlay doit continuer à fonctionner
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	if continue_btn:

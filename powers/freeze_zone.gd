@@ -7,7 +7,7 @@ extends Area2D
 
 # --- Effet de gameplay ---
 @export var radius: float = 96.0
-@export var slow_multiplier: float = 0.5   # 0.5 = deux fois plus lent
+@export var slow_multiplier: float = 0.8   
 @export var duration: float = 4.0
 
 # --- VFX (9 sprites) ---
@@ -22,6 +22,15 @@ var _id: String = ""
 
 func _ready() -> void:
 	_id = "freeze_%s" % str(get_instance_id())
+
+	# ✅ Upgrade Labo : facteur de slow global
+	# Niveau 0 = 0.8 (base), puis 0.6 / 0.4 / 0.0
+	if Game and Game.has_method("get_freeze_strength_factor"):
+		slow_multiplier = float(Game.get_freeze_strength_factor())
+		# Sécurité : clamp [0..1]
+		slow_multiplier = clampf(slow_multiplier, 0.0, 1.0)
+
+
 
 	# Rayon de collision
 	if cs and cs.shape is CircleShape2D:

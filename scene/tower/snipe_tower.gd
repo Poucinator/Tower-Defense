@@ -1,23 +1,22 @@
 # res://scene/tower/snipe_tower.gd
 extends StaticBody2D
 
-# --------- Tir / réglages snip ---------
-@export var fire_interval: float = 1.4       # cadence plus lente
-@export var bullet_speed: float = 520.0      # vitesse balle (si tu l'utilises dans la bullet)
+# --------- Tir / réglages snipe ---------
+@export var fire_interval: float = 1.4
+@export var bullet_speed: float = 520.0
 @export var rotation_speed: float = 6.0
-@export var bullet_damage: int = 30          # ✅ dégâts transmis à la balle (monte en MK2/MK3)
+
+# ✅ Dégâts de base (MK1/MK2/MK3) - les buffs s'appliquent dessus
+@export var bullet_damage: int = 30
 
 @export var detector_path: NodePath
 @export var muzzle_path: NodePath
-@export var can_target_flying: bool = false  # 🚫 cette tour ne vise pas les volants
-
+@export var can_target_flying: bool = false
 
 # --------- Upgrade (scalable) ---------
 @export var upgrade_scene: PackedScene
 @export var upgrade_cost: int = 60
 @export var upgrade_icon: Texture2D
-
-# Tier de la tour (MK1=1, MK2=2, MK3=3...)
 @export var tower_tier: int = 1
 
 const BULLET_SCN := preload("res://scene/tower/snipe_bullet.tscn")
@@ -33,8 +32,28 @@ var current_target: Node2D = null
 var _click_ready_at_ms := 0
 var _menu_ref: Node = null
 
+# ============================================================
+#                 BUFFS DÉGÂTS (Barracks aura)
+# ============================================================
+var _damage_mult_sources: Dictionary = {} # source_id -> float
+
+func set_damage_buff(source_id: StringName, mult: float) -> void:
+	# mult <= 1.0 => retire/neutralise cette source
+	if mult <= 1.0:
+		_damage_mult_sources.erase(source_id)
+	else:
+		_damage_mult_sources[source_id] = mult
+
+func get_damage_mult() -> float:
+	var m := 1.0
+	for v in _damage_mult_sources.values():
+		m *= float(v)
+	return m
+
 
 func _ready() -> void:
+	add_to_group("Tower") # ✅ pour que la Barracks puisse me choisir
+
 	detector = get_node_or_null(detector_path)
 	muzzle   = get_node_or_null(muzzle_path)
 
@@ -79,7 +98,6 @@ func _is_valid_target(e: Node2D) -> bool:
 	if e == null or not is_instance_valid(e):
 		return false
 
-	# Si l’ennemi est volant et que la tour ne peut pas viser les volants -> on l’ignore
 	if ("is_flying" in e) and e.is_flying and not can_target_flying:
 		return false
 
@@ -98,11 +116,22 @@ func _open_upgrade_menu() -> void:
 	if upgrade_scene == null:
 		return
 
-	# 🔒 Vérifie si le prochain tier est autorisé par Game.max_tower_tier
 	var next_tier := tower_tier + 1
-	if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
-		print("[SnipeTower] Upgrade vers MK%d verrouillé (max_tower_tier=%d)" % [next_tier, Game.max_tower_tier])
-		return
+	var tower_id: StringName = &"snipe"
+
+	if Game and Game.has_method("can_upgrade_tower_to"):
+		if not Game.can_upgrade_tower_to(tower_id, next_tier):
+			print("[SnipeTower] Upgrade vers MK%d verrouillé (run=%d / labo[%s]=%d)" % [
+				next_tier,
+				Game.max_tower_tier,
+				String(tower_id),
+				Game.get_tower_unlocked_tier(tower_id)
+			])
+			return
+	else:
+		if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
+			print("[SnipeTower] Upgrade vers MK%d verrouillé (max_tower_tier=%d)" % [next_tier, Game.max_tower_tier])
+			return
 
 	if _menu_ref and is_instance_valid(_menu_ref):
 		_menu_ref.queue_free()
@@ -143,7 +172,6 @@ func _on_upgrade_clicked() -> void:
 	queue_free()
 
 
-
 # --------- détection / tir ----------
 func _on_tower_body_entered(b: Node2D) -> void:
 	if b.is_in_group("Enemy") and _is_valid_target(b):
@@ -172,7 +200,6 @@ func _choose_target() -> Node2D:
 	if list.is_empty():
 		return null
 
-	# cible la plus avancée
 	var best := list[0]
 	var best_prog := _progress_of(best)
 	for e in list:
@@ -181,7 +208,6 @@ func _choose_target() -> Node2D:
 			best = e
 			best_prog = p
 	return best
-
 
 func _progress_of(enemy: Node2D) -> float:
 	var pf := enemy.get_parent()
@@ -201,18 +227,38 @@ func _shoot_at(target: Node2D) -> void:
 	var spawn: Vector2 = global_position
 	if muzzle != null:
 		spawn = muzzle.global_position
+
 	b.global_position = spawn
 	get_parent().add_child(b)
 
-	# ✅ On transmet les dégâts à la balle
-	if b.has_method("fire_at"):
-		# Convention : fire_at(target_pos: Vector2, override_damage: int = -1)
-		b.call("fire_at", target.global_position, bullet_damage)
-	elif "damage" in b:
-		# fallback si ta balle n'a pas de fire_at optionnel
-		b.damage = bullet_damage
+	# ✅ dégâts avec buff (Barracks aura etc.)
+	var dmg := int(round(float(bullet_damage) * get_damage_mult()))
+
+	# ✅ nombre d'ennemis SUPPLÉMENTAIRES touchés via le labo (Break Snipe)
+	var extra_hits := 0
+	if Game and Game.has_method("get_snipe_break_extra_hits"):
+		extra_hits = int(Game.get_snipe_break_extra_hits())
+
+	# ✅ configure(speed, damage, extra_hits) puis fire_at (direction fixe)
+	if b.has_method("configure"):
+		b.call("configure", bullet_speed, dmg, extra_hits)
+		if b.has_method("fire_at"):
+			b.call("fire_at", target.global_position)
+	elif b.has_method("fire_at"):
+		# Convention : fire_at(target_pos, override_damage=-1, override_speed=-1)
+		b.call("fire_at", target.global_position, dmg, bullet_speed)
+		# si on n'a pas configure, on tente quand même de pousser extra_hits
+		if "extra_hits" in b:
+			b.extra_hits = extra_hits
+	else:
+		# fallback propriétés
+		if "damage" in b: b.damage = dmg
+		if "speed" in b: b.speed = bullet_speed
+		if "extra_hits" in b: b.extra_hits = extra_hits
 		if b.has_method("set_direction_to"):
 			b.call("set_direction_to", target.global_position)
+		elif b.has_method("set_direction"):
+			b.call("set_direction", (target.global_position - spawn).normalized(), bullet_speed)
 
 
 func _on_anim_finished() -> void:

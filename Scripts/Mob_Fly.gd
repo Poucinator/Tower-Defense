@@ -4,7 +4,11 @@ extends CharacterBody2D
 @onready var hp_bar: Range = $HealthBar
 
 @export var speed: float = 100.0
-var _speed_mods := {}
+
+# --- Modificateurs de vitesse (slow, etc.) ---
+# source_id -> multiplier (ex: 0.85 = -15% vitesse)
+var _speed_mods: Dictionary = {}            # source_id -> float
+var _speed_mod_timers: Dictionary = {}      # source_id -> Timer
 
 @export var max_hp: int = 5
 var hp: int
@@ -19,7 +23,7 @@ var engaged_by: Node = null
 var _attack_timer: Timer = null
 
 # --- Spécifique volant ---
-@export var is_flying: bool = true  # 👈 flag utilisé par les tours pour filtrer les cibles
+@export var is_flying: bool = true  # flag utilisé par les tours pour filtrer les cibles
 
 signal died(mob: Node)
 signal reached_end(mob: Node)
@@ -27,6 +31,7 @@ signal reached_end(mob: Node)
 # --- Suivi du déplacement ---
 var _prev_pos: Vector2 = Vector2.INF
 var _current_dir: String = "down"  # "up", "down", "left", "right"
+var _is_dead: bool = false
 
 
 # ======================================================
@@ -35,9 +40,9 @@ var _current_dir: String = "down"  # "up", "down", "left", "right"
 func _ready() -> void:
 	if anim:
 		anim.play("walk_down")
-		# --- Debug : liste les animations disponibles ---
-		var names := anim.sprite_frames.get_animation_names()
-		print("[MobFlying] Animations trouvées :", names)
+		if anim.sprite_frames:
+			var names := anim.sprite_frames.get_animation_names()
+			print("[MobFlying] Animations trouvées :", names)
 
 	hp = max_hp
 	if hp_bar:
@@ -46,7 +51,7 @@ func _ready() -> void:
 		hp_bar.visible = false
 
 	add_to_group("Enemy")
-	add_to_group("FlyingEnemy")  # 👈 optionnel, pratique si tu veux un groupe pour les vols
+	add_to_group("FlyingEnemy")  # optionnel
 
 	global_rotation = 0.0
 	if anim:
@@ -65,6 +70,9 @@ func _ready() -> void:
 #                      PROCESS
 # ======================================================
 func _process(delta: float) -> void:
+	if _is_dead:
+		return
+
 	var follower := get_parent() as PathFollow2D
 	if follower == null:
 		return
@@ -106,6 +114,43 @@ func _process(delta: float) -> void:
 
 
 # ======================================================
+#                    SLOW API (NEW)
+# ======================================================
+# Convention (bullets):
+# apply_slow(duration_sec, factor, source_id)
+# factor < 1.0 = ralentit ; duration sec ; source_id sert à empiler proprement.
+func apply_slow(duration_sec: float, factor: float, source_id: StringName) -> void:
+	if _is_dead:
+		return
+	if duration_sec <= 0.0:
+		return
+	if factor >= 1.0:
+		remove_speed_modifier(source_id)
+		return
+
+	add_speed_modifier(source_id, factor)
+
+	# Timer par source : refresh la durée si on re-hit
+	var t: Timer = _speed_mod_timers.get(source_id, null)
+	if t == null or not is_instance_valid(t):
+		t = Timer.new()
+		t.one_shot = true
+		add_child(t)
+		_speed_mod_timers[source_id] = t
+		t.timeout.connect(func():
+			remove_speed_modifier(source_id)
+			if _speed_mod_timers.has(source_id):
+				_speed_mod_timers.erase(source_id)
+			if t and is_instance_valid(t):
+				t.queue_free()
+		)
+
+	t.stop()
+	t.wait_time = duration_sec
+	t.start()
+
+
+# ======================================================
 #             DIRECTION ET ANIMATIONS
 # ======================================================
 func _get_dir_from_vector(vec: Vector2) -> String:
@@ -135,6 +180,8 @@ func _play_anim(base_name: String) -> void:
 #                     DÉGÂTS
 # ======================================================
 func apply_damage(amount: int) -> void:
+	if _is_dead:
+		return
 	hp -= amount
 	if hp_bar:
 		hp_bar.visible = true
@@ -154,21 +201,20 @@ func _hit_flash() -> void:
 # ======================================================
 #                    MORT DU MOB
 # ======================================================
-var _is_dead := false
-
-
 func _die() -> void:
 	if _is_dead:
 		return
 	_is_dead = true
 
-	# Retire le mob du groupe pour qu'il ne soit plus ciblé
 	remove_from_group("Enemy")
 	remove_from_group("FlyingEnemy")
 
 	# Désactive toute collision
 	set_collision_layer(0)
 	set_collision_mask(0)
+
+	# ✅ nettoyage slows
+	_clear_speed_mods()
 
 	# Libère le marine engagé
 	if engaged_by and is_instance_valid(engaged_by) and engaged_by.has_method("release_target_from_enemy"):
@@ -180,22 +226,17 @@ func _die() -> void:
 		Game.add_gold(gold_reward)
 	gold_reward = 0
 
-	# Envoie le signal de mort (pour effets ou score)
 	emit_signal("died", self)
 
-	# Animation de mort
 	_play_anim("dead")
 	speed = 0
 
-	# Cache la barre de vie
 	if hp_bar:
 		hp_bar.visible = false
 
-	# Stoppe toute attaque en cours
 	if _attack_timer:
 		_attack_timer.stop()
 
-	# Attend la fin de l'animation avant destruction
 	await get_tree().create_timer(2.6).timeout
 	queue_free()
 
@@ -210,18 +251,29 @@ func get_effective_speed() -> float:
 	return speed * mult
 
 
-func add_speed_modifier(id: String, multiplier: float) -> void:
+func add_speed_modifier(id: StringName, multiplier: float) -> void:
 	_speed_mods[id] = multiplier
 
 
-func remove_speed_modifier(id: String) -> void:
+func remove_speed_modifier(id: StringName) -> void:
 	_speed_mods.erase(id)
+
+
+func _clear_speed_mods() -> void:
+	_speed_mods.clear()
+	for t in _speed_mod_timers.values():
+		if t and is_instance_valid(t):
+			t.stop()
+			t.queue_free()
+	_speed_mod_timers.clear()
 
 
 # ======================================================
 #              ENGAGEMENT MARINE ↔ ENNEMI
 # ======================================================
 func request_engage(marine: Node) -> bool:
+	if _is_dead:
+		return false
 	if engaged_by == null:
 		engaged_by = marine
 		_attack_timer.wait_time = attack_interval
@@ -240,6 +292,8 @@ func release_engage(marine: Node) -> void:
 
 
 func _enemy_attack_tick() -> void:
+	if _is_dead:
+		return
 	if engaged_by == null or not is_instance_valid(engaged_by):
 		if _attack_timer:
 			_attack_timer.stop()

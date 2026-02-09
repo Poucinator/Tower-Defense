@@ -4,7 +4,11 @@ extends CharacterBody2D
 @onready var hp_bar: Range = $HealthBar
 
 @export var speed: float = 100.0
-var _speed_mods := {}
+
+# --- Modificateurs de vitesse (slow, etc.) ---
+# source_id -> multiplier (ex: 0.85 = -15% vitesse)
+var _speed_mods: Dictionary = {}            # source_id -> float
+var _speed_mod_timers: Dictionary = {}      # source_id -> Timer
 
 @export var max_hp: int = 5
 var hp: int
@@ -38,14 +42,16 @@ var _is_dead: bool = false         # bloque la mort multiple
 func _ready() -> void:
 	if anim:
 		anim.play("walk_down")
-		var names := anim.sprite_frames.get_animation_names()
-		print("[Mob] Animations trouvées :", names)
+		if anim.sprite_frames:
+			var names := anim.sprite_frames.get_animation_names()
+			print("[Mob] Animations trouvées :", names)
 
 	hp = max_hp
 	if hp_bar:
 		hp_bar.max_value = max_hp
 		hp_bar.value = hp
 		hp_bar.visible = false
+
 	add_to_group("Enemy")
 
 	global_rotation = 0.0
@@ -65,6 +71,9 @@ func _ready() -> void:
 #                      PROCESS
 # ======================================================
 func _process(delta: float) -> void:
+	if _is_dead:
+		return
+
 	var follower := get_parent() as PathFollow2D
 	if follower == null:
 		return
@@ -103,6 +112,43 @@ func _process(delta: float) -> void:
 				Game.lose_health(damage)
 			emit_signal("reached_end", self)
 			queue_free()
+
+
+# ======================================================
+#                    SLOW API (NEW)
+# ======================================================
+# Convention (bluebullet):
+# apply_slow(duration_sec, factor, source_id)
+# factor < 1.0 = ralentit ; duration sec ; source_id sert à empiler proprement.
+func apply_slow(duration_sec: float, factor: float, source_id: StringName) -> void:
+	if _is_dead:
+		return
+	if duration_sec <= 0.0:
+		return
+	if factor >= 1.0:
+		remove_speed_modifier(source_id)
+		return
+
+	add_speed_modifier(source_id, factor)
+
+	# Timer par source : refresh la durée si on re-hit
+	var t: Timer = _speed_mod_timers.get(source_id, null)
+	if t == null or not is_instance_valid(t):
+		t = Timer.new()
+		t.one_shot = true
+		add_child(t)
+		_speed_mod_timers[source_id] = t
+		t.timeout.connect(func():
+			remove_speed_modifier(source_id)
+			if _speed_mod_timers.has(source_id):
+				_speed_mod_timers.erase(source_id)
+			if t and is_instance_valid(t):
+				t.queue_free()
+		)
+
+	t.stop()
+	t.wait_time = duration_sec
+	t.start()
 
 
 # ======================================================
@@ -165,10 +211,15 @@ func _die() -> void:
 	set_collision_layer(0)
 	set_collision_mask(0)
 
+	# ✅ nettoyage slows
+	_clear_speed_mods()
+
+	# Libère le marine engagé
 	if engaged_by and is_instance_valid(engaged_by) and engaged_by.has_method("release_target_from_enemy"):
 		engaged_by.call("release_target_from_enemy", self)
 	engaged_by = null
 
+	# Donne l'or une seule fois
 	if gold_reward > 0 and "add_gold" in Game:
 		Game.add_gold(gold_reward)
 	gold_reward = 0
@@ -237,18 +288,29 @@ func get_effective_speed() -> float:
 	return speed * mult
 
 
-func add_speed_modifier(id: String, multiplier: float) -> void:
+func add_speed_modifier(id: StringName, multiplier: float) -> void:
 	_speed_mods[id] = multiplier
 
 
-func remove_speed_modifier(id: String) -> void:
+func remove_speed_modifier(id: StringName) -> void:
 	_speed_mods.erase(id)
+
+
+func _clear_speed_mods() -> void:
+	_speed_mods.clear()
+	for t in _speed_mod_timers.values():
+		if t and is_instance_valid(t):
+			t.stop()
+			t.queue_free()
+	_speed_mod_timers.clear()
 
 
 # ======================================================
 #              ENGAGEMENT MARINE ↔ ENNEMI
 # ======================================================
 func request_engage(marine: Node) -> bool:
+	if _is_dead:
+		return false
 	if engaged_by == null:
 		engaged_by = marine
 		_attack_timer.wait_time = attack_interval
@@ -267,6 +329,8 @@ func release_engage(marine: Node) -> void:
 
 
 func _enemy_attack_tick() -> void:
+	if _is_dead:
+		return
 	if engaged_by == null or not is_instance_valid(engaged_by):
 		if _attack_timer:
 			_attack_timer.stop()

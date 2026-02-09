@@ -35,6 +35,24 @@ var _invincible_time_left: float = 0.0
 # --- Regen interne ---
 var _regen_buffer: float = 0.0   # cumule la regen partielle
 
+# ============================================================
+#                 BUFFS DÉGÂTS (Barracks aura)
+# ============================================================
+var _damage_mult_sources: Dictionary = {} # source_id -> float
+
+func set_damage_buff(source_id: StringName, mult: float) -> void:
+	# mult <= 1.0 => retire/neutralise cette source
+	if mult <= 1.0:
+		_damage_mult_sources.erase(source_id)
+	else:
+		_damage_mult_sources[source_id] = mult
+
+func get_damage_mult() -> float:
+	var m := 1.0
+	for v in _damage_mult_sources.values():
+		m *= float(v)
+	return m
+
 
 func _ready() -> void:
 	add_to_group("Marine")
@@ -169,8 +187,13 @@ func _do_attack() -> void:
 	var tgt := _pick_target()
 	if tgt == null or not is_instance_valid(tgt):
 		return
+
+	# ✅ Dégâts = dégâts de base (export) * buffs (Barracks etc.)
+	var dmg := int(round(float(attack_damage) * get_damage_mult()))
+
 	if tgt.has_method("apply_damage"):
-		tgt.call("apply_damage", attack_damage)
+		tgt.call("apply_damage", dmg)
+
 	if muzzle:
 		muzzle.visible = true
 		muzzle.play("flash")

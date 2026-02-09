@@ -102,6 +102,13 @@ func _ready() -> void:
 	if start_first_on_ready:
 		call_deferred("_start_or_intro")
 
+		# ✅ Reset progression tours pour ce niveau (MK1 au départ)
+	if "reset_run_tower_progression" in Game:
+		Game.reset_run_tower_progression()
+	else:
+		# fallback si jamais tu n'as pas encore ajouté la méthode
+		if "max_tower_tier" in Game:
+			Game.max_tower_tier = 1
 
 ## ==========================================================
 ##     INIT CAMERA (robuste)
@@ -371,10 +378,19 @@ func _unlock_phase2_buildslots() -> void:
 ## ==========================================================
 ##   FIN DE JEU : VICTOIRE
 ## ==========================================================
+
+@export var labo_scene_path: String = "res://scene/Vaisseau/Labo.tscn" # ajuste si besoin
+
+
+var _last_victory_crystals_earned: int = 0
+
+
 func end_level_victory(crystals_earned: int) -> void:
+	# Empêche de spawn plusieurs overlays
 	if _victory_ui != null and is_instance_valid(_victory_ui):
 		return
 
+	_last_victory_crystals_earned = crystals_earned
 	get_tree().paused = true
 
 	if victory_overlay_scene == null:
@@ -385,37 +401,75 @@ func end_level_victory(crystals_earned: int) -> void:
 	_victory_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_victory_ui)
 
+	# Affichage du gain sur l'overlay
 	if _victory_ui.has_method("set_crystals"):
 		_victory_ui.call("set_crystals", crystals_earned)
 
+	# Connexions boutons
 	if _victory_ui.has_signal("continue_pressed") and not _victory_ui.continue_pressed.is_connected(_on_victory_continue):
 		_victory_ui.continue_pressed.connect(_on_victory_continue)
-	if _victory_ui.has_signal("menu_pressed") and not _victory_ui.menu_pressed.is_connected(_on_victory_menu):
-		_victory_ui.menu_pressed.connect(_on_victory_menu)
-	if _victory_ui.has_signal("quit_pressed") and not _victory_ui.quit_pressed.is_connected(_on_victory_quit):
-		_victory_ui.quit_pressed.connect(_on_victory_quit)
+	if _victory_ui.has_signal("menu_pressed") and not _victory_ui.menu_pressed.is_connected(_on_victory_labo):
+		_victory_ui.menu_pressed.connect(_on_victory_labo)
+	if _victory_ui.has_signal("quit_pressed") and not _victory_ui.quit_pressed.is_connected(_on_victory_quit_to_main):
+		_victory_ui.quit_pressed.connect(_on_victory_quit_to_main)
 
-	if not _victory_reward_applied and ("add_bank_crystals" in Game):
-		_victory_reward_applied = true
-		Game.add_bank_crystals(crystals_earned)
+	# ✅ IMPORTANT : on NE crédite PAS la banque ici.
+	# Le commit run->bank se fera uniquement si on quitte vers le Labo ou le Menu principal.
+	_victory_reward_applied = false
 
 
+
+func _close_victory_overlay() -> void:
+	if _victory_ui != null and is_instance_valid(_victory_ui):
+		_victory_ui.queue_free()
+	_victory_ui = null
+
+func _commit_victory_once() -> void:
+	if _victory_reward_applied:
+		return
+	_victory_reward_applied = true
+
+	# ✅ Commit des cristaux de RUN vers la banque
+	if "commit_run_crystals_to_bank" in Game:
+		Game.commit_run_crystals_to_bank()
+	else:
+		# Fallback (si jamais Game n'a pas encore la méthode)
+		Game.add_bank_crystals(_last_victory_crystals_earned)
+
+
+## ==========================================================
+##   BOUTONS OVERLAY
+## ==========================================================
 func _on_victory_continue() -> void:
-	# ✅ "Continuer" = relancer le niveau
+	# ✅ Continuer = on ferme l'overlay et on reprend la run
 	get_tree().paused = false
-	get_tree().reload_current_scene()
+	_close_victory_overlay()
+	# IMPORTANT : on ne recharge pas la scène
 
 
-func _on_victory_menu() -> void:
+func _on_victory_labo() -> void:
+	# ✅ Menu = commit run->bank puis aller au Labo
 	get_tree().paused = false
+	_commit_victory_once()
+	_close_victory_overlay()
+
+	if labo_scene_path != "":
+		get_tree().call_deferred("change_scene_to_file", labo_scene_path)
+	else:
+		push_warning("[LD] labo_scene_path est vide.")
+
+
+func _on_victory_quit_to_main() -> void:
+	# ✅ Quitter = commit run->bank puis retour au menu principal
+	get_tree().paused = false
+	_commit_victory_once()
+	_close_victory_overlay()
+
 	if main_menu_scene_path != "":
-		get_tree().change_scene_to_file(main_menu_scene_path)
+		get_tree().call_deferred("change_scene_to_file", main_menu_scene_path)
 	else:
 		push_warning("[LD] main_menu_scene_path est vide.")
 
-
-func _on_victory_quit() -> void:
-	get_tree().quit()
 
 
 ## ==========================================================

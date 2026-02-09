@@ -41,6 +41,7 @@ collision_layer = 5
 input_pickable = true
 script = ExtResource("1_aibar")
 fire_interval = 0.3
+bullet_speed = 500.0
 detector_path = NodePath("Tower")
 muzzle_path = NodePath("Muzzle")
 upgrade_scene = ExtResource("2_58b7d")

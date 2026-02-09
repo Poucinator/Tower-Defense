@@ -65,21 +65,22 @@ func _ready() -> void:
 	# Exit button init
 	_setup_exit_button()
 
-	# État initial selon cristaux actuels
+	# État initial selon cristaux de RUN
 	var init_crystals := 0
-	if "crystals" in Game:
-		init_crystals = int(Game.get("crystals"))
+	if "run_crystals" in Game:
+		init_crystals = int(Game.get("run_crystals"))
 	_on_crystals_changed(init_crystals)
 
-	# Écoute l'évolution des cristaux
-	if Game.has_signal("crystals_changed"):
-		if not Game.crystals_changed.is_connected(_on_crystals_changed):
-			Game.crystals_changed.connect(_on_crystals_changed)
+	# Écoute l'évolution des cristaux de RUN
+	if Game.has_signal("run_crystals_changed"):
+		if not Game.run_crystals_changed.is_connected(_on_crystals_changed):
+			Game.run_crystals_changed.connect(_on_crystals_changed)
 			if DBG_EXIT:
-				print("[DRILL/EXIT] connected Game.crystals_changed")
+				print("[DRILL/EXIT] connected Game.run_crystals_changed")
 	else:
 		if DBG_EXIT:
-			print("[DRILL/EXIT] WARNING: Game has no signal crystals_changed")
+			print("[DRILL/EXIT] WARNING: Game has no signal run_crystals_changed")
+
 
 
 func _setup_exit_button() -> void:
@@ -147,17 +148,18 @@ func _on_exit_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 
 func _request_end_level() -> void:
 	var amount := 0
-	if "crystals" in Game:
-		amount = int(Game.get("crystals"))
+	if "run_crystals" in Game:
+		amount = int(Game.get("run_crystals"))
 
 	if DBG_EXIT:
-		print("[DRILL/EXIT] end requested, crystals=", amount)
+		print("[DRILL/EXIT] end requested, run_crystals=", amount)
 
 	var ld := get_tree().get_first_node_in_group("LevelDirector")
 	if ld and ld.has_method("end_level_victory"):
 		ld.call("end_level_victory", amount)
 	else:
 		push_warning("[DRILL/EXIT] LevelDirector introuvable ou méthode end_level_victory manquante.")
+
 
 
 # =========================================================

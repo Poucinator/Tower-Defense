@@ -1,6 +1,33 @@
-[gd_scene load_steps=2 format=3 uid="uid://f6c0dgfhdlyr"]
+[gd_scene load_steps=28 format=3 uid="uid://f6c0dgfhdlyr"]
 
+[ext_resource type="Script" uid="uid://bpcvg2j1nkr4w" path="res://Scripts/laboUI.gd" id="1_0fg1g"]
 [ext_resource type="VideoStream" uid="uid://d3gsnpqpmu6c6" path="res://Sprite/decort/Labo-Idle-vidéo.ogv" id="1_ef10h"]
+[ext_resource type="Script" uid="uid://c4oj0g78gwddy" path="res://Scripts/crystal_counter.gd" id="2_8a14a"]
+[ext_resource type="Resource" uid="uid://cahlnn814gfxl" path="res://data/upgrade_texts.tres" id="2_tr5yx"]
+[ext_resource type="Texture2D" uid="uid://clc3rpu5megtm" path="res://scene/ui/Victory Overlay/Cristal vaisseau.png" id="2_xx83c"]
+[ext_resource type="PackedScene" uid="uid://c4f8sh2jb0ijx" path="res://scene/niveaux/Niveau2.tscn" id="3_kqdhb"]
+[ext_resource type="Texture2D" uid="uid://bt71oecp6kwxa" path="res://ui/bouton ship/Petit 176x175/turret_button_grey_barracks.png" id="4_i1cgo"]
+[ext_resource type="Texture2D" uid="uid://51r2llou24ds" path="res://ui/bouton ship/Petit 176x175/turret_button_no_snowflake.png" id="5_c6hm3"]
+[ext_resource type="Texture2D" uid="uid://c6mqoix4s0jjw" path="res://ui/bouton ship/Petit 176x175/turret_button_green.png" id="6_0fg1g"]
+[ext_resource type="Texture2D" uid="uid://bcokjorxn4jdw" path="res://ui/bouton ship/Petit 176x175/turret_button_red_orange (1).png" id="7_6ucq0"]
+[ext_resource type="Texture2D" uid="uid://d1g3bq5wb57oy" path="res://scene/ui/Victory Overlay/222.png" id="9_6ucq0"]
+[ext_resource type="Texture2D" uid="uid://c8loa4aa8wbef" path="res://ui/bouton ship/Petit 176x175/turret_button_grey_barracks_monochrome.png" id="9_26aai"]
+[ext_resource type="Texture2D" uid="uid://g6uq0woy700x" path="res://ui/ico_2.png" id="9_86s86"]
+[ext_resource type="Texture2D" uid="uid://dql11b26r0cf1" path="res://ui/ChatGPT_Image_27_oct._2025__18_58_26-removebg-preview.png" id="10_26aai"]
+[ext_resource type="Texture2D" uid="uid://cpankqu4kfxlc" path="res://ui/bouton ship/Petit 176x175/turret_button_double_no_snowflake (1).png" id="10_h3qnd"]
+[ext_resource type="Texture2D" uid="uid://j0fgxftayeqx" path="res://ui/bouton ship/Petit 176x175/turret_button_green_double_2cannons (1).png" id="11_3p5c6"]
+[ext_resource type="Texture2D" uid="uid://duo6gib8jg3fc" path="res://ui/ChatGPT_Image_27_oct._2025__19_01_01-removebg-preview.png" id="11_isfpo"]
+[ext_resource type="Texture2D" uid="uid://cn21ofyyj8frd" path="res://ui/bouton ship/Petit 176x175/turret_button_red_clean.png" id="12_w0uum"]
+[ext_resource type="Texture2D" uid="uid://bc5e4mvmlec5c" path="res://scene/ui/MainMenu/12.png" id="13_byuyr"]
+[ext_resource type="Texture2D" uid="uid://dg3h5xeejtgau" path="res://ui/KO sans fond.png" id="14_tr5yx"]
+[ext_resource type="Texture2D" uid="uid://cnbojrdjfqwxy" path="res://ui/Ok sans fond (1).png" id="15_acc7j"]
+[ext_resource type="Texture2D" uid="uid://ddx2ifcricq6k" path="res://ui/ico_6.png" id="17_3p5c6"]
+[ext_resource type="Texture2D" uid="uid://e0h6y8l1amw4" path="res://ui/ico_4.png" id="18_w0uum"]
+[ext_resource type="Texture2D" uid="uid://bjyw213gajcxj" path="res://ui/ico_5.png" id="19_l6xme"]
+[ext_resource type="Texture2D" uid="uid://cu05mx7xbuuai" path="res://ui/ico_1.png" id="20_6pkgp"]
+[ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="22_acc7j"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr5yx"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -9,6 +36,80 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_0fg1g")
+barrack_btn_path = NodePath("HUD/CrystalCounter/barrackBtn")
+gun_btn_path = NodePath("HUD/CrystalCounter/GunBtn")
+snipe_btn_path = NodePath("HUD/CrystalCounter/SnipeBtn")
+missile_btn_path = NodePath("HUD/CrystalCounter/MissileBtn")
+freeze_btn_path = NodePath("HUD/CrystalCounter/FreezeBtn")
+summon_btn_path = NodePath("HUD/CrystalCounter/SummonBtn")
+heal_btn_path = NodePath("HUD/CrystalCounter/HealBtn")
+upgrade_frame_path = NodePath("HUD/UpgradeFrame")
+barracks_menu_path = NodePath("HUD/UpgradeFrame/BarracksMenu")
+gun_menu_path = NodePath("HUD/UpgradeFrame/GunMenu")
+snipe_menu_path = NodePath("HUD/UpgradeFrame/SnipeMenu")
+missile_menu_path = NodePath("HUD/UpgradeFrame/MissileMenu")
+freeze_menu_path = NodePath("HUD/UpgradeFrame/FreezeMenu")
+summon_menu_path = NodePath("HUD/UpgradeFrame/SummonMenu")
+heal_menu_path = NodePath("HUD/UpgradeFrame/HealMenu")
+upgrade_texts = ExtResource("2_tr5yx")
+next_btn_path = NodePath("next_btn")
+next_scene = ExtResource("3_kqdhb")
+confirm_overlay_path = NodePath("ConfirmOverlay")
+confirm_title_label_path = NodePath("ConfirmOverlay/Panel/VBoxContainer/TitleLabel")
+confirm_desc_label_path = NodePath("ConfirmOverlay/Panel/VBoxContainer/DescLabel")
+confirm_cost_label_path = NodePath("ConfirmOverlay/Panel/VBoxContainer/CostLabel")
+confirm_cancel_btn_path = NodePath("ConfirmOverlay/Panel/HBoxContainer/CancelBtn")
+confirm_confirm_btn_path = NodePath("ConfirmOverlay/Panel/HBoxContainer/ConfirmBtn")
+open_duration = 1.0
+barracks_buff_btn_path = NodePath("HUD/UpgradeFrame/BarracksMenu/BarracksBuffBtn")
+barracks_buff_label_path = NodePath("HUD/UpgradeFrame/BarracksMenu/BarracksBuffLabel")
+gun_slow_btn_path = NodePath("HUD/UpgradeFrame/GunMenu/slowgunBtn")
+gun_slow_label_path = NodePath("HUD/UpgradeFrame/GunMenu/slowgunLabel")
+snipe_break_btn_path = NodePath("HUD/UpgradeFrame/SnipeMenu/breakBtn")
+snipe_break_label_path = NodePath("HUD/UpgradeFrame/SnipeMenu/breakLabel")
+missile_fire_btn_path = NodePath("HUD/UpgradeFrame/MissileMenu/fireBtn")
+missile_fire_label_path = NodePath("HUD/UpgradeFrame/MissileMenu/fireLabel")
+freeze_cooldown_btn_path = NodePath("HUD/UpgradeFrame/FreezeMenu/cooldownfreezeBtn")
+freeze_cooldown_label_path = NodePath("HUD/UpgradeFrame/FreezeMenu/cooldownfreezeLabel")
+freeze_level_btn_path = NodePath("HUD/UpgradeFrame/FreezeMenu/freezelvlBtn")
+freeze_level_label_path = NodePath("HUD/UpgradeFrame/FreezeMenu/freezelvlLabel")
+freeze_number_btn_path = NodePath("HUD/UpgradeFrame/FreezeMenu/freezenumberBtn")
+freeze_number_label_path = NodePath("HUD/UpgradeFrame/FreezeMenu/freezenumberLabel")
+summon_cooldown_btn_path = NodePath("HUD/UpgradeFrame/SummonMenu/cooldownmarineBtn")
+summon_cooldown_label_path = NodePath("HUD/UpgradeFrame/SummonMenu/cooldownmarineLabel")
+summon_marine_lvl_btn_path = NodePath("HUD/UpgradeFrame/SummonMenu/marinelvlBtn")
+summon_marine_lvl_label_path = NodePath("HUD/UpgradeFrame/SummonMenu/marinelvlLabel")
+summon_number_btn_path = NodePath("HUD/UpgradeFrame/SummonMenu/marinenumberBtn")
+summon_number_label_path = NodePath("HUD/UpgradeFrame/SummonMenu/marinenumberLabel")
+heal_cooldown_btn_path = NodePath("HUD/UpgradeFrame/HealMenu/cooldownhealBtn")
+heal_cooldown_label_path = NodePath("HUD/UpgradeFrame/HealMenu/cooldownlabel")
+heal_revive_btn_path = NodePath("HUD/UpgradeFrame/HealMenu/marineBtn")
+heal_revive_label_path = NodePath("HUD/UpgradeFrame/HealMenu/marineLabel")
+heal_inv_btn_path = NodePath("HUD/UpgradeFrame/HealMenu/durationBtn")
+heal_inv_label_path = NodePath("HUD/UpgradeFrame/HealMenu/durationLabel")
+item_icon_path = NodePath("HUD/UpgradeFrame/TowerIcon")
+barracks_icon = ExtResource("4_i1cgo")
+gun_icon = ExtResource("5_c6hm3")
+snipe_icon = ExtResource("6_0fg1g")
+missile_icon = ExtResource("7_6ucq0")
+freeze_icon = ExtResource("9_86s86")
+summon_icon = ExtResource("10_26aai")
+heal_icon = ExtResource("11_isfpo")
+mk3_btn_path = NodePath("HUD/UpgradeFrame/Mk3Btn")
+mk3_cost_label_path = NodePath("HUD/UpgradeFrame/Mk3CostLabel")
+mk3_barracks_normal = ExtResource("9_26aai")
+mk3_gun_normal = ExtResource("10_h3qnd")
+mk3_snipe_normal = ExtResource("11_3p5c6")
+mk3_missile_normal = ExtResource("12_w0uum")
+mk3_barracks_hover = ExtResource("9_26aai")
+mk3_gun_hover = ExtResource("10_h3qnd")
+mk3_snipe_hover = ExtResource("11_3p5c6")
+mk3_missile_hover = ExtResource("12_w0uum")
+mk3_barracks_pressed = ExtResource("9_26aai")
+mk3_gun_pressed = ExtResource("10_h3qnd")
+mk3_snipe_pressed = ExtResource("11_3p5c6")
+mk3_missile_pressed = ExtResource("12_w0uum")
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
 layout_mode = 0
@@ -19,3 +120,388 @@ volume_db = 2.05
 autoplay = true
 expand = true
 loop = true
+
+[node name="HUD" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CrystalCounter" type="HBoxContainer" parent="HUD"]
+layout_mode = 0
+offset_left = 200.0
+offset_right = 250.0
+offset_bottom = 40.0
+theme_override_constants/separation = 6
+script = ExtResource("2_8a14a")
+
+[node name="CrystalsLabel" type="Label" parent="HUD/CrystalCounter"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD/CrystalCounter"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("2_xx83c")
+expand_mode = 3
+stretch_mode = 2
+
+[node name="barrackBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("4_i1cgo")
+
+[node name="GunBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("5_c6hm3")
+
+[node name="SnipeBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("6_0fg1g")
+
+[node name="MissileBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("7_6ucq0")
+
+[node name="FreezeBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("9_86s86")
+
+[node name="SummonBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("10_26aai")
+
+[node name="HealBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("11_isfpo")
+
+[node name="UpgradeFrame" type="TextureRect" parent="HUD"]
+layout_mode = 2
+offset_left = 4.0
+offset_top = 192.0
+offset_right = 1560.0
+offset_bottom = 1084.0
+texture = ExtResource("9_6ucq0")
+
+[node name="BarracksMenu" type="Control" parent="HUD/UpgradeFrame"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BarracksBuffBtn" type="TextureButton" parent="HUD/UpgradeFrame/BarracksMenu"]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 413.0
+offset_right = 426.0
+offset_bottom = 588.0
+texture_normal = ExtResource("17_3p5c6")
+
+[node name="BarracksBuffLabel" type="Label" parent="HUD/UpgradeFrame/BarracksMenu"]
+layout_mode = 0
+offset_left = 431.0
+offset_top = 472.0
+offset_right = 531.0
+offset_bottom = 547.0
+
+[node name="GunMenu" type="Control" parent="HUD/UpgradeFrame"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="slowgunBtn" type="TextureButton" parent="HUD/UpgradeFrame/GunMenu"]
+layout_mode = 0
+offset_left = 253.0
+offset_top = 416.0
+offset_right = 417.0
+offset_bottom = 584.0
+texture_normal = ExtResource("18_w0uum")
+
+[node name="slowgunLabel" type="Label" parent="HUD/UpgradeFrame/GunMenu"]
+layout_mode = 0
+offset_left = 439.0
+offset_top = 478.0
+offset_right = 649.0
+offset_bottom = 514.0
+
+[node name="SnipeMenu" type="Control" parent="HUD/UpgradeFrame"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="breakBtn" type="TextureButton" parent="HUD/UpgradeFrame/SnipeMenu"]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 420.0
+offset_right = 418.0
+offset_bottom = 582.0
+texture_normal = ExtResource("19_l6xme")
+
+[node name="breakLabel" type="Label" parent="HUD/UpgradeFrame/SnipeMenu"]
+layout_mode = 0
+offset_left = 435.0
+offset_top = 478.0
+offset_right = 604.0
+offset_bottom = 533.0
+
+[node name="MissileMenu" type="Control" parent="HUD/UpgradeFrame"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="fireBtn" type="TextureButton" parent="HUD/UpgradeFrame/MissileMenu"]
+layout_mode = 0
+offset_left = 251.0
+offset_top = 416.0
+offset_right = 424.0
+offset_bottom = 587.0
+texture_normal = ExtResource("20_6pkgp")
+
+[node name="fireLabel" type="Label" parent="HUD/UpgradeFrame/MissileMenu"]
+layout_mode = 0
+offset_left = 448.0
+offset_top = 487.0
+offset_right = 687.0
+offset_bottom = 546.0
+
+[node name="FreezeMenu" type="Control" parent="HUD/UpgradeFrame"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="cooldownfreezeBtn" type="TextureButton" parent="HUD/UpgradeFrame/FreezeMenu"]
+layout_mode = 0
+offset_left = 253.0
+offset_top = 246.0
+offset_right = 429.0
+offset_bottom = 421.0
+texture_normal = ExtResource("18_w0uum")
+
+[node name="cooldownfreezeLabel" type="Label" parent="HUD/UpgradeFrame/FreezeMenu"]
+layout_mode = 0
+offset_left = 428.0
+offset_top = 310.0
+offset_right = 598.0
+offset_bottom = 345.0
+
+[node name="freezelvlBtn" type="TextureButton" parent="HUD/UpgradeFrame/FreezeMenu"]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 417.0
+offset_right = 431.0
+offset_bottom = 592.0
+texture_normal = ExtResource("18_w0uum")
+
+[node name="freezelvlLabel" type="Label" parent="HUD/UpgradeFrame/FreezeMenu"]
+layout_mode = 0
+offset_left = 428.0
+offset_top = 478.0
+offset_right = 598.0
+offset_bottom = 518.0
+
+[node name="freezenumberBtn" type="TextureButton" parent="HUD/UpgradeFrame/FreezeMenu"]
+layout_mode = 0
+offset_left = 256.0
+offset_top = 590.0
+offset_right = 432.0
+offset_bottom = 765.0
+texture_normal = ExtResource("9_86s86")
+
+[node name="freezenumberLabel" type="Label" parent="HUD/UpgradeFrame/FreezeMenu"]
+layout_mode = 0
+offset_left = 428.0
+offset_top = 650.0
+offset_right = 598.0
+offset_bottom = 687.0
+
+[node name="SummonMenu" type="Control" parent="HUD/UpgradeFrame"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="marinelvlBtn" type="TextureButton" parent="HUD/UpgradeFrame/SummonMenu"]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 409.0
+offset_right = 431.0
+offset_bottom = 584.0
+texture_normal = ExtResource("17_3p5c6")
+
+[node name="marinelvlLabel" type="Label" parent="HUD/UpgradeFrame/SummonMenu"]
+layout_mode = 0
+offset_left = 438.0
+offset_top = 476.0
+offset_right = 569.0
+offset_bottom = 524.0
+
+[node name="cooldownmarineBtn" type="TextureButton" parent="HUD/UpgradeFrame/SummonMenu"]
+layout_mode = 0
+offset_left = 254.0
+offset_top = 245.0
+offset_right = 430.0
+offset_bottom = 420.0
+texture_normal = ExtResource("18_w0uum")
+
+[node name="cooldownmarineLabel" type="Label" parent="HUD/UpgradeFrame/SummonMenu"]
+layout_mode = 0
+offset_left = 433.0
+offset_top = 313.0
+offset_right = 605.0
+offset_bottom = 353.0
+
+[node name="marinenumberBtn" type="TextureButton" parent="HUD/UpgradeFrame/SummonMenu"]
+layout_mode = 0
+offset_left = 258.0
+offset_top = 587.0
+offset_right = 408.0
+offset_bottom = 737.0
+texture_normal = ExtResource("10_26aai")
+
+[node name="marinenumberLabel" type="Label" parent="HUD/UpgradeFrame/SummonMenu"]
+layout_mode = 0
+offset_left = 411.0
+offset_top = 639.0
+offset_right = 551.0
+offset_bottom = 684.0
+
+[node name="HealMenu" type="Control" parent="HUD/UpgradeFrame"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="cooldownhealBtn" type="TextureButton" parent="HUD/UpgradeFrame/HealMenu"]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 243.0
+offset_right = 424.0
+offset_bottom = 414.0
+texture_normal = ExtResource("18_w0uum")
+
+[node name="cooldownlabel" type="Label" parent="HUD/UpgradeFrame/HealMenu"]
+layout_mode = 0
+offset_left = 434.0
+offset_top = 309.0
+offset_right = 637.0
+offset_bottom = 353.0
+
+[node name="marineBtn" type="TextureButton" parent="HUD/UpgradeFrame/HealMenu"]
+layout_mode = 0
+offset_left = 259.0
+offset_top = 415.0
+offset_right = 423.0
+offset_bottom = 584.0
+texture_normal = ExtResource("10_26aai")
+
+[node name="marineLabel" type="Label" parent="HUD/UpgradeFrame/HealMenu"]
+layout_mode = 0
+offset_left = 434.0
+offset_top = 469.0
+offset_right = 591.0
+offset_bottom = 519.0
+
+[node name="durationBtn" type="TextureButton" parent="HUD/UpgradeFrame/HealMenu"]
+layout_mode = 0
+offset_left = 256.0
+offset_top = 581.0
+offset_right = 432.0
+offset_bottom = 756.0
+texture_normal = ExtResource("19_l6xme")
+
+[node name="durationLabel" type="Label" parent="HUD/UpgradeFrame/HealMenu"]
+layout_mode = 0
+offset_left = 429.0
+offset_top = 638.0
+offset_right = 596.0
+offset_bottom = 689.0
+
+[node name="TowerIcon" type="TextureRect" parent="HUD/UpgradeFrame"]
+layout_mode = 0
+offset_left = 1238.0
+offset_top = 99.0
+offset_right = 1377.0
+offset_bottom = 237.0
+mouse_filter = 2
+
+[node name="Mk3Btn" type="TextureButton" parent="HUD/UpgradeFrame"]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 242.0
+offset_right = 391.0
+offset_bottom = 367.0
+
+[node name="Mk3CostLabel" type="Label" parent="HUD/UpgradeFrame"]
+layout_mode = 0
+offset_left = 432.0
+offset_top = 275.0
+offset_right = 580.0
+offset_bottom = 322.0
+
+[node name="Mk3TitleLabel" type="Label" parent="HUD/UpgradeFrame"]
+layout_mode = 0
+offset_left = 220.0
+offset_top = 138.0
+offset_right = 428.0
+offset_bottom = 198.0
+
+[node name="ConfirmOverlay" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Dimmer" type="TextureRect" parent="ConfirmOverlay"]
+layout_mode = 0
+offset_left = 574.0
+offset_top = 358.0
+offset_right = 1261.0
+offset_bottom = 915.0
+mouse_filter = 0
+texture = ExtResource("13_byuyr")
+
+[node name="Panel" type="Panel" parent="ConfirmOverlay"]
+layout_mode = 0
+offset_left = 704.0
+offset_top = 504.0
+offset_right = 1113.0
+offset_bottom = 819.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_tr5yx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ConfirmOverlay/Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 203.0
+
+[node name="TitleLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="DescLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(350, 100)
+layout_mode = 2
+autowrap_mode = 2
+text_overrun_behavior = 3
+
+[node name="CostLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ConfirmOverlay/Panel"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 217.0
+offset_right = 457.0
+offset_bottom = 317.0
+
+[node name="CancelBtn" type="TextureButton" parent="ConfirmOverlay/Panel/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("14_tr5yx")
+
+[node name="spacer" type="Control" parent="ConfirmOverlay/Panel/HBoxContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+
+[node name="ConfirmBtn" type="TextureButton" parent="ConfirmOverlay/Panel/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("15_acc7j")
+
+[node name="next_btn" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 1552.0
+offset_top = 920.0
+offset_right = 1687.0
+offset_bottom = 1059.0
+texture_normal = ExtResource("22_acc7j")

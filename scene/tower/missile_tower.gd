@@ -3,15 +3,14 @@ extends StaticBody2D
 
 # --- Tir ---
 @export var fire_interval: float = 1.2
-@export var missile_speed: float = 420.0      # transmis au missile si dispo
+@export var missile_speed: float = 420.0
 @export var rotation_speed: float = 4.5
 @export var can_target_flying: bool = false   # 🚫 ne vise pas les volants
 
-
 # --- Dégâts / Zone ---
-@export var missile_damage: int = 30          # override de dégâts pour ce niveau
-@export var splash_radius: float = 72.0       # override de rayon pour ce niveau
-@export var splash_falloff: float = 0.3       # 0=plat, 0.3 léger, 1 fort (poussé au missile)
+@export var missile_damage: int = 30
+@export var splash_radius: float = 72.0
+@export var splash_falloff: float = 0.3
 
 # --- Nœuds ---
 @export var detector_path: NodePath
@@ -21,8 +20,6 @@ extends StaticBody2D
 @export var upgrade_scene: PackedScene
 @export var upgrade_cost: int = 70
 @export var upgrade_icon: Texture2D
-
-# Tier de la tour (MK1=1, MK2=2, MK3=3...)
 @export var tower_tier: int = 1
 
 const MISSILE_SCN := preload("res://scene/projectile/missile.tscn")
@@ -38,12 +35,30 @@ var current_target: Node2D = null
 var _click_ready_at_ms := 0
 var _menu_ref: Node = null
 
+# ============================================================
+#                 BUFFS DÉGÂTS (Barracks aura)
+# ============================================================
+var _damage_mult_sources: Dictionary = {} # source_id -> float
+
+func set_damage_buff(source_id: StringName, mult: float) -> void:
+	if mult <= 1.0:
+		_damage_mult_sources.erase(source_id)
+	else:
+		_damage_mult_sources[source_id] = mult
+
+func get_damage_mult() -> float:
+	var m := 1.0
+	for v in _damage_mult_sources.values():
+		m *= float(v)
+	return m
+
 
 func _ready() -> void:
+	add_to_group("Tower") # ✅ pour être cible du buff de Barracks
+
 	detector = get_node_or_null(detector_path)
 	muzzle   = get_node_or_null(muzzle_path)
 
-	# Important pour que la tour soit cliquable
 	input_pickable = true
 
 	if anim:
@@ -83,11 +98,8 @@ func _process(delta: float) -> void:
 func _is_valid_target(e: Node2D) -> bool:
 	if e == null or not is_instance_valid(e):
 		return false
-
-	# Si l’ennemi est volant et que la tour ne peut pas viser les volants -> on l’ignore
 	if ("is_flying" in e) and e.is_flying and not can_target_flying:
 		return false
-
 	return true
 
 
@@ -103,11 +115,22 @@ func _open_upgrade_menu() -> void:
 	if upgrade_scene == null:
 		return
 
-	# 🔒 Vérifie si le prochain tier est autorisé par Game.max_tower_tier
 	var next_tier := tower_tier + 1
-	if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
-		print("[MissileTower] Upgrade vers MK%d verrouillé (max_tower_tier=%d)" % [next_tier, Game.max_tower_tier])
-		return
+	var tower_id: StringName = &"missile"
+
+	if Game and Game.has_method("can_upgrade_tower_to"):
+		if not Game.can_upgrade_tower_to(tower_id, next_tier):
+			print("[MissileTower] Upgrade vers MK%d verrouillé (run=%d / labo[%s]=%d)" % [
+				next_tier,
+				Game.max_tower_tier,
+				String(tower_id),
+				Game.get_tower_unlocked_tier(tower_id)
+			])
+			return
+	else:
+		if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
+			print("[MissileTower] Upgrade vers MK%d verrouillé (max_tower_tier=%d)" % [next_tier, Game.max_tower_tier])
+			return
 
 	if _menu_ref and is_instance_valid(_menu_ref):
 		_menu_ref.queue_free()
@@ -142,12 +165,10 @@ func _on_upgrade_clicked() -> void:
 	new_tower.global_position = global_position
 	new_tower.rotation = rotation
 
-	# Même logique que la snipe_tower : on applique un petit cooldown
 	if "_click_ready_at_ms" in new_tower:
 		new_tower._click_ready_at_ms = Time.get_ticks_msec() + click_cooldown_ms
 
 	queue_free()
-
 
 
 # -------- Détection / Tir --------
@@ -155,13 +176,11 @@ func _on_tower_body_entered(b: Node2D) -> void:
 	if b.is_in_group("Enemy") and _is_valid_target(b):
 		curr_targets.append(b)
 
-
 func _on_tower_body_exited(b: Node2D) -> void:
 	if b.is_in_group("Enemy"):
 		curr_targets.erase(b)
 		if b == current_target:
 			current_target = null
-
 
 func _on_shoot_timer_timeout() -> void:
 	if current_target == null \
@@ -171,7 +190,6 @@ func _on_shoot_timer_timeout() -> void:
 		current_target = _choose_target()
 	if current_target:
 		_shoot_at(current_target)
-
 
 func _choose_target() -> Node2D:
 	var list: Array[Node2D] = []
@@ -190,7 +208,6 @@ func _choose_target() -> Node2D:
 			best_prog = p
 	return best
 
-
 func _progress_of(enemy: Node2D) -> float:
 	var pf := enemy.get_parent()
 	if pf is PathFollow2D:
@@ -206,30 +223,36 @@ func _shoot_at(target: Node2D) -> void:
 	if m == null:
 		return
 
-	# Position de spawn
+	# spawn
 	var spawn_pos: Vector2 = global_position
 	if muzzle != null:
 		spawn_pos = muzzle.global_position
 	m.global_position = spawn_pos
 
-	# Insérer dans la scène AVANT d'appeler fire_at (cas où le missile dépend de _ready/_physics_process)
 	get_parent().add_child(m)
 
-	# Pousse quelques réglages au missile s'ils existent
+	# pousser réglages généraux
 	if "speed" in m:
 		m.speed = missile_speed
 	if "splash_falloff" in m:
 		m.splash_falloff = splash_falloff
 
-	# Appel correct : 3 arguments (position + overrides dégâts/rayon)
+	# ✅ dégâts buffés par l'aura Barracks (et autres sources futures)
+	var dmg := int(round(float(missile_damage) * get_damage_mult()))
+
+	# fire
 	if m.has_method("fire_at"):
-		m.call("fire_at", target.global_position, missile_damage, splash_radius)
+		# fire_at(target_pos, damage_override, radius_override)
+		m.call("fire_at", target.global_position, dmg, splash_radius)
+	elif m.has_method("configure"):
+		# (si un jour tu ajoutes un configure)
+		m.call("configure", missile_speed, dmg, splash_radius, splash_falloff)
+		m.call("fire_at", target.global_position)
 
 
 func _on_anim_finished() -> void:
 	if anim and anim.animation == "shoot":
 		anim.play("idle")
-
 
 
 # -------- Utils --------

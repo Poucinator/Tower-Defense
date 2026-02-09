@@ -2,6 +2,12 @@ extends CanvasLayer
 
 const DBG_CRYSTAL := true
 
+# =========================================================
+#     MODE "NON-TUTO" (SAFE: default false => lvl1 inchangé)
+# =========================================================
+@export var auto_unlock_from_game: bool = false
+@export var show_crystal_panel_on_start: bool = false
+
 # --- Références UI (haut) ---
 @onready var gold_label:       Label          = $"HBoxContainer/GoldLabel"
 @onready var health_label:     Label          = $"HBoxContainer/HealthLabel"
@@ -116,29 +122,23 @@ func _ready() -> void:
 		if DBG_CRYSTAL:
 			print("[CRYSTAL] panel forced invisible at start")
 
-	# Connect signal Game -> HUD
-	if Game.has_signal("crystals_changed"):
-		if not Game.crystals_changed.is_connected(_on_crystals_changed):
-			Game.crystals_changed.connect(_on_crystals_changed)
+	# Connect signal Game -> HUD (cristaux de RUN)
+	if Game.has_signal("run_crystals_changed"):
+		if not Game.run_crystals_changed.is_connected(_on_run_crystals_changed):
+			Game.run_crystals_changed.connect(_on_run_crystals_changed)
 			if DBG_CRYSTAL:
-				print("[CRYSTAL] connected Game.crystals_changed -> _on_crystals_changed")
+				print("[CRYSTAL] connected Game.run_crystals_changed -> _on_run_crystals_changed")
 	else:
 		if DBG_CRYSTAL:
-			print("[CRYSTAL] WARNING: Game has no signal crystals_changed")
+			print("[CRYSTAL] WARNING: Game has no signal run_crystals_changed")
 
-	# Valeur initiale
-		# Valeur initiale (ultra safe)
-	var init_val := 0
-	if Game != null and ("crystals" in Game):
-		init_val = int(Game.get("crystals"))
-	else:
-		init_val = 0
-
+	# Valeur initiale (run)
+	var init_val: int = 0
+	if "run_crystals" in Game:
+		init_val = int(Game.run_crystals)
 	if DBG_CRYSTAL:
-		print("[CRYSTAL] init crystals from Game =", init_val)
-
-	_on_crystals_changed(init_val)
-
+		print("[CRYSTAL] init run_crystals from Game =", init_val)
+	_on_run_crystals_changed(init_val)
 
 	# Timer
 	if crystal_timer:
@@ -159,15 +159,97 @@ func _ready() -> void:
 	if heal_btn:   heal_btn.pressed.connect(_on_heal_pressed)
 	if summon_btn: summon_btn.pressed.connect(_on_summon_pressed)
 
+	# Init values powers depuis Game (inchangé)
 	if powers and powers.has_method("set_freeze_cooldown"):
-		powers.call("set_freeze_cooldown", 10.0)
-	if powers and powers.has_method("set_heal_cooldown"):
-		powers.call("set_heal_cooldown", 20.0)
-	if powers and powers.has_method("set_summon_cooldown"):
-		powers.call("set_summon_cooldown", 25.0)
+		var cd := 20.0
+		if Game and Game.has_method("get_freeze_cooldown_seconds"):
+			cd = float(Game.get_freeze_cooldown_seconds())
+		powers.call("set_freeze_cooldown", cd)
 
-	# 🔒 Masquer au départ ce qui n'est pas débloqué
+	if powers and powers.has_method("set_freeze_max_concurrent"):
+		var n := 1
+		if Game and Game.has_method("get_freeze_max_concurrent"):
+			n = int(Game.get_freeze_max_concurrent())
+		powers.call("set_freeze_max_concurrent", n)
+
+	_update_freeze_button_ui()
+
+	if powers and powers.has_method("set_heal_cooldown"):
+		var cd2 := 20.0
+		if Game and Game.has_method("get_heal_cooldown_seconds"):
+			cd2 = float(Game.get_heal_cooldown_seconds())
+		powers.call("set_heal_cooldown", cd2)
+
+	if powers and powers.has_method("set_heal_invincible_duration"):
+		var dur := 5.0
+		if Game and Game.has_method("get_heal_invincible_seconds"):
+			dur = float(Game.get_heal_invincible_seconds())
+		powers.call("set_heal_invincible_duration", dur)
+
+	if powers and powers.has_method("set_heal_revive_bonus_per_barracks"):
+		var bonus := 0
+		if Game and Game.has_method("get_heal_revive_bonus"):
+			bonus = int(Game.get_heal_revive_bonus())
+		powers.call("set_heal_revive_bonus_per_barracks", bonus)
+
+	if powers and powers.has_method("set_summon_cooldown"):
+		var cd3 := 20.0
+		if Game and Game.has_method("get_summon_cooldown_seconds"):
+			cd3 = float(Game.get_summon_cooldown_seconds())
+		powers.call("set_summon_cooldown", cd3)
+
+	if powers and powers.has_method("set_summon_count"):
+		var count := 3
+		if Game and Game.has_method("get_summon_marine_count"):
+			count = int(Game.get_summon_marine_count())
+		powers.call("set_summon_count", count)
+
+	if powers and powers.has_method("set_summon_marine_tier"):
+		var tier := 1
+		if Game and Game.has_method("get_summon_marine_tier"):
+			tier = int(Game.get_summon_marine_tier())
+		powers.call("set_summon_marine_tier", tier)
+
+	# Relais signals Game -> PowerController (inchangé)
+	if Game:
+		if Game.has_signal("heal_cooldown_level_changed"):
+			Game.heal_cooldown_level_changed.connect(func(_lvl:int):
+				if powers and powers.has_method("set_heal_cooldown") and Game.has_method("get_heal_cooldown_seconds"):
+					powers.call("set_heal_cooldown", float(Game.get_heal_cooldown_seconds()))
+			)
+		if Game.has_signal("heal_invincible_level_changed"):
+			Game.heal_invincible_level_changed.connect(func(_lvl:int):
+				if powers and powers.has_method("set_heal_invincible_duration") and Game.has_method("get_heal_invincible_seconds"):
+					powers.call("set_heal_invincible_duration", float(Game.get_heal_invincible_seconds()))
+			)
+		if Game.has_signal("heal_revive_level_changed"):
+			Game.heal_revive_level_changed.connect(func(_lvl:int):
+				if powers and powers.has_method("set_heal_revive_bonus_per_barracks") and Game.has_method("get_heal_revive_bonus"):
+					powers.call("set_heal_revive_bonus_per_barracks", int(Game.get_heal_revive_bonus()))
+			)
+
+		if Game.has_signal("summon_cooldown_level_changed"):
+			Game.summon_cooldown_level_changed.connect(func(_lvl:int):
+				if powers and powers.has_method("set_summon_cooldown") and Game.has_method("get_summon_cooldown_seconds"):
+					powers.call("set_summon_cooldown", float(Game.get_summon_cooldown_seconds()))
+			)
+		if Game.has_signal("summon_marine_level_changed"):
+			Game.summon_marine_level_changed.connect(func(_lvl:int):
+				if powers and powers.has_method("set_summon_marine_tier") and Game.has_method("get_summon_marine_tier"):
+					powers.call("set_summon_marine_tier", int(Game.get_summon_marine_tier()))
+			)
+		if Game.has_signal("summon_number_level_changed"):
+			Game.summon_number_level_changed.connect(func(_lvl:int):
+				if powers and powers.has_method("set_summon_count") and Game.has_method("get_summon_marine_count"):
+					powers.call("set_summon_count", int(Game.get_summon_marine_count()))
+			)
+
+	# 🔒 Masquer au départ ce qui n'est pas débloqué (niveau 1 inchangé)
 	_init_locked_elements()
+
+	# ✅ Mode non-tuto : on ré-ouvre selon Game (uniquement si export true)
+	if auto_unlock_from_game:
+		_apply_unlocks_from_game()
 
 	set_process(true)
 
@@ -343,14 +425,8 @@ func _on_next_wave_pressed() -> void:
 #                   Pouvoirs
 # =========================================================
 func _process(_delta: float) -> void:
-	if freeze_btn and freeze_label and powers and powers.has_method("get_freeze_cooldown_left"):
-		var left := powers.call("get_freeze_cooldown_left") as float
-		if left > 0.0:
-			freeze_btn.disabled = true
-			freeze_label.text = "Gel (%.0fs)" % ceil(left)
-		else:
-			freeze_btn.disabled = false
-			freeze_label.text = "Gel"
+	if freeze_btn and freeze_label:
+		_update_freeze_button_ui()
 
 	if heal_btn and heal_label and powers and powers.has_method("get_heal_cooldown_left"):
 		var left := powers.call("get_heal_cooldown_left") as float
@@ -362,10 +438,10 @@ func _process(_delta: float) -> void:
 			heal_label.text = "Soin"
 
 	if summon_btn and summon_label and powers and powers.has_method("get_summon_cooldown_left"):
-		var left := powers.call("get_summon_cooldown_left") as float
-		if left > 0.0:
+		var left2 := powers.call("get_summon_cooldown_left") as float
+		if left2 > 0.0:
 			summon_btn.disabled = true
-			summon_label.text = "Appel (%.0fs)" % ceil(left)
+			summon_label.text = "Appel (%.0fs)" % ceil(left2)
 		else:
 			summon_btn.disabled = false
 			summon_label.text = "Appel"
@@ -388,7 +464,7 @@ func _on_summon_pressed() -> void:
 
 
 # =========================================================
-#            Visibilité initiale & déblocage
+#            Visibilité initiale & déblocage (tuto)
 # =========================================================
 func _init_locked_elements() -> void:
 	build_barracks_btn.visible = true
@@ -400,9 +476,7 @@ func _init_locked_elements() -> void:
 	summon_btn.visible = false
 	# NB: CrystalPanel est déjà forcé invisible au _ready()
 
-
 func unlock_element(name: String) -> void:
-	# Debug centralisé
 	if DBG_CRYSTAL:
 		print("[CRYSTAL] unlock_element called with:", name)
 
@@ -417,11 +491,10 @@ func unlock_element(name: String) -> void:
 			heal_btn.visible = true
 		"summon":
 			summon_btn.visible = true
-
-		# ✅ IMPORTANT : ce case doit être AVANT "_:"
 		"crystals":
 			if DBG_CRYSTAL:
-				print("[CRYSTAL] -> enabling panel + starting income")
+				print("[CRYSTAL] -> enabling panel + starting income (reset run)")
+
 			if crystal_panel:
 				crystal_panel.visible = true
 				if DBG_CRYSTAL:
@@ -430,10 +503,44 @@ func unlock_element(name: String) -> void:
 				if DBG_CRYSTAL:
 					print("[CRYSTAL] ERROR: crystal_panel is null")
 
+			if "reset_run_crystals" in Game:
+				Game.reset_run_crystals()
+
 			_start_crystal_income()
 
 		_:
 			push_warning("[HUD] Élément inconnu : %s" % name)
+
+
+# =========================================================
+#     MODE "NON-TUTO" : ouvrir selon Game (lvl2)
+# =========================================================
+func _apply_unlocks_from_game() -> void:
+	# Base : toujours dispo
+	if build_barracks_btn: build_barracks_btn.visible = true
+	if build_btn: build_btn.visible = true
+
+	# Niveau 2 : on affiche les tours/pouvoirs (tu pourras affiner plus tard via Game)
+	if build_snipe_btn: build_snipe_btn.visible = true
+	if build_missile_btn: build_missile_btn.visible = true
+
+	if freeze_btn: freeze_btn.visible = true
+	if heal_btn: heal_btn.visible = true
+	if summon_btn: summon_btn.visible = true
+
+	# Cristaux : optionnel
+	if show_crystal_panel_on_start:
+		_enable_crystals_panel_and_income()
+
+
+func _enable_crystals_panel_and_income() -> void:
+	if crystal_panel:
+		crystal_panel.visible = true
+
+	if "reset_run_crystals" in Game:
+		Game.reset_run_crystals()
+
+	_start_crystal_income()
 
 
 func _on_sell_mode_changed(active: bool) -> void:
@@ -444,23 +551,16 @@ func _on_sell_mode_changed(active: bool) -> void:
 # =========================================================
 #                   Cristaux
 # =========================================================
-func _on_crystals_changed(v: int) -> void:
+func _on_run_crystals_changed(v: int) -> void:
 	if DBG_CRYSTAL:
-		print("[CRYSTAL] Game.crystals_changed ->", v)
+		print("[CRYSTAL] Game.run_crystals_changed ->", v)
 	if crystal_label2:
 		crystal_label2.text = str(v)
-	else:
-		if DBG_CRYSTAL:
-			print("[CRYSTAL] WARNING: crystal_label2 is null")
 
 func _on_crystal_timer_timeout() -> void:
 	if DBG_CRYSTAL:
-		print("[CRYSTAL] timer timeout -> add_crystals(1)")
-	if "add_crystals" in Game:
-		Game.add_crystals(1)
-	else:
-		if DBG_CRYSTAL:
-			print("[CRYSTAL] ERROR: Game has no method add_crystals")
+		print("[CRYSTAL] timer timeout -> add_run_crystals(1)")
+	Game.add_run_crystals(1)
 
 func _start_crystal_income() -> void:
 	if _crystal_running:
@@ -479,6 +579,55 @@ func _start_crystal_income() -> void:
 		crystal_timer.start()
 		if DBG_CRYSTAL:
 			print("[CRYSTAL] timer started. is_stopped? =", crystal_timer.is_stopped())
+
+
+# =========================================================
+#             FREEZE UI (single ou multi-slots)
+# =========================================================
+func _get_freeze_cooldowns_left_list() -> Array[float]:
+	if powers and powers.has_method("get_freeze_cooldown_lefts"):
+		var raw = powers.call("get_freeze_cooldown_lefts")
+		var out: Array[float] = []
+		if raw is Array:
+			for v in raw:
+				out.append(float(v))
+		return out
+
+	if powers and powers.has_method("get_freeze_cooldown_left"):
+		return [float(powers.call("get_freeze_cooldown_left"))]
+
+	return []
+
+func _update_freeze_button_ui() -> void:
+	if freeze_btn == null or freeze_label == null:
+		return
+
+	var lefts := _get_freeze_cooldowns_left_list()
+	if lefts.is_empty():
+		freeze_btn.disabled = false
+		freeze_label.text = "Gel"
+		return
+
+	var has_ready := false
+	for l in lefts:
+		if l <= 0.0:
+			has_ready = true
+			break
+
+	freeze_btn.disabled = not has_ready
+
+	if lefts.size() == 1:
+		var l0 := lefts[0]
+		if l0 > 0.0:
+			freeze_label.text = "Gel (%.0fs)" % ceil(l0)
+		else:
+			freeze_label.text = "Gel"
 	else:
-		if DBG_CRYSTAL:
-			print("[CRYSTAL] ERROR: crystal_timer is null")
+		var lines: Array[String] = []
+		for i in lefts.size():
+			var l := lefts[i]
+			if l > 0.0:
+				lines.append("Gel %d (%.0fs)" % [i + 1, ceil(l)])
+			else:
+				lines.append("Gel %d" % [i + 1])
+		freeze_label.text = "\n".join(lines)

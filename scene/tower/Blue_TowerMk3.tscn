@@ -38,6 +38,7 @@ rotation = 1.5708
 collision_layer = 5
 script = ExtResource("1_0ac3u")
 fire_interval = 0.1
+bullet_damage = 10
 detector_path = NodePath("Tower")
 muzzle_path = NodePath("Muzzle")
 upgrade_cost = 400

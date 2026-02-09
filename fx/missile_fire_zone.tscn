@@ -1,0 +1,119 @@
+[gd_scene load_steps=21 format=3 uid="uid://dqic6ckpjbfai"]
+
+[ext_resource type="Texture2D" uid="uid://bm16x6rt6j6bh" path="res://Sprite/fx/fire/fire_big5_cycle.png" id="1_3eepy"]
+[ext_resource type="Script" uid="uid://duo5h3j7fv8g4" path="res://fx/missile_fire_zone.gd" id="1_a6ogw"]
+[ext_resource type="Texture2D" uid="uid://bi8mvc25x61yc" path="res://Sprite/fx/fire/fire_big6_cycle.png" id="2_a6ogw"]
+[ext_resource type="Texture2D" uid="uid://dfdo52oy2t0yu" path="res://Sprite/fx/fire/fire_big7_cycle.png" id="3_i8r0n"]
+[ext_resource type="Texture2D" uid="uid://ooxm2rvbfjro" path="res://Sprite/fx/fire/fire_big8_cycle.png" id="4_cvakh"]
+[ext_resource type="Texture2D" uid="uid://taada1d4cmda" path="res://Sprite/fx/fire/fire_big9_cycle.png" id="5_nouvu"]
+[ext_resource type="Texture2D" uid="uid://dq1wqsajqka6n" path="res://Sprite/fx/fire/fire_big10_cycle.png" id="6_wk5sf"]
+[ext_resource type="Texture2D" uid="uid://dnc3neivuba2c" path="res://Sprite/fx/fire/fire_big11_cycle.png" id="7_trtfl"]
+[ext_resource type="Texture2D" uid="uid://chke6ulny451w" path="res://Sprite/fx/fire/fire_big12.png" id="8_27wrp"]
+[ext_resource type="Texture2D" uid="uid://dfrdq53tgeved" path="res://Sprite/fx/fire/fire_big13.png" id="9_tl1ru"]
+[ext_resource type="Texture2D" uid="uid://b0ivl5siulih4" path="res://Sprite/fx/fire/fire_big14.png" id="10_6xbxo"]
+[ext_resource type="Texture2D" uid="uid://8lxg0ft0thc5" path="res://Sprite/fx/fire/fire_big15.png" id="11_cn0n8"]
+[ext_resource type="Texture2D" uid="uid://btxmtqh35a452" path="res://Sprite/fx/fire/fire_big16.png" id="12_4yfn1"]
+[ext_resource type="Texture2D" uid="uid://3adbs0bwrwuy" path="res://Sprite/fx/fire/fire_big17.png" id="13_x18x7"]
+[ext_resource type="Texture2D" uid="uid://bn8wf32ckhcd7" path="res://Sprite/fx/fire/fire_big1.png" id="14_lj43s"]
+[ext_resource type="Texture2D" uid="uid://bjpiyif8wr7w7" path="res://Sprite/fx/fire/fire_big2.png" id="15_pi88d"]
+[ext_resource type="Texture2D" uid="uid://vbfll36dhl7q" path="res://Sprite/fx/fire/fire_big3.png" id="16_tmjx1"]
+[ext_resource type="Texture2D" uid="uid://brq68xwhfyfs8" path="res://Sprite/fx/fire/fire_big4.png" id="17_u6qeo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6i7wf"]
+radius = 54.0833
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hstyr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_3eepy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_a6ogw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_i8r0n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_cvakh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_nouvu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_wk5sf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_trtfl")
+}],
+"loop": true,
+"name": &"burn",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_trtfl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_27wrp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_tl1ru")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_6xbxo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_cn0n8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_4yfn1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_x18x7")
+}],
+"loop": false,
+"name": &"end",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_lj43s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_pi88d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_tmjx1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_u6qeo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_3eepy")
+}],
+"loop": false,
+"name": &"start",
+"speed": 12.0
+}]
+
+[node name="FireZone" type="Area2D"]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_a6ogw")
+auto_start = true
+auto_total_duration = 20.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_6i7wf")
+
+[node name="Vfx" type="AnimatedSprite2D" parent="."]
+z_index = 15
+scale = Vector2(1.90625, 1.67578)
+sprite_frames = SubResource("SpriteFrames_hstyr")
+animation = &"burn"
+frame_progress = 0.051243
+
+[node name="TickTimer" type="Timer" parent="."]
+
+[node name="EndTimer" type="Timer" parent="."]
