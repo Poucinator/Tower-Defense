@@ -19,11 +19,12 @@ class_name PowerController
 @export var summon_marine_count: int = 3
 @export var summon_duration: float = 20.0
 @export_range(0.0, 10.0, 0.5, "suffix:s") var heal_invincible_duration: float = 5.0
+
 # Summon : tier MK des marines invoqués (1 = MK1)
 @export var summon_marine_tier: int = 1
+
+# Heal : revive bonus
 @export var heal_revive_bonus_per_barracks: int = 0
-
-
 
 # =========================================================
 #                     VARIABLES INTERNES
@@ -33,9 +34,13 @@ var _placing_summon := false
 
 # --- FREEZE : N charges (un cooldown par slot) ---
 var _freeze_cooldowns: Array[float] = [] # taille = nb de charges, chaque entrée = cooldown restant
+
 var _heal_cooldown_left := 0.0
 var _summon_cooldown_left := 0.0
+
 var _ghost: Node2D
+
+
 func set_summon_count(v: int) -> void:
 	summon_marine_count = maxi(1, v)
 
@@ -73,7 +78,6 @@ func _process(delta: float) -> void:
 		if _freeze_cooldowns[i] > 0.0:
 			_freeze_cooldowns[i] = max(0.0, _freeze_cooldowns[i] - delta)
 
-
 	if _heal_cooldown_left > 0.0:
 		_heal_cooldown_left = max(0.0, _heal_cooldown_left - delta)
 
@@ -83,6 +87,7 @@ func _process(delta: float) -> void:
 	# --- Placement fantôme du pouvoir Gel
 	if _placing_freeze and _ghost:
 		_ghost.global_position = get_global_mouse_position()
+
 
 # =========================================================
 #                     INPUT GÉNÉRAL
@@ -105,22 +110,22 @@ func _unhandled_input(event: InputEvent) -> void:
 	# ---------- INVOCATION ----------
 	if _placing_summon:
 		if event is InputEventMouseButton and event.pressed:
-			var mb := event as InputEventMouseButton
-			if mb.button_index == MOUSE_BUTTON_LEFT:
+			var mb2 := event as InputEventMouseButton
+			if mb2.button_index == MOUSE_BUTTON_LEFT:
 				_place_summon_at(get_global_mouse_position())
 				get_viewport().set_input_as_handled()
-			elif mb.button_index == MOUSE_BUTTON_RIGHT:
+			elif mb2.button_index == MOUSE_BUTTON_RIGHT:
 				_cancel_summon_place()
 				get_viewport().set_input_as_handled()
 		elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
 			_cancel_summon_place()
 			get_viewport().set_input_as_handled()
 
+
 # =========================================================
 #                     GEL DE ZONE
 # =========================================================
 func start_place_freeze() -> void:
-	# On ne peut placer que si au moins une charge est prête
 	if _placing_freeze:
 		return
 	if not _has_freeze_ready():
@@ -158,6 +163,7 @@ func _cancel_place() -> void:
 	if _ghost:
 		_ghost.visible = false
 
+
 # --- API compat (ancien HUD) : temps avant la prochaine charge dispo ---
 func get_freeze_cooldown_left() -> float:
 	return _time_until_next_freeze_ready()
@@ -176,6 +182,7 @@ func set_freeze_cooldown(v: float) -> void:
 func set_freeze_max_concurrent(count: int) -> void:
 	_ensure_freeze_slots(count)
 
+
 # =========================================================
 #                     SOIN GLOBAL
 # =========================================================
@@ -186,22 +193,27 @@ func activate_heal_all() -> void:
 
 	# 1) Heal + invincibilité (barracks + summon)
 	for m in get_tree().get_nodes_in_group("Marine"):
-		if m and is_instance_valid(m) and "hp" in m and "max_hp" in m:
+		if m == null or not is_instance_valid(m):
+			continue
+
+		if "hp" in m and "max_hp" in m:
 			m.hp = m.max_hp
 			if "hp_bar" in m and m.hp_bar:
 				m.hp_bar.value = m.max_hp
+
 			if m.has_node("AnimatedSprite2D"):
 				var anim = m.get_node("AnimatedSprite2D")
-				if anim.animation != "idle":
+				if anim and anim.animation != "idle":
 					anim.play("idle")
 
-			if heal_invincible_duration > 0.0 and m.has_method("set_invincible_for"):
-				m.set_invincible_for(heal_invincible_duration)
+		if heal_invincible_duration > 0.0 and m.has_method("set_invincible_for"):
+			m.call("set_invincible_for", heal_invincible_duration)
 
 	# 2) Revive des marines morts des barracks (sans dépasser le max de la barracks)
 	_revive_barracks_marines()
 
-	print("[Power] Heal : soin + invincibilité %ss + revive barracks +%d" % [heal_invincible_duration, heal_revive_bonus_per_barracks])
+	print("[Power] Heal : soin + invincibilité %ss + revive barracks +%d"
+		% [heal_invincible_duration, heal_revive_bonus_per_barracks])
 
 
 func get_heal_cooldown_left() -> float:
@@ -212,6 +224,27 @@ func is_heal_ready() -> bool:
 
 func set_heal_cooldown(v: float) -> void:
 	heal_cooldown = v
+
+func set_heal_invincible_duration(v: float) -> void:
+	heal_invincible_duration = max(0.0, v)
+
+func set_heal_revive_bonus_per_barracks(v: int) -> void:
+	heal_revive_bonus_per_barracks = maxi(0, v)
+
+
+func _revive_barracks_marines() -> void:
+	if heal_revive_bonus_per_barracks <= 0:
+		return
+
+	var barracks := get_tree().get_nodes_in_group("Barracks")
+	for b in barracks:
+		if b == null or not is_instance_valid(b):
+			continue
+
+		# La barracks gère elle-même son max/missing/pending
+		if b.has_method("revive_missing"):
+			# ✅ On passe aussi la durée d'invincibilité pour les marines respawn
+			b.call("revive_missing", heal_revive_bonus_per_barracks, heal_invincible_duration)
 
 
 # =========================================================
@@ -234,7 +267,7 @@ func _place_summon_at(pos: Vector2) -> void:
 	z.marine_count = summon_marine_count
 	z.lifetime = summon_duration
 
-	# ✅ NOUVEAU : tier MK transmis à la zone
+	# ✅ tier MK transmis à la zone
 	if "marine_tier" in z:
 		z.marine_tier = summon_marine_tier
 	elif z.has_method("set_marine_tier"):
@@ -282,7 +315,7 @@ func _ensure_freeze_slots(count: int) -> void:
 			_freeze_cooldowns[i] = 0.0
 		return
 
-	# Si on diminue (peu probable car upgrade) : on tronque
+	# Si on diminue : on tronque
 	_freeze_cooldowns.resize(count)
 
 
@@ -294,7 +327,6 @@ func _get_ready_freeze_slot_index() -> int:
 
 
 func _time_until_next_freeze_ready() -> float:
-	# Retourne le plus petit cooldown > 0 (temps avant qu’un slot redevienne dispo)
 	var best := INF
 	for cd in _freeze_cooldowns:
 		if cd > 0.0 and cd < best:
@@ -304,29 +336,3 @@ func _time_until_next_freeze_ready() -> float:
 
 func _has_freeze_ready() -> bool:
 	return _get_ready_freeze_slot_index() != -1
-	
-func set_heal_invincible_duration(v: float) -> void:
-	heal_invincible_duration = max(0.0, v)
-
-func set_heal_revive_bonus_per_barracks(v: int) -> void:
-	heal_revive_bonus_per_barracks = maxi(0, v)
-	
-func _revive_barracks_marines() -> void:
-	if heal_revive_bonus_per_barracks <= 0:
-		return
-
-	# ⚠️ IMPORTANT : mets tes barracks dans un groupe (ex: "Barracks")
-	# et donne-leur une méthode revive_missing(count:int) ou equivalent.
-	for b in get_tree().get_nodes_in_group("Barracks"):
-		if not is_instance_valid(b):
-			continue
-
-		# Option A (recommandée) : la barracks sait gérer son max
-		if b.has_method("revive_missing"):
-			b.revive_missing(heal_revive_bonus_per_barracks)
-			continue
-
-		# Option B : autre nom éventuel (si tu as déjà une méthode)
-		if b.has_method("spawn_missing_marines"):
-			b.spawn_missing_marines(heal_revive_bonus_per_barracks)
-			continue

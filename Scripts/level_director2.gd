@@ -53,6 +53,13 @@ const DBG_DEFEAT := true
 func _ready() -> void:
 	add_to_group("LevelDirector")
 
+	# ✅ Niveau 2 : par défaut, les tours doivent pouvoir aller jusqu'à MK2
+	# (l'achat labo sert uniquement à débloquer MK3 par type)
+	if Game:
+		if "max_tower_tier" in Game:
+			Game.max_tower_tier = maxi(int(Game.max_tower_tier), 2)
+
+
 	# HUD
 	hud = get_node_or_null(hud_path)
 	if hud == null:
@@ -76,6 +83,8 @@ func _ready() -> void:
 	# Démarrer
 	if start_first_on_ready:
 		call_deferred("_start_or_intro")
+
+
 
 
 func _init_camera() -> void:

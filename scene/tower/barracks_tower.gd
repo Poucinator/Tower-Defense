@@ -111,6 +111,16 @@ func _ready() -> void:
 	call_deferred("_refresh_aura_buff")
 
 
+# ============================================================
+#   ✅ UN SEUL CONTAINER POUR TOUS LES SPAWNS (spawn/respawn/revive)
+# ============================================================
+func _get_units_container() -> Node:
+	var container: Node = get_tree().current_scene if get_tree().current_scene else get_parent()
+	if container == null:
+		container = self
+	return container
+
+
 # ========================
 #       PATH
 # ========================
@@ -126,9 +136,7 @@ func _get_spawn_point() -> Vector2:
 
 
 func _spawn_marines() -> void:
-	var container: Node = get_tree().current_scene if get_tree().current_scene else get_parent()
-	if container == null:
-		container = self
+	var container := _get_units_container()
 
 	var spawn_origin := _get_spawn_point()
 	var offsets: Array[Vector2] = []
@@ -200,12 +208,15 @@ func notify_marine_dead(marine: Node) -> void:
 
 func _on_respawn_timer_timeout() -> void:
 	if _pending_respawns > 0 and _marines.size() < marine_count:
+		var container := _get_units_container()
+
 		var spawn_origin := _get_spawn_point()
 		var offset := Vector2.RIGHT.rotated(randf() * TAU) * ring_radius
 
 		var m := marine_scene.instantiate()
 		if m:
-			get_parent().add_child(m)
+			# ✅ IMPORTANT : même container que spawn/revive
+			container.add_child(m)
 			m.global_position = spawn_origin + offset
 			if "rally" in m: m.rally = rally
 			if "barrack" in m: m.barrack = self
@@ -265,10 +276,7 @@ func _open_upgrade_menu() -> void:
 	if upgrade_scene == null:
 		return
 
-	# Tier de la tour vers laquelle on veut upgrader :
 	var next_tier := tower_tier + 1
-
-	# 🔒 Vérifie si le prochain tier est autorisé (run + labo par type)
 	var tower_id: StringName = &"barracks"
 
 	if Game and Game.has_method("can_upgrade_tower_to"):
@@ -281,7 +289,6 @@ func _open_upgrade_menu() -> void:
 			])
 			return
 	else:
-		# fallback ancien comportement
 		if "max_tower_tier" in Game and next_tier > Game.max_tower_tier:
 			print("[Barracks] Upgrade vers MK%d encore verrouillé." % next_tier)
 			return
@@ -303,13 +310,11 @@ func _on_upgrade_clicked() -> void:
 	if not _try_spend(upgrade_cost) or upgrade_scene == null:
 		return
 
-	# Nettoyer les anciens marines avant la transition
 	for m in _marines:
 		if m and is_instance_valid(m):
 			m.queue_free()
 	_marines.clear()
 
-	# ✅ retirer buffs (sinon les tours gardent le buff si on remplace la barracks)
 	_clear_aura_buffs()
 
 	var parent := get_parent()
@@ -363,10 +368,8 @@ func _find_build_slot_under_me() -> Node:
 #          AUTO-CLEANUP : suppression des marines + buffs
 # ============================================================
 func _on_tree_exited() -> void:
-	# ✅ retire les buffs appliqués aux autres tours
 	_clear_aura_buffs()
 
-	# Si la tour est retirée de la scène (vente, destruction, etc.)
 	for m in _marines:
 		if m and is_instance_valid(m):
 			m.queue_free()
@@ -382,7 +385,6 @@ func set_damage_buff(source_id: StringName, mult: float) -> void:
 	else:
 		_damage_mult_sources[source_id] = mult
 
-	# Propager aux marines existants (stable)
 	_apply_buff_to_own_marines(_get_self_marines_mult())
 
 
@@ -397,7 +399,6 @@ func get_damage_mult() -> float:
 #  AURA BUFF : séparation "bonus labo" vs "buffs reçus"
 # ============================================================
 func _get_aura_bonus_mult() -> float:
-	# Bonus du labo UNIQUEMENT (pour buff des tours + marines)
 	if Game and Game.has_method("get_barracks_aura_level") and Game.has_method("get_barracks_aura_bonus"):
 		var lvl: int = Game.get_barracks_aura_level()
 		if lvl > 0:
@@ -405,7 +406,6 @@ func _get_aura_bonus_mult() -> float:
 	return 1.0
 
 func _get_self_marines_mult() -> float:
-	# Marins = buffs reçus par la barracks * bonus labo
 	return get_damage_mult() * _get_aura_bonus_mult()
 
 
@@ -413,10 +413,9 @@ func _get_self_marines_mult() -> float:
 #        AURA BUFF : émission (je buff les 3 tours proches)
 # ============================================================
 func _refresh_aura_buff() -> void:
-	# Si Game n'a pas la progression du buff, on coupe proprement
 	if not Game or not Game.has_method("get_barracks_aura_level") or not Game.has_method("get_barracks_aura_bonus"):
 		_clear_aura_buffs()
-		_apply_buff_to_own_marines(get_damage_mult()) # buff reçus seulement
+		_apply_buff_to_own_marines(get_damage_mult())
 		return
 
 	var level: int = Game.get_barracks_aura_level()
@@ -425,27 +424,21 @@ func _refresh_aura_buff() -> void:
 		_apply_buff_to_own_marines(get_damage_mult())
 		return
 
-	# ✅ ce que je DONNE aux autres tours : bonus labo uniquement (évite effet exponentiel)
 	var mult_out := _get_aura_bonus_mult()
-	# ✅ ce que mes marines reçoivent : buff reçus * bonus labo
 	var mult_marines := _get_self_marines_mult()
 
-	# 1) choisir cibles
 	var new_targets := _find_nearest_towers(aura_target_count, aura_radius)
 
-	# 2) retirer anciens buffs qui sortent du top
 	for old in _buffed_targets:
 		if old and is_instance_valid(old) and not new_targets.has(old):
 			_apply_damage_buff(old, 1.0)
 
-	# 3) appliquer aux nouvelles cibles
 	for t in new_targets:
 		if t and is_instance_valid(t):
 			_apply_damage_buff(t, mult_out)
 
 	_buffed_targets = new_targets
 
-	# 4) buff mes marines
 	_apply_buff_to_own_marines(mult_marines)
 
 
@@ -453,7 +446,7 @@ func _clear_aura_buffs() -> void:
 	for t in _buffed_targets:
 		if t and is_instance_valid(t):
 			_apply_damage_buff(t, 1.0)
-			_detach_preview_ring(t) # sécurité visuelle
+			_detach_preview_ring(t)
 	_buffed_targets.clear()
 
 
@@ -482,7 +475,6 @@ func _find_nearest_towers(count: int, radius: float) -> Array[Node]:
 
 
 func _apply_damage_buff(target: Node, mult: float) -> void:
-	# Convention : les tours receveuses exposent set_damage_buff(source_id, mult)
 	if target and is_instance_valid(target) and target.has_method("set_damage_buff"):
 		target.call("set_damage_buff", _aura_source_id, mult)
 
@@ -531,51 +523,52 @@ func _detach_preview_ring(t: Node) -> void:
 		n.queue_free()
 
 
-
 # ============================================================
-#   HEAL POWER : Revive missing marines (sans dépasser le max)
+#   HEAL POWER : Revive missing marines (spawn immédiat)
+#   - spawn seulement si il manque des marines EN CE MOMENT
+#   - consomme les respawns déjà planifiés pour ne pas dépasser marine_count
 # ============================================================
-func revive_missing(extra: int) -> void:
+func revive_missing(extra: int, invincible_duration: float = 0.0) -> void:
 	extra = maxi(0, extra)
 	if extra <= 0:
 		return
 
-	# Max autorisé = marine_count (donc MK2 peut être 4 si ta scène MK2 a marine_count=4)
-	var missing := marine_count - (_marines.size() + _pending_respawns)
-	if missing <= 0:
+	# ✅ Manquants "réels" (présents dans la scène), sans compter le pending
+	var missing_now := marine_count - _marines.size()
+	if missing_now <= 0:
 		return
 
-	var spawn_now := mini(extra, missing)
+	var spawn_now := mini(extra, missing_now)
+	if spawn_now <= 0:
+		return
 
-	# ✅ Si des respawns étaient déjà planifiés, on les "consomme" (sinon tu dépasserais le max)
+	# ✅ Si des respawns étaient déjà prévus, on les consomme
+	# (sinon plus tard le timer te ferait dépasser le max)
 	var consume := mini(_pending_respawns, spawn_now)
 	_pending_respawns -= consume
 
-	# Si on vient de vider les respawns planifiés, on peut arrêter le timer
+	# Si plus rien à respawn via timer, on peut l'arrêter
 	if _pending_respawns <= 0 and respawn_timer and not respawn_timer.is_stopped():
 		respawn_timer.stop()
 
-	# Spawn immédiat
-	var container: Node = get_tree().current_scene if get_tree().current_scene else get_parent()
-	if container == null:
-		container = self
-
+	var container := _get_units_container()
 	var spawn_origin := _get_spawn_point()
 
 	for i in range(spawn_now):
-		# offset en cercle (comme ton respawn)
 		var offset := Vector2.RIGHT.rotated(randf() * TAU) * ring_radius
-
 		var m := marine_scene.instantiate()
 		if not m:
 			continue
 
 		container.add_child(m)
 		m.global_position = spawn_origin + offset
+
 		if "rally" in m: m.rally = rally
 		if "barrack" in m: m.barrack = self
 		m.slot_offset = offset
 		_marines.append(m)
+		if invincible_duration > 0.0 and m.has_method("set_invincible_for"):
+			m.set_invincible_for(invincible_duration)
 
-		# ✅ applique buff au nouveau marine
+		# ✅ buff au nouveau marine
 		_apply_buff_to_own_marines(_get_self_marines_mult())

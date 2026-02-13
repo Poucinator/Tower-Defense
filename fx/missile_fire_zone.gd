@@ -25,6 +25,7 @@ var _radius: float = 96.0
 var _total_duration: float = 2.0
 var _started := false
 
+
 func _ready() -> void:
 	# sécurité signaux
 	if not body_entered.is_connected(_on_body_entered):
@@ -54,6 +55,7 @@ func _ready() -> void:
 	if auto_start and not _started:
 		setup(auto_radius, auto_dps, auto_total_duration)
 
+
 # API simple : à appeler au spawn (missile impact)
 func setup(radius: float, dps: int, total_duration: float) -> void:
 	_started = true
@@ -63,7 +65,20 @@ func setup(radius: float, dps: int, total_duration: float) -> void:
 	_total_duration = maxf(total_duration, 0.1)
 
 	_apply_radius(_radius)
+
+	# ✅ Anti-cas-limite : si des ennemis sont déjà dans la zone au moment du spawn,
+	# on les récupère quand même (overlaps fiables après ajout à l’arbre).
+	call_deferred("_prime_overlaps")
+
 	_run_sequence()
+
+
+func _prime_overlaps() -> void:
+	# Récupère les bodies déjà à l’intérieur (utile quand la zone est spawnée par un missile)
+	for b in get_overlapping_bodies():
+		if b and b.is_in_group("Enemy") and not _targets.has(b):
+			_targets.append(b)
+
 
 func _apply_radius(r: float) -> void:
 	# collision
@@ -78,6 +93,7 @@ func _apply_radius(r: float) -> void:
 		var s: float = r / base_visual_radius_px
 		vfx.scale = Vector2(s, s)
 
+
 func _run_sequence() -> void:
 	# si pas de vfx => on fait simple
 	if not vfx:
@@ -88,6 +104,7 @@ func _run_sequence() -> void:
 	# phase 1 : start
 	vfx.play("start")
 	# (la suite se fait dans _on_anim_finished)
+
 
 func _get_anim_duration(anim_name: StringName) -> float:
 	if not vfx:
@@ -100,6 +117,7 @@ func _get_anim_duration(anim_name: StringName) -> float:
 		return 0.0
 	var frames := sf.get_frame_count(anim_name)
 	return float(frames) / float(fps)
+
 
 func _on_anim_finished() -> void:
 	if not vfx:
@@ -118,6 +136,7 @@ func _on_anim_finished() -> void:
 	elif vfx.animation == "end":
 		queue_free()
 
+
 func _start_end_phase() -> void:
 	# stop les ticks quand ça commence à se dissiper
 	if tick_timer and not tick_timer.is_stopped():
@@ -127,6 +146,7 @@ func _start_end_phase() -> void:
 		vfx.play("end")
 	else:
 		queue_free()
+
 
 func _on_tick() -> void:
 	if _dps <= 0:
@@ -143,6 +163,7 @@ func _on_tick() -> void:
 		if t and is_instance_valid(t) and t.has_method("apply_damage"):
 			t.apply_damage(_dps)
 
+
 func _on_body_entered(b: Node) -> void:
 	if debug_print_enter_exit:
 		print("[FireZone] body_entered:", b)
@@ -150,6 +171,7 @@ func _on_body_entered(b: Node) -> void:
 	if b and b.is_in_group("Enemy"):
 		if not _targets.has(b):
 			_targets.append(b)
+
 
 func _on_body_exited(b: Node) -> void:
 	if debug_print_enter_exit:

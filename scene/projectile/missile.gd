@@ -133,7 +133,7 @@ func _explode() -> void:
 	if ex.has_method("play"):
 		ex.play(radius)
 	
-		# =========================================================
+	# =========================================================
 	# 🔥 Fire zone (si pouvoir acheté + chance)
 	# =========================================================
 	if Game and Game.has_method("get_missile_fire_level"):
@@ -142,16 +142,18 @@ func _explode() -> void:
 			var chance := 0.0
 			var dur := 0.0
 			var pct := 0.0
-			var fire_radius := radius # par défaut on utilise le radius d'aoe du missile
+			var fire_radius := radius # par défaut = rayon d'AOE du missile
 
+			# ✅ noms de méthodes alignés avec Game.gd
 			if Game.has_method("get_missile_fire_chance_for_level"):
 				chance = float(Game.get_missile_fire_chance_for_level(lvl))
 			if Game.has_method("get_missile_fire_duration_for_level"):
 				dur = float(Game.get_missile_fire_duration_for_level(lvl))
-			if Game.has_method("get_missile_fire_dps_percent_for_level"):
-				pct = float(Game.get_missile_fire_dps_percent_for_level(lvl))
-			if Game.has_method("get_missile_fire_radius_for_level"):
-				fire_radius = float(Game.get_missile_fire_radius_for_level(lvl))
+			if Game.has_method("get_missile_fire_dps_pct_for_level"):
+				pct = float(Game.get_missile_fire_dps_pct_for_level(lvl))
+			# (Optionnel) si tu n'as pas de radius par niveau, on garde radius
+			# if Game.has_method("get_missile_fire_radius_for_level"):
+			# 	fire_radius = float(Game.get_missile_fire_radius_for_level(lvl))
 
 			if randf() <= chance and FIRE_ZONE_SCN:
 				var z := FIRE_ZONE_SCN.instantiate()
@@ -159,13 +161,12 @@ func _explode() -> void:
 					z.global_position = global_position
 					get_tree().current_scene.add_child(z)
 
-					# dps = % des dégâts du missile (proxy des dégâts tour)
+					# dps = % des dégâts du missile
 					var dps := int(round(float(dmg) * pct))
 					if z.has_method("setup"):
 						z.call("setup", fire_radius, dps, dur)
-
-	
-	
+		
+		
 	
 	queue_free()
 
