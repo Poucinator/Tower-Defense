@@ -69,15 +69,11 @@ func _resolve_overlay() -> void:
 #     RÉSO CAMÉRA JEU
 # =========================
 func _resolve_camera() -> void:
-	# Cherche la caméra de gameplay dans le groupe
-	gameplay_camera = get_tree().get_first_node_in_group("player_camera")
+	# ✅ Uniquement la caméra de gameplay, jamais "la première caméra du projet"
+	gameplay_camera = get_tree().get_first_node_in_group("player_camera") as Camera2D
 
 	if gameplay_camera == null:
-		# Cherche dans la scène
-		gameplay_camera = get_tree().get_first_node_of_type(Camera2D)
-
-	if gameplay_camera == null:
-		push_warning("[StoryDirector] ⚠️ Aucune caméra de gameplay trouvée !")
+		push_warning("[StoryDirector] ⚠️ Aucune caméra gameplay trouvée (groupe 'player_camera').")
 	else:
 		print("[StoryDirector] 🎥 Caméra gameplay détectée :", gameplay_camera.name)
 

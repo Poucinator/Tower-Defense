@@ -1,8 +1,8 @@
 extends Node
 
-## ==========================================================
+## =========================================================
 ##              CONFIGURATION EXPORT
-## ==========================================================
+## =========================================================
 @export var hud_path: NodePath
 @export var wave_paths: Array[NodePath] = []
 @export var inter_level_delay: float = 30.0
@@ -13,17 +13,34 @@ extends Node
 
 var story: Node = null
 
-## ==========================================================
+## =========================================================
+##                 WEATHER / METEO
+## =========================================================
+@export var rain_particles_path: NodePath      # -> CanvasItem (ex: WeatherLayer/RainParticles)
+@export var weather_dim_rect_path: NodePath    # -> ColorRect (ex: WeatherLayer/WeatherDim)
+
+# À partir de quelle wave (index) on active pluie + assombrissement
+@export var enable_weather_at_wave_index: int = 4
+
+# Assombrissement cible (0..1)
+@export_range(0.0, 1.0, 0.01) var dim_target_alpha: float = 0.18
+@export_range(0.0, 2.0, 0.01) var weather_fade_time: float = 0.6
+
+var _rain_particles: CanvasItem = null
+var _dim_rect: ColorRect = null
+var _weather_enabled: bool = false
+
+## =========================================================
 ##                PHASE 2
-## ==========================================================
+## =========================================================
 @export var phase2_paths: Array[NodePath] = []
 @export var phase2_world_bottom: float = 1800.0
 @export var phase2_world_top: float = -200.0
 const PHASE2_SLOT_GROUP := "Phase2BuildSlot"
 
-## ==========================================================
+## =========================================================
 ##                INTERNES
-## ==========================================================
+## =========================================================
 var hud: Node = null
 var waves: Array[Node] = []
 var current_idx := -1
@@ -31,31 +48,35 @@ var _skip_inter_delay := false
 var _inter_left := 0.0
 var camera: Camera2D = null
 
-## ==========================================================
+## =========================================================
 ##        DEBUG (uniquement lié à defeat hooks)
-## ==========================================================
+## =========================================================
 const DBG_DEFEAT := true
 
-## ==========================================================
+## =========================================================
 ##                     VICTORY
-## ==========================================================
+## =========================================================
 @export var victory_overlay_scene: PackedScene = preload("res://scene/Victory_Overlay.tscn")
 @export var main_menu_scene_path: String = "res://scene/MainMenu.tscn"
 
+@export var labo_scene_path: String = "res://scene/Vaisseau/Labo.tscn" # ajuste si besoin
+
 var _victory_ui: CanvasLayer = null
 var _victory_reward_applied := false
+var _last_victory_crystals_earned: int = 0
 
-## ==========================================================
+## =========================================================
 ##                     DEFEAT
-## ==========================================================
+## =========================================================
 @export var defeat_overlay_scene: PackedScene = preload("res://scene/defeat_overlay.tscn")
 
 var _defeat_ui: CanvasLayer = null
 var _defeat_shown := false
 
-## ==========================================================
+
+## =========================================================
 ##                     READY
-## ==========================================================
+## =========================================================
 func _ready() -> void:
 	add_to_group("LevelDirector")
 
@@ -69,6 +90,11 @@ func _ready() -> void:
 
 	# Caméra
 	_init_camera()
+
+	# Weather (optionnel)
+	_rain_particles = get_node_or_null(rain_particles_path) as CanvasItem
+	_dim_rect = get_node_or_null(weather_dim_rect_path) as ColorRect
+	_prepare_weather_initial_state()
 
 	# ✅ Defeat hooks (robuste, late + node_added)
 	call_deferred("_connect_defeat_objectives_late")
@@ -102,7 +128,7 @@ func _ready() -> void:
 	if start_first_on_ready:
 		call_deferred("_start_or_intro")
 
-		# ✅ Reset progression tours pour ce niveau (MK1 au départ)
+	# ✅ Reset progression tours pour ce niveau (MK1 au départ)
 	if "reset_run_tower_progression" in Game:
 		Game.reset_run_tower_progression()
 	else:
@@ -110,26 +136,80 @@ func _ready() -> void:
 		if "max_tower_tier" in Game:
 			Game.max_tower_tier = 1
 
-## ==========================================================
+
+## =========================================================
 ##     INIT CAMERA (robuste)
-## ==========================================================
+## =========================================================
 func _init_camera() -> void:
 	if camera_path != NodePath(""):
-		camera = get_node_or_null(camera_path)
+		camera = get_node_or_null(camera_path) as Camera2D
 
+	# ✅ Sinon uniquement la caméra gameplay
 	if camera == null:
-		camera = get_tree().get_first_node_in_group("player_camera")
+		camera = get_tree().get_first_node_in_group("player_camera") as Camera2D
 
+	# ❌ On évite get_first_node_of_type(Camera2D) (risque d'attraper une caméra d'UI/overlay)
 	if camera == null:
-		camera = get_tree().get_first_node_of_type(Camera2D)
+		push_warning("[LD] ❌ Aucune caméra trouvée (groupe 'player_camera' introuvable).")
+		return
 
-	if camera == null:
-		push_warning("[LD] ❌ Aucune caméra trouvée.")
+	camera.make_current()
 
 
-## ==========================================================
+## =========================================================
+##          WEATHER
+## =========================================================
+func _prepare_weather_initial_state() -> void:
+	_weather_enabled = false
+
+	# Pluie : au départ invisible (tu l'as déjà fait)
+	if _rain_particles:
+		# On laisse l'état tel quel si tu préfères le contrôler dans l'éditeur,
+		# mais on sécurise : invisible au start.
+		_rain_particles.visible = false
+
+	# Dim : invisible + alpha 0 (sinon tu peux “salir” l'écran)
+	if _dim_rect:
+		_dim_rect.visible = false
+		var c := _dim_rect.color
+		c.a = 0.0
+		_dim_rect.color = c
+
+func _enable_weather_once() -> void:
+	if _weather_enabled:
+		return
+	_weather_enabled = true
+
+	# 1) Pluie
+	if _rain_particles:
+		_rain_particles.visible = true
+	else:
+		push_warning("[LD] rain_particles_path non assigné ou invalide (pluie ignorée).")
+
+	# 2) Assombrissement
+	if _dim_rect:
+		_fade_dim_to(dim_target_alpha, weather_fade_time)
+	else:
+		push_warning("[LD] weather_dim_rect_path non assigné (assombrissement ignoré).")
+
+func _fade_dim_to(target_alpha: float, duration: float) -> void:
+	if not _dim_rect:
+		return
+
+	_dim_rect.visible = true
+
+	var c := _dim_rect.color
+	var end_a := clampf(target_alpha, 0.0, 1.0)
+
+	var tw := create_tween()
+	tw.set_trans(Tween.TRANS_SINE)
+	tw.set_ease(Tween.EASE_OUT)
+	tw.tween_property(_dim_rect, "color", Color(c.r, c.g, c.b, end_a), max(duration, 0.01))
+
+
+## =========================================================
 ##          DEFEAT : branche Drill + Ship (robuste)
-## ==========================================================
+## =========================================================
 func _connect_defeat_objectives_late() -> void:
 	# laisse Godot finir de monter la scène
 	await get_tree().process_frame
@@ -198,9 +278,9 @@ func _on_objective_destroyed(obj: Node) -> void:
 	end_level_defeat()
 
 
-## ==========================================================
+## =========================================================
 ##                 INTRO OU DÉMARRAGE
-## ==========================================================
+## =========================================================
 func _start_or_intro() -> void:
 	if story and story.has_method("play_intro_then"):
 		story.call("play_intro_then", Callable(self, "_on_intro_finished"))
@@ -216,9 +296,9 @@ func _on_intro_finished() -> void:
 	_prepare_wave(0)
 
 
-## ==========================================================
+## =========================================================
 ##            PRÉPARATION DE CHAQUE VAGUE
-## ==========================================================
+## =========================================================
 func _prepare_wave(index: int) -> void:
 	if index < 0 or index >= waves.size():
 		push_warning("[LD] Index vague invalide : " + str(index))
@@ -259,9 +339,9 @@ func _prepare_wave(index: int) -> void:
 		push_warning("[LD] ⚠️ %s n’a pas begin()" % wave.name)
 
 
-## ==========================================================
+## =========================================================
 ##          CLICK NEXT (+X PO)
-## ==========================================================
+## =========================================================
 func _on_hud_next_clicked() -> void:
 	var reward := int(ceil(max(_inter_left, 0.0)))
 	if reward > 0 and "add_gold" in Game:
@@ -269,9 +349,9 @@ func _on_hud_next_clicked() -> void:
 	_skip_inter_delay = true
 
 
-## ==========================================================
+## =========================================================
 ##               FIN DES WAVES ET ENCHAÎNEMENT
-## ==========================================================
+## =========================================================
 func _on_wave_finished(_wave_index: int, finished_wave: Node) -> void:
 	var idx := waves.find(finished_wave)
 	if idx == -1:
@@ -290,9 +370,9 @@ func _on_wave_finished(_wave_index: int, finished_wave: Node) -> void:
 		_prepare_wave(next_idx)
 
 
-## ==========================================================
+## =========================================================
 ##                   HELPERS
-## ==========================================================
+## =========================================================
 func _get_first_spawner_in_wave(wave: Node) -> Node:
 	if wave == null:
 		return null
@@ -305,9 +385,9 @@ func _get_first_spawner_in_wave(wave: Node) -> Node:
 	return null
 
 
-## ==========================================================
+## =========================================================
 ##                   PHASE 2
-## ==========================================================
+## =========================================================
 func _reveal_phase2_zone() -> void:
 	for p in phase2_paths:
 		var n := get_node_or_null(p) as Node2D
@@ -324,12 +404,15 @@ func _reveal_phase2_zone() -> void:
 		elif camera is Camera2D:
 			camera.limit_bottom = int(phase2_world_bottom)
 			camera.limit_top = int(phase2_world_top)
-
 		else:
 			push_warning("[LD] La caméra n'a ni world_bottom/world_top ni limites Camera2D.")
 
 
 func _unlock_progression(index: int) -> void:
+	# ✅ Météo à partir de la wave souhaitée
+	if index == enable_weather_at_wave_index:
+		_enable_weather_once()
+
 	if index == 4:
 		if "max_tower_tier" in Game:
 			Game.max_tower_tier = max(Game.max_tower_tier, 2)
@@ -375,16 +458,9 @@ func _unlock_phase2_buildslots() -> void:
 			slot.enable()
 
 
-## ==========================================================
+## =========================================================
 ##   FIN DE JEU : VICTOIRE
-## ==========================================================
-
-@export var labo_scene_path: String = "res://scene/Vaisseau/Labo.tscn" # ajuste si besoin
-
-
-var _last_victory_crystals_earned: int = 0
-
-
+## =========================================================
 func end_level_victory(crystals_earned: int) -> void:
 	# Empêche de spawn plusieurs overlays
 	if _victory_ui != null and is_instance_valid(_victory_ui):
@@ -414,15 +490,14 @@ func end_level_victory(crystals_earned: int) -> void:
 		_victory_ui.quit_pressed.connect(_on_victory_quit_to_main)
 
 	# ✅ IMPORTANT : on NE crédite PAS la banque ici.
-	# Le commit run->bank se fera uniquement si on quitte vers le Labo ou le Menu principal.
 	_victory_reward_applied = false
-
 
 
 func _close_victory_overlay() -> void:
 	if _victory_ui != null and is_instance_valid(_victory_ui):
 		_victory_ui.queue_free()
 	_victory_ui = null
+
 
 func _commit_victory_once() -> void:
 	if _victory_reward_applied:
@@ -433,22 +508,20 @@ func _commit_victory_once() -> void:
 	if "commit_run_crystals_to_bank" in Game:
 		Game.commit_run_crystals_to_bank()
 	else:
-		# Fallback (si jamais Game n'a pas encore la méthode)
+		# Fallback
 		Game.add_bank_crystals(_last_victory_crystals_earned)
 
 
-## ==========================================================
+## =========================================================
 ##   BOUTONS OVERLAY
-## ==========================================================
+## =========================================================
 func _on_victory_continue() -> void:
-	# ✅ Continuer = on ferme l'overlay et on reprend la run
 	get_tree().paused = false
 	_close_victory_overlay()
 	# IMPORTANT : on ne recharge pas la scène
 
 
 func _on_victory_labo() -> void:
-	# ✅ Menu = commit run->bank puis aller au Labo
 	get_tree().paused = false
 	_commit_victory_once()
 	_close_victory_overlay()
@@ -460,7 +533,6 @@ func _on_victory_labo() -> void:
 
 
 func _on_victory_quit_to_main() -> void:
-	# ✅ Quitter = commit run->bank puis retour au menu principal
 	get_tree().paused = false
 	_commit_victory_once()
 	_close_victory_overlay()
@@ -471,10 +543,9 @@ func _on_victory_quit_to_main() -> void:
 		push_warning("[LD] main_menu_scene_path est vide.")
 
 
-
-## ==========================================================
+## =========================================================
 ##   FIN DE JEU : DÉFAITE
-## ==========================================================
+## =========================================================
 func end_level_defeat() -> void:
 	if _defeat_shown:
 		return

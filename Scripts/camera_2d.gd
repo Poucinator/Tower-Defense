@@ -1,30 +1,35 @@
+# res://scripts/camera_2d.gd
 extends Camera2D
+class_name PlayerCamera2D
 
-## ==========================================================
-##                CONFIG CAMÉRA
-## ==========================================================
 @export var speed: float = 400.0
 @export var zoom_step: float = 0.05
 
-# Zoom minimal (vue "normale") et zoom max (dézoom max)
-@export var min_zoom: float = 1.0
-@export var max_zoom: float = 1.8
+# Zoom utilisateur (max = zoom-in)
+@export var user_min_zoom: float = 0.6   # tentative de dézoom max (sera remontée si besoin)
+@export var user_max_zoom: float = 1.4   # zoom-in max
 
-## ==========================================================
-##                LIMITES DU MONDE
-## ==========================================================
-# ⚠️ VALEURS D’EXEMPLE : tu les ajusteras dans l’inspecteur
-@export var world_left: float = 40.0
-@export var world_top: float = 100.0
-@export var world_right: float = 4000.0
-@export var world_bottom: float = 2400.0
+# Limites monde (en coordonnées monde)
+@export var world_left: float = -1300.0
+@export var world_top: float = -120.0
+@export var world_right: float = 1300.0
+@export var world_bottom: float = 870.0
 
+var _min_zoom_fit: float = 1.0
 
 func _ready() -> void:
 	add_to_group("player_camera")
-	zoom = Vector2(min_zoom, min_zoom)
-	_snap_to_top_left()  # on se cale en haut à gauche dès le début
+	offset = Vector2.ZERO
+	rotation = 0.0
+	scale = Vector2.ONE
 
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
+
+	_recompute_zoom_fit()
+	# zoom initial = 1 mais clampé dans la plage valide
+	_set_zoom_clamped(1.0)
+	_snap_to_top_left()
+	make_current()
 
 func _process(delta: float) -> void:
 	var dir := Vector2(
@@ -36,62 +41,75 @@ func _process(delta: float) -> void:
 		global_position += dir.normalized() * speed * delta
 		_clamp_position()
 
-
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
+		var z := zoom.x
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			zoom += Vector2(zoom_step, zoom_step)
+			z += zoom_step # zoom in
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			zoom -= Vector2(zoom_step, zoom_step)
-
-		# clamp du zoom
-		zoom.x = clamp(zoom.x, min_zoom, max_zoom)
-		zoom.y = zoom.x
-
+			z -= zoom_step # zoom out
+		else:
+			return
+		_set_zoom_clamped(z)
 		_clamp_position()
 
-
-func _clamp_position() -> void:
-	var viewport_size: Vector2 = get_viewport_rect().size
-
-	# ✅ IMPORTANT : clamp basé sur le zoom ACTUEL (sinon tu “perds” le haut)
-	var half_w: float = viewport_size.x * zoom.x / 2.0
-	var half_h: float = viewport_size.y * zoom.y / 2.0
-
-	var min_x: float = world_left + half_w
-	var max_x: float = world_right - half_w
-	var min_y: float = world_top + half_h
-	var max_y: float = world_bottom - half_h
-
-	# Sécurité si la zone est plus petite que l’écran à ce zoom :
-	# on force la caméra à rester centrée plutôt que partir en NaN / clamp inversé.
-	if min_x > max_x:
-		global_position.x = (world_left + world_right) / 2.0
-	else:
-		global_position.x = clamp(global_position.x, min_x, max_x)
-
-	if min_y > max_y:
-		global_position.y = (world_top + world_bottom) / 2.0
-	else:
-		global_position.y = clamp(global_position.y, min_y, max_y)
-
-
-func _snap_to_top_left() -> void:
-	# ✅ Snap basé sur le zoom ACTUEL (pas max_zoom)
-	var viewport_size: Vector2 = get_viewport_rect().size
-	var half_w: float = viewport_size.x * zoom.x / 2.0
-	var half_h: float = viewport_size.y * zoom.y / 2.0
-
-	global_position = Vector2(
-		world_left + half_w,
-		world_top + half_h
-	)
-
+func _on_viewport_size_changed() -> void:
+	_recompute_zoom_fit()
+	_set_zoom_clamped(zoom.x)
 	_clamp_position()
 
+func _recompute_zoom_fit() -> void:
+	var vp := get_viewport_rect().size
+	var world_w := maxf(world_right - world_left, 1.0)
+	var world_h := maxf(world_bottom - world_top, 1.0)
 
-# Appelé après la story
+	# ✅ zoom minimal pour éviter le noir (viewport / zoom <= world)
+	var fit_x := vp.x / world_w
+	var fit_y := vp.y / world_h
+	_min_zoom_fit = maxf(fit_x, fit_y)
+
+func _set_zoom_clamped(target: float) -> void:
+	# zoom minimal réel = max(ce que veut le user, ce que le monde permet)
+	var minz := maxf(user_min_zoom, _min_zoom_fit)
+	var maxz := maxf(user_max_zoom, minz) # sécurité
+	var z := clampf(target, minz, maxz)
+	zoom = Vector2(z, z)
+
+func _visible_half_extents() -> Vector2:
+	var vp := get_viewport_rect().size
+	var zx := maxf(zoom.x, 0.01)
+	var zy := maxf(zoom.y, 0.01)
+	return Vector2(vp.x * 0.5 / zx, vp.y * 0.5 / zy)
+
+func _clamp_position() -> void:
+	var half := _visible_half_extents()
+
+	var min_x := world_left + half.x
+	var max_x := world_right - half.x
+	var min_y := world_top + half.y
+	var max_y := world_bottom - half.y
+
+	# Si encore impossible (monde trop petit), on centre proprement
+	if min_x > max_x:
+		global_position.x = (world_left + world_right) * 0.5
+	else:
+		global_position.x = clampf(global_position.x, min_x, max_x)
+
+	if min_y > max_y:
+		global_position.y = (world_top + world_bottom) * 0.5
+	else:
+		global_position.y = clampf(global_position.y, min_y, max_y)
+
+func _snap_to_top_left() -> void:
+	var half := _visible_half_extents()
+	global_position = Vector2(world_left + half.x, world_top + half.y)
+	_clamp_position()
+
 func reset_after_story() -> void:
-	zoom = Vector2(min_zoom, min_zoom)
+	offset = Vector2.ZERO
+	rotation = 0.0
+	scale = Vector2.ONE
+	_recompute_zoom_fit()
+	_set_zoom_clamped(1.0)
 	_snap_to_top_left()
 	make_current()

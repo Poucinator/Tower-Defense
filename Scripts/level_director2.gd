@@ -94,13 +94,18 @@ func _ready() -> void:
 
 func _init_camera() -> void:
 	if camera_path != NodePath(""):
-		camera = get_node_or_null(camera_path)
+		camera = get_node_or_null(camera_path) as Camera2D
+
+	# ✅ Sinon uniquement la caméra de gameplay
 	if camera == null:
-		camera = get_tree().get_first_node_in_group("player_camera")
+		camera = get_tree().get_first_node_in_group("player_camera") as Camera2D
+
 	if camera == null:
-		camera = get_tree().get_first_node_of_type(Camera2D)
-	if camera == null:
-		push_warning("[LD2] ❌ Aucune caméra trouvée.")
+		push_warning("[LD2] ❌ Aucune caméra gameplay trouvée (groupe 'player_camera').")
+		return
+
+	# ✅ On force la caméra de gameplay comme current ici aussi
+	camera.make_current()
 
 
 func _load_waves() -> void:
