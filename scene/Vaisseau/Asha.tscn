@@ -1,0 +1,156 @@
+[gd_scene load_steps=13 format=3 uid="uid://cpqkmnerirbbm"]
+
+[ext_resource type="Script" uid="uid://ckl1lxnhyy71t" path="res://scene/Vaisseau/asha.gd" id="1_bohlr"]
+[ext_resource type="Texture2D" uid="uid://bt71oecp6kwxa" path="res://ui/bouton ship/Petit 176x175/turret_button_grey_barracks.png" id="4_o3rb3"]
+[ext_resource type="Texture2D" uid="uid://51r2llou24ds" path="res://ui/bouton ship/Petit 176x175/turret_button_no_snowflake.png" id="5_yxcv6"]
+[ext_resource type="Texture2D" uid="uid://c6mqoix4s0jjw" path="res://ui/bouton ship/Petit 176x175/turret_button_green.png" id="6_xi5pf"]
+[ext_resource type="VideoStream" uid="uid://clsykija5jkyl" path="res://Sprite/decort/Asha_s-ship-.ogv" id="15_uv2o5"]
+[ext_resource type="Script" uid="uid://c4oj0g78gwddy" path="res://Scripts/crystal_counter.gd" id="16_6a78d"]
+[ext_resource type="Texture2D" uid="uid://clc3rpu5megtm" path="res://scene/ui/Victory Overlay/Cristal vaisseau.png" id="17_h7c2b"]
+[ext_resource type="Texture2D" uid="uid://bc5e4mvmlec5c" path="res://scene/ui/MainMenu/12.png" id="24_tyhl2"]
+[ext_resource type="Texture2D" uid="uid://dg3h5xeejtgau" path="res://ui/KO sans fond.png" id="25_r8bm5"]
+[ext_resource type="Texture2D" uid="uid://cnbojrdjfqwxy" path="res://ui/Ok sans fond (1).png" id="26_prg58"]
+[ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="27_jp5ca"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr5yx"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bohlr")
+previous_scene_path = "res://scene/Vaisseau/Labo.tscn"
+next_scene_path = "res://scene/niveaux/Niveau2.tscn"
+crystal_counter_path = NodePath("HUD/CrystalCounter/CrystalsLabel")
+confirm_overlay_path = NodePath("ConfirmOverlay")
+start_gold_btn_path = NodePath("HUD/CrystalCounter/goldbegginBtn")
+wave_gold_btn_path = NodePath("HUD/CrystalCounter/WavegoldBtn")
+building_hp_btn_path = NodePath("HUD/CrystalCounter/ShiptBtn")
+next_btn_path = NodePath("next_btn")
+previous_btn_path = NodePath("previous_btn")
+ov_open_duration = 1.0
+ov_open_fade_duration = 0.5
+dimmer_open_duration = 1.0
+dimmer_fade_duration = 1.0
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+stream = ExtResource("15_uv2o5")
+volume_db = 2.05
+autoplay = true
+expand = true
+loop = true
+
+[node name="HUD" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CrystalCounter" type="HBoxContainer" parent="HUD"]
+layout_mode = 0
+offset_left = 200.0
+offset_right = 250.0
+offset_bottom = 40.0
+theme_override_constants/separation = 6
+script = ExtResource("16_6a78d")
+
+[node name="CrystalsLabel" type="Label" parent="HUD/CrystalCounter"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD/CrystalCounter"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("17_h7c2b")
+expand_mode = 3
+stretch_mode = 2
+
+[node name="goldbegginBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("4_o3rb3")
+
+[node name="WavegoldBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("5_yxcv6")
+
+[node name="ShiptBtn" type="TextureButton" parent="HUD/CrystalCounter"]
+layout_mode = 2
+texture_normal = ExtResource("6_xi5pf")
+
+[node name="ConfirmOverlay" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Dimmer" type="TextureRect" parent="ConfirmOverlay"]
+layout_mode = 0
+offset_left = 574.0
+offset_top = 358.0
+offset_right = 1370.0
+offset_bottom = 915.0
+mouse_filter = 0
+texture = ExtResource("24_tyhl2")
+
+[node name="Panel" type="Panel" parent="ConfirmOverlay"]
+layout_mode = 0
+offset_left = 704.0
+offset_top = 504.0
+offset_right = 1214.0
+offset_bottom = 819.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_tr5yx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ConfirmOverlay/Panel"]
+layout_mode = 0
+offset_right = 638.0
+offset_bottom = 240.0
+
+[node name="TitleLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="DescLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(350, 150)
+layout_mode = 2
+autowrap_mode = 2
+text_overrun_behavior = 3
+
+[node name="CostLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ConfirmOverlay/Panel"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 217.0
+offset_right = 457.0
+offset_bottom = 317.0
+
+[node name="CancelBtn" type="TextureButton" parent="ConfirmOverlay/Panel/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("25_r8bm5")
+
+[node name="spacer" type="Control" parent="ConfirmOverlay/Panel/HBoxContainer"]
+custom_minimum_size = Vector2(280, 50)
+layout_mode = 2
+
+[node name="ConfirmBtn" type="TextureButton" parent="ConfirmOverlay/Panel/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("26_prg58")
+
+[node name="next_btn" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 1689.0
+offset_top = 915.0
+offset_right = 1824.0
+offset_bottom = 1054.0
+texture_normal = ExtResource("26_prg58")
+
+[node name="previous_btn" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 1503.0
+offset_top = 909.0
+offset_right = 1638.0
+offset_bottom = 1048.0
+texture_normal = ExtResource("27_jp5ca")

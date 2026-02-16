@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://c4oj0g78gwddy" path="res://Scripts/crystal_counter.gd" id="2_8a14a"]
 [ext_resource type="Resource" uid="uid://cahlnn814gfxl" path="res://data/upgrade_texts.tres" id="2_tr5yx"]
 [ext_resource type="Texture2D" uid="uid://clc3rpu5megtm" path="res://scene/ui/Victory Overlay/Cristal vaisseau.png" id="2_xx83c"]
-[ext_resource type="PackedScene" uid="uid://c4f8sh2jb0ijx" path="res://scene/niveaux/Niveau2.tscn" id="3_kqdhb"]
 [ext_resource type="Texture2D" uid="uid://bt71oecp6kwxa" path="res://ui/bouton ship/Petit 176x175/turret_button_grey_barracks.png" id="4_i1cgo"]
 [ext_resource type="Texture2D" uid="uid://51r2llou24ds" path="res://ui/bouton ship/Petit 176x175/turret_button_no_snowflake.png" id="5_c6hm3"]
 [ext_resource type="Texture2D" uid="uid://c6mqoix4s0jjw" path="res://ui/bouton ship/Petit 176x175/turret_button_green.png" id="6_0fg1g"]
@@ -26,6 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://bjyw213gajcxj" path="res://ui/ico_5.png" id="19_l6xme"]
 [ext_resource type="Texture2D" uid="uid://cu05mx7xbuuai" path="res://ui/ico_1.png" id="20_6pkgp"]
 [ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="22_acc7j"]
+[ext_resource type="Texture2D" uid="uid://cqt0ql4ldhd7y" path="res://ui/ico_5_single_shield.png" id="23_122ta"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr5yx"]
 
@@ -54,7 +54,7 @@ summon_menu_path = NodePath("HUD/UpgradeFrame/SummonMenu")
 heal_menu_path = NodePath("HUD/UpgradeFrame/HealMenu")
 upgrade_texts = ExtResource("2_tr5yx")
 next_btn_path = NodePath("next_btn")
-next_scene = ExtResource("3_kqdhb")
+next_scene_path = "uid://cpqkmnerirbbm"
 confirm_overlay_path = NodePath("ConfirmOverlay")
 confirm_title_label_path = NodePath("ConfirmOverlay/Panel/VBoxContainer/TitleLabel")
 confirm_desc_label_path = NodePath("ConfirmOverlay/Panel/VBoxContainer/DescLabel")
@@ -401,7 +401,7 @@ offset_left = 256.0
 offset_top = 581.0
 offset_right = 432.0
 offset_bottom = 756.0
-texture_normal = ExtResource("19_l6xme")
+texture_normal = ExtResource("23_122ta")
 
 [node name="durationLabel" type="Label" parent="HUD/UpgradeFrame/HealMenu"]
 layout_mode = 0

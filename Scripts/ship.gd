@@ -22,14 +22,28 @@ const DBG_SHIP := true
 
 func _ready() -> void:
 	add_to_group("Ship")
-	# (temp) pour tester si tu avais un filtre côté ennemi, mais ton request_engage n'en a pas :
-	add_to_group("Drill")
+	add_to_group("Drill") # (temp) tu avais ça pour tests
 
+	# =========================
+	# HP init (avec upgrade)
+	# =========================
+	var mult := 1.0
+	if Game and Game.has_method("get_building_hp_multiplier"):
+		mult = float(Game.get_building_hp_multiplier())
+
+	var effective_max_hp := maxi(1, int(round(float(max_hp) * mult)))
+
+	# IMPORTANT: on remplace max_hp runtime pour que le reste du script reste simple
+	max_hp = effective_max_hp
 	hp = max_hp
+
 	if hp_bar:
 		hp_bar.max_value = max_hp
 		hp_bar.value = hp
 		hp_bar.visible = true
+
+	# Aggro (comme avant)
+	# ...
 
 	# Aggro (comme la foreuse)
 	if aggro:

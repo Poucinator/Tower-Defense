@@ -34,7 +34,7 @@ const MK3_COST := 50
 
 # --- Bouton "Next" / scene suivante ---
 @export var next_btn_path: NodePath
-@export var next_scene: PackedScene   # ✅ assignable dans l'inspecteur
+@export_file("*.tscn") var next_scene_path: String
 
 
 
@@ -243,8 +243,7 @@ const MK3_COST := 50
 @onready var confirm_cancel_btn: BaseButton = get_node_or_null(confirm_cancel_btn_path)
 @onready var confirm_confirm_btn: BaseButton = get_node_or_null(confirm_confirm_btn_path)
 
-@onready var next_btn: TextureButton = get_node_or_null(next_btn_path)
-# =========================================================
+@onready var next_btn: BaseButton = get_node_or_null(next_btn_path) as BaseButton# =========================================================
 #                 ETAT
 # =========================================================
 var _tween: Tween
@@ -2034,7 +2033,7 @@ func _get_upgrade_title_desc(key: StringName) -> Dictionary:
 
 
 func _on_next_pressed() -> void:
-	if next_scene == null:
-		push_warning("[LaboUI] next_scene n'est pas assignée")
+	if next_scene_path.is_empty():
+		push_warning("[LaboUI] next_scene_path n'est pas assigné")
 		return
-	get_tree().change_scene_to_packed(next_scene)
+	get_tree().change_scene_to_file(next_scene_path)

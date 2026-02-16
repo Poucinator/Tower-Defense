@@ -398,7 +398,12 @@ func _update_next_button_state() -> void:
 
 	next_btn.visible  = can_skip
 	next_btn.disabled = not can_skip
-	var reward := int(ceil(max(left, 0.0)))
+	var reward := 0
+	if Game and Game.has_method("compute_wave_skip_reward"):
+		reward = int(Game.compute_wave_skip_reward(left))
+	else:
+		reward = int(ceil(max(left, 0.0))) # fallback sécurité
+
 	next_btn.text = "Lancer (+" + str(reward) + " PO)"
 
 func _on_next_wave_pressed() -> void:
@@ -413,7 +418,12 @@ func _on_next_wave_pressed() -> void:
 			left = float(spawner.call("get_countdown_left"))
 		else:
 			left = _last_left
-		var reward := int(ceil(max(left, 0.0)))
+		var reward := 0
+		if Game and Game.has_method("compute_wave_skip_reward"):
+			reward = int(Game.compute_wave_skip_reward(left))
+		else:
+			reward = int(ceil(max(left, 0.0)))
+
 		if reward > 0 and "add_gold" in Game:
 			Game.add_gold(reward)
 		if spawner.has_method("skip_countdown_and_start"):

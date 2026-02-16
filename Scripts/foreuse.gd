@@ -40,8 +40,18 @@ var _exit_base_pos: Vector2 = Vector2.ZERO
 func _ready() -> void:
 	add_to_group("Drill")
 
-	# HP init
+	# =========================
+	# HP init (avec upgrade)
+	# =========================
+	var mult := 1.0
+	if Game and Game.has_method("get_building_hp_multiplier"):
+		mult = float(Game.get_building_hp_multiplier())
+
+	var effective_max_hp := maxi(1, int(round(float(max_hp) * mult)))
+
+	max_hp = effective_max_hp
 	hp = max_hp
+
 	if hp_bar:
 		hp_bar.max_value = max_hp
 		hp_bar.value = hp

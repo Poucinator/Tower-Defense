@@ -4,12 +4,39 @@ signal gold_changed(amount: int)
 signal health_changed(amount: int)
 signal wave_countdown_changed(seconds_left: int)
 
-var gold: int = 30000
+var gold: int = 300
 var health: int = 20
 var wave_countdown: float = 0.0
 var is_selling_mode: bool = false
 
 var max_tower_tier: int = 1
+
+# ==========================================================
+#        UPGRADES ECONOMY (InterLevel Asha)
+# ==========================================================
+const U_START_GOLD: StringName = &"start_gold"
+const U_BUILDING_HP: StringName = &"building_hp"
+const U_WAVE_SKIP_GOLD: StringName = &"wave_skip_gold"
+# Base (niveau 0)
+const BASE_START_GOLD: int = 300
+
+# Bonus additif par niveau (1..5)
+const START_GOLD_BONUS_BY_LEVEL: Array[int] = [100, 300, 500, 800, 1200]
+
+
+# Multiplicateur PV bâtiments par niveau (1..5) ; niveau 0 = x1.0
+const BUILDING_HP_MULT_BY_LEVEL: Array[float] = [1.5, 2.0, 3.0, 4.0, 5.0]
+const WAVE_SKIP_GOLD_MULT_BY_LEVEL: Array[float] = [1.5, 2.0, 3.0, 4.0, 5.0]
+
+func _meta_upgrade_level_key(upgrade_id: StringName) -> StringName:
+	return StringName("meta_upgrade_level_%s" % String(upgrade_id))
+
+func get_upgrade_level(upgrade_id: StringName) -> int:
+	# Niveau 0 si pas acheté
+	return int(get_meta(_meta_upgrade_level_key(upgrade_id), 0))
+
+
+
 
 # =========================================================
 # DEV / GODMODE (laisser à 0 en prod)
@@ -213,13 +240,14 @@ func reset_run_tower_progression() -> void:
 #                 GOLD (MONNAIE EN JEU)
 # ==========================================================
 func add_gold(amount: int) -> void:
-	gold += amount
+	if amount == 0:
+		return
+	gold = max(gold + amount, 0)
 	gold_changed.emit(gold)
 
-func can_spend(amount: int) -> bool:
-	return gold >= amount
-
 func try_spend(amount: int) -> bool:
+	if amount <= 0:
+		return true
 	if gold >= amount:
 		gold -= amount
 		gold_changed.emit(gold)
@@ -915,3 +943,53 @@ func try_upgrade_heal_invincible() -> bool:
 	heal_invincible_level += 1
 	heal_invincible_level_changed.emit(heal_invincible_level)
 	return true
+
+# --------------------------
+# GOLD de départ (upgrade)
+# --------------------------
+func get_start_gold_total() -> int:
+	var level := get_upgrade_level(U_START_GOLD)
+	if level <= 0:
+		return BASE_START_GOLD
+
+	# level 1..5 -> index 0..4
+	var idx := clampi(level - 1, 0, START_GOLD_BONUS_BY_LEVEL.size() - 1)
+	return BASE_START_GOLD + int(START_GOLD_BONUS_BY_LEVEL[idx])
+
+func reset_gold_to_start_value() -> void:
+	# À appeler au début d’un niveau/run, une seule fois.
+	gold = get_start_gold_total()
+	gold_changed.emit(gold)
+
+
+func get_building_hp_multiplier() -> float:
+	var level := get_upgrade_level(U_BUILDING_HP)
+	if level <= 0:
+		return 1.0
+	var idx := clampi(level - 1, 0, BUILDING_HP_MULT_BY_LEVEL.size() - 1)
+	return float(BUILDING_HP_MULT_BY_LEVEL[idx])
+
+
+func get_wave_skip_gold_multiplier() -> float:
+	var level := get_upgrade_level(U_WAVE_SKIP_GOLD)
+	if level <= 0:
+		return 1.0
+	var idx := clampi(level - 1, 0, WAVE_SKIP_GOLD_MULT_BY_LEVEL.size() - 1)
+	return float(WAVE_SKIP_GOLD_MULT_BY_LEVEL[idx])
+
+
+func compute_wave_skip_reward(seconds_left: float) -> int:
+	# Récompense "base" : comme avant (arrondi au dessus)
+	var base_reward := int(ceil(max(seconds_left, 0.0)))
+
+	# Appliquer le multiplicateur Asha
+	var mult := 1.0
+	if has_method("get_wave_skip_gold_multiplier"):
+		mult = get_wave_skip_gold_multiplier()
+
+	# On arrondit proprement et on évite 0 si base > 0 (optionnel)
+	var final_reward := int(round(float(base_reward) * mult))
+	if base_reward > 0:
+		final_reward = maxi(1, final_reward)
+
+	return final_reward
