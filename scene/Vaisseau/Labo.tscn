@@ -24,8 +24,8 @@
 [ext_resource type="Texture2D" uid="uid://e0h6y8l1amw4" path="res://ui/ico_4.png" id="18_w0uum"]
 [ext_resource type="Texture2D" uid="uid://bjyw213gajcxj" path="res://ui/ico_5.png" id="19_l6xme"]
 [ext_resource type="Texture2D" uid="uid://cu05mx7xbuuai" path="res://ui/ico_1.png" id="20_6pkgp"]
-[ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="22_acc7j"]
 [ext_resource type="Texture2D" uid="uid://cqt0ql4ldhd7y" path="res://ui/ico_5_single_shield.png" id="23_122ta"]
+[ext_resource type="Texture2D" uid="uid://bs38sstbefgnh" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (5).png" id="26_kqdhb"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr5yx"]
 
@@ -500,8 +500,8 @@ texture_normal = ExtResource("15_acc7j")
 
 [node name="next_btn" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 1552.0
-offset_top = 920.0
-offset_right = 1687.0
-offset_bottom = 1059.0
-texture_normal = ExtResource("22_acc7j")
+offset_left = 1535.0
+offset_top = 871.0
+offset_right = 1705.0
+offset_bottom = 1046.0
+texture_normal = ExtResource("26_kqdhb")

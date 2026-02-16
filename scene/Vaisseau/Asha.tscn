@@ -1,16 +1,17 @@
-[gd_scene load_steps=13 format=3 uid="uid://cpqkmnerirbbm"]
+[gd_scene load_steps=14 format=3 uid="uid://cpqkmnerirbbm"]
 
 [ext_resource type="Script" uid="uid://ckl1lxnhyy71t" path="res://scene/Vaisseau/asha.gd" id="1_bohlr"]
-[ext_resource type="Texture2D" uid="uid://bt71oecp6kwxa" path="res://ui/bouton ship/Petit 176x175/turret_button_grey_barracks.png" id="4_o3rb3"]
-[ext_resource type="Texture2D" uid="uid://51r2llou24ds" path="res://ui/bouton ship/Petit 176x175/turret_button_no_snowflake.png" id="5_yxcv6"]
-[ext_resource type="Texture2D" uid="uid://c6mqoix4s0jjw" path="res://ui/bouton ship/Petit 176x175/turret_button_green.png" id="6_xi5pf"]
+[ext_resource type="Texture2D" uid="uid://10s6g1r8yxwv" path="res://ui/btn_upgrade_gold (1).png" id="5_bohlr"]
+[ext_resource type="Texture2D" uid="uid://bn6ybab6y6jg1" path="res://ui/btn_income_between_waves_simple.png" id="6_bohlr"]
+[ext_resource type="Texture2D" uid="uid://csa77xoh686lt" path="res://ui/btn_energy_shield.png" id="7_k83nt"]
+[ext_resource type="Texture2D" uid="uid://2gj6ele1b8ot" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (6).png" id="11_k83nt"]
+[ext_resource type="Texture2D" uid="uid://dkln6d78ex0gh" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (3).png" id="12_qhkaw"]
 [ext_resource type="VideoStream" uid="uid://clsykija5jkyl" path="res://Sprite/decort/Asha_s-ship-.ogv" id="15_uv2o5"]
 [ext_resource type="Script" uid="uid://c4oj0g78gwddy" path="res://Scripts/crystal_counter.gd" id="16_6a78d"]
 [ext_resource type="Texture2D" uid="uid://clc3rpu5megtm" path="res://scene/ui/Victory Overlay/Cristal vaisseau.png" id="17_h7c2b"]
 [ext_resource type="Texture2D" uid="uid://bc5e4mvmlec5c" path="res://scene/ui/MainMenu/12.png" id="24_tyhl2"]
 [ext_resource type="Texture2D" uid="uid://dg3h5xeejtgau" path="res://ui/KO sans fond.png" id="25_r8bm5"]
 [ext_resource type="Texture2D" uid="uid://cnbojrdjfqwxy" path="res://ui/Ok sans fond (1).png" id="26_prg58"]
-[ext_resource type="Texture2D" uid="uid://ksgxl42jbp0x" path="res://icon.svg" id="27_jp5ca"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr5yx"]
 
@@ -31,10 +32,12 @@ wave_gold_btn_path = NodePath("HUD/CrystalCounter/WavegoldBtn")
 building_hp_btn_path = NodePath("HUD/CrystalCounter/ShiptBtn")
 next_btn_path = NodePath("next_btn")
 previous_btn_path = NodePath("previous_btn")
-ov_open_duration = 1.0
+ov_open_duration = 0.57
 ov_open_fade_duration = 0.5
-dimmer_open_duration = 1.0
-dimmer_fade_duration = 1.0
+ov_close_duration = 0.41
+ov_close_fade_duration = 0.43
+dimmer_open_duration = 0.5
+dimmer_fade_duration = 0.5
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
 layout_mode = 0
@@ -71,15 +74,15 @@ stretch_mode = 2
 
 [node name="goldbegginBtn" type="TextureButton" parent="HUD/CrystalCounter"]
 layout_mode = 2
-texture_normal = ExtResource("4_o3rb3")
+texture_normal = ExtResource("5_bohlr")
 
 [node name="WavegoldBtn" type="TextureButton" parent="HUD/CrystalCounter"]
 layout_mode = 2
-texture_normal = ExtResource("5_yxcv6")
+texture_normal = ExtResource("6_bohlr")
 
 [node name="ShiptBtn" type="TextureButton" parent="HUD/CrystalCounter"]
 layout_mode = 2
-texture_normal = ExtResource("6_xi5pf")
+texture_normal = ExtResource("7_k83nt")
 
 [node name="ConfirmOverlay" type="Control" parent="."]
 anchors_preset = 0
@@ -141,16 +144,16 @@ texture_normal = ExtResource("26_prg58")
 
 [node name="next_btn" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 1689.0
-offset_top = 915.0
-offset_right = 1824.0
-offset_bottom = 1054.0
-texture_normal = ExtResource("26_prg58")
+offset_left = 1621.0
+offset_top = 856.0
+offset_right = 1792.0
+offset_bottom = 1031.0
+texture_normal = ExtResource("11_k83nt")
 
 [node name="previous_btn" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 1503.0
-offset_top = 909.0
-offset_right = 1638.0
-offset_bottom = 1048.0
-texture_normal = ExtResource("27_jp5ca")
+offset_left = 1386.0
+offset_top = 854.0
+offset_right = 1559.0
+offset_bottom = 1029.0
+texture_normal = ExtResource("12_qhkaw")

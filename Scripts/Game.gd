@@ -44,7 +44,7 @@ func get_upgrade_level(upgrade_id: StringName) -> int:
 @export var dev_enable: bool = true
 @export var dev_bank_crystals_bonus: int = 0
 @export var dev_run_crystals_bonus: int = 0
-
+@export var dev_gold_bonus: int = 0
 
 
 
@@ -149,6 +149,9 @@ func try_spend_bank_crystals(cost: int) -> bool:
 	_emit_bank_changed()
 	return true
 
+
+
+
 # --------------------------
 # API Run
 # --------------------------
@@ -243,16 +246,28 @@ func add_gold(amount: int) -> void:
 	if amount == 0:
 		return
 	gold = max(gold + amount, 0)
-	gold_changed.emit(gold)
+	_emit_gold_changed_total()
 
 func try_spend(amount: int) -> bool:
 	if amount <= 0:
 		return true
-	if gold >= amount:
+
+	var available := get_gold_total()
+	if available < amount:
+		return false
+
+	# 1) Consomme le bonus DEV d'abord
+	if dev_enable and dev_gold_bonus > 0:
+		var take := mini(dev_gold_bonus, amount)
+		dev_gold_bonus -= take
+		amount -= take
+
+	# 2) Puis le vrai gold
+	if amount > 0:
 		gold -= amount
-		gold_changed.emit(gold)
-		return true
-	return false
+
+	_emit_gold_changed_total()
+	return true
 
 # ==========================================================
 #                 VIE / GAME OVER
@@ -957,9 +972,8 @@ func get_start_gold_total() -> int:
 	return BASE_START_GOLD + int(START_GOLD_BONUS_BY_LEVEL[idx])
 
 func reset_gold_to_start_value() -> void:
-	# À appeler au début d’un niveau/run, une seule fois.
 	gold = get_start_gold_total()
-	gold_changed.emit(gold)
+	_emit_gold_changed_total()
 
 
 func get_building_hp_multiplier() -> float:
@@ -993,3 +1007,14 @@ func compute_wave_skip_reward(seconds_left: float) -> int:
 		final_reward = maxi(1, final_reward)
 
 	return final_reward
+	
+	
+func _gold_bonus() -> int:
+	return dev_gold_bonus if dev_enable else 0
+
+func get_gold_total() -> int:
+	return gold + _gold_bonus()
+
+func _emit_gold_changed_total() -> void:
+	# On émet le TOTAL pour l'UI (vrai + bonus)
+	gold_changed.emit(get_gold_total())

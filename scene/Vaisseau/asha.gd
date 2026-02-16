@@ -57,7 +57,7 @@ const MAX_LEVEL := 5
 const BASE_START_GOLD := 300
 
 # ✅ Coûts identiques pour les 3 upgrades (niveau 1..5)
-const COSTS_COMMON := [50, 200, 500, 2000, 5000]
+const COSTS_COMMON := [50, 100, 250, 500, 1000]
 
 # ✅ Effets
 # - Start gold = bonus additif
@@ -182,8 +182,8 @@ func _refresh_one_button(btn: BaseButton, upgrade_id: StringName) -> void:
 		btn.disabled = false
 		btn.modulate.a = MAX_GRAY_ALPHA
 	else:
-		btn.disabled = not can_buy
-		btn.modulate.a = 1.0
+		btn.disabled = false
+		btn.modulate.a = MAX_GRAY_ALPHA if (is_max or not can_buy) else 1.0
 
 	btn.tooltip_text = _build_tooltip_text(upgrade_id, level, next_cost, is_max)
 
@@ -191,30 +191,38 @@ func _refresh_one_button(btn: BaseButton, upgrade_id: StringName) -> void:
 func _request_upgrade(upgrade_id: StringName) -> void:
 	var level := _get_level(upgrade_id)
 
-	# ✅ Si MAX : on ouvre quand même l'overlay avec les infos chiffrées
+	# ✅ MAX : overlay info, pas d'achat
 	if level >= MAX_LEVEL:
-		var title := _get_title(upgrade_id)
-		var desc := _get_desc(upgrade_id)
-
-		var details := "Niveau actuel : %d/%d\n%s\n\n(MAX)" % [
+		var title_max := _get_title(upgrade_id)
+		var desc_max := _get_desc(upgrade_id)
+		var details_max := "Niveau actuel : %d/%d\n%s\n\n(MAX)" % [
 			level, MAX_LEVEL, _effect_line(upgrade_id, level)
 		]
-
-		# overlay info (pas d'achat)
-		_open_info("%s (MAX)" % title, desc + "\n\n" + details)
+		_open_info("%s (MAX)" % title_max, desc_max + "\n\n" + details_max)
 		return
 
-	# ✅ Sinon : overlay achat classique
+	# ✅ Achat : on ouvre TOUJOURS l'overlay
 	var title := _get_title(upgrade_id)
 	var desc := _get_desc(upgrade_id)
 	var cost := _get_cost_for_next_level(level)
+
+	var can_afford := (Game != null) and Game.can_spend_bank_crystals(cost)
 
 	_pending_mode = PendingMode.PURCHASE
 	_pending_upgrade_id = upgrade_id
 	_pending_cost = cost
 
 	var details := _build_purchase_details(upgrade_id, level, cost)
+
+	# petit ajout de feedback si pas assez
+	if not can_afford:
+		details += "\n\n❌ Pas assez de cristaux."
+
 	_open_purchase(title, desc + "\n\n" + details, cost)
+
+	# ✅ on désactive "Valider" si pas assez
+	if _ov_confirm:
+		_ov_confirm.disabled = not can_afford
 
 
 func _apply_pending_purchase() -> void:
@@ -238,8 +246,6 @@ func _apply_pending_purchase() -> void:
 
 
 func _open_purchase(title: String, desc: String, cost: int) -> void:
-	if _ov_confirm:
-		_ov_confirm.disabled = false
 	if confirm_overlay == null:
 		return
 
