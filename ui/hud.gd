@@ -16,6 +16,8 @@ const DBG_CRYSTAL := true
 @onready var build_missile_btn: TextureButton = $"HBoxContainer/BuildMissileBtn"
 @onready var build_barracks_btn: TextureButton = $"HBoxContainer/BuildBarracksBtn"
 
+@export var music_bus_name: StringName = &"Music"
+
 # --- Timer + bouton à droite (haut) ---
 @onready var timer_label:  Label  = $"HBoxContainer/TimerLabel"
 @onready var next_btn:     Button = $"HBoxContainer/NextWaveBtn"
@@ -68,6 +70,53 @@ const MISSILE_TOWER_SCN   := preload("res://scene/tower/missile_tower.tscn")
 const MISSILE_TOWER_PRICE := 300
 const BARRACKS_TOWER_SCN  := preload("res://scene/tower/barracks_tower.tscn")
 const BARRACKS_TOWER_PRICE := 50
+
+# =========================================================
+#                OPTIONS MENU (pause / music / speed)
+# =========================================================
+@export var option_btn_path: NodePath = NodePath("HBoxContainer2/optionBtn")
+@export var options_panel_path: NodePath = NodePath("TextureRect")
+
+@export var play_btn_path: NodePath = NodePath("TextureRect/playBtn") # reprendre
+@export var exit_btn_path: NodePath = NodePath("TextureRect/exitBtn") # menu principal
+
+@export var music_btn_path: NodePath = NodePath("TextureRect/musicBtn")
+@export var speed_x1_btn_path: NodePath = NodePath("TextureRect/speedX1Btn")
+@export var speed_x2_btn_path: NodePath = NodePath("TextureRect/speedX2Btn")
+@export var speed_x4_btn_path: NodePath = NodePath("TextureRect/speedX4Btn")
+
+@export_file("*.tscn") var main_menu_scene_path: String = "res://scene/MainMenu.tscn"
+
+# Textures "vide / plein" pour tes toggles (à assigner dans l'inspecteur)
+@export var toggle_empty_tex: Texture2D
+@export var toggle_full_tex: Texture2D
+
+# Feeling anim panneau
+@export_range(0.05, 1.0, 0.01) var options_open_duration: float = 0.22
+@export_range(0.05, 1.0, 0.01) var options_close_duration: float = 0.18
+@export var options_slide_px: float = 40.0
+
+@onready var option_btn: BaseButton = get_node_or_null(option_btn_path)
+@onready var options_panel: Control = get_node_or_null(options_panel_path)
+
+@onready var play_btn: BaseButton = get_node_or_null(play_btn_path)
+@onready var exit_btn: BaseButton = get_node_or_null(exit_btn_path)
+
+@onready var music_btn: TextureButton = get_node_or_null(music_btn_path) as TextureButton
+@onready var speed_x1_btn: TextureButton = get_node_or_null(speed_x1_btn_path) as TextureButton
+@onready var speed_x2_btn: TextureButton = get_node_or_null(speed_x2_btn_path) as TextureButton
+@onready var speed_x4_btn: TextureButton = get_node_or_null(speed_x4_btn_path) as TextureButton
+
+var _options_open := false
+var _panel_open_pos := Vector2.ZERO
+var _panel_closed_pos := Vector2.ZERO
+
+# état actuel (réel)
+var _music_on := true
+var _speed_mult := 1.0
+
+# Réf vers la musique de la scène (autoplay)
+var _music_player: AudioStreamPlayer = null
 
 
 func _ready() -> void:
@@ -250,6 +299,11 @@ func _ready() -> void:
 	# ✅ Mode non-tuto : on ré-ouvre selon Game (uniquement si export true)
 	if auto_unlock_from_game:
 		_apply_unlocks_from_game()
+
+	# =========================
+	# Options menu : init (pause/music/speed)
+	# =========================
+	_init_options_menu()
 
 	set_process(true)
 
@@ -435,6 +489,11 @@ func _on_next_wave_pressed() -> void:
 #                   Pouvoirs
 # =========================================================
 func _process(_delta: float) -> void:
+	# ✅ IMPORTANT : quand le menu options est ouvert, le gameplay est en pause.
+	# On évite de mettre à jour les cooldowns UI en boucle.
+	if get_tree().paused:
+		return
+
 	if freeze_btn and freeze_label:
 		_update_freeze_button_ui()
 
@@ -641,3 +700,274 @@ func _update_freeze_button_ui() -> void:
 			else:
 				lines.append("Gel %d" % [i + 1])
 		freeze_label.text = "\n".join(lines)
+
+
+# =========================================================
+#           OPTIONS MENU : implémentation réelle
+# =========================================================
+func _init_options_menu() -> void:
+	# Le HUD doit continuer à recevoir les clics même si get_tree().paused = true
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	# Panneau
+	if options_panel:
+		_panel_open_pos = options_panel.position
+		_panel_closed_pos = _panel_open_pos + Vector2(0, options_slide_px)
+		options_panel.visible = false
+		options_panel.position = _panel_closed_pos
+
+		# IMPORTANT : éviter que les Labels/TextureRect décoratifs mangent les clics
+		_options_fix_mouse_filters()
+
+		# Les UI doivent tourner pendant pause
+		_set_process_mode_recursive(options_panel, Node.PROCESS_MODE_ALWAYS)
+	else:
+		push_warning("[HUD/OPTIONS] options_panel introuvable (options_panel_path)")
+
+	# Bouton ouverture
+	if option_btn:
+		option_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not option_btn.pressed.is_connected(_on_option_pressed):
+			option_btn.pressed.connect(_on_option_pressed)
+	else:
+		push_warning("[HUD/OPTIONS] optionBtn introuvable (option_btn_path)")
+
+	# Reprendre
+	if play_btn:
+		play_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not play_btn.pressed.is_connected(_on_options_play_pressed):
+			play_btn.pressed.connect(_on_options_play_pressed)
+	else:
+		push_warning("[HUD/OPTIONS] playBtn introuvable (play_btn_path)")
+
+	# Quitter
+	if exit_btn:
+		exit_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not exit_btn.pressed.is_connected(_on_options_exit_pressed):
+			exit_btn.pressed.connect(_on_options_exit_pressed)
+	else:
+		push_warning("[HUD/OPTIONS] exitBtn introuvable (exit_btn_path)")
+
+	# Toggle musique
+	if music_btn:
+		music_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not music_btn.pressed.is_connected(_on_music_toggle_pressed):
+			music_btn.pressed.connect(_on_music_toggle_pressed)
+	else:
+		push_warning("[HUD/OPTIONS] musicBtn introuvable (music_btn_path)")
+
+	# Toggles vitesse
+	if speed_x1_btn:
+		speed_x1_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not speed_x1_btn.pressed.is_connected(_on_speed_x1_pressed):
+			speed_x1_btn.pressed.connect(_on_speed_x1_pressed)
+
+	if speed_x2_btn:
+		speed_x2_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not speed_x2_btn.pressed.is_connected(_on_speed_x2_pressed):
+			speed_x2_btn.pressed.connect(_on_speed_x2_pressed)
+
+	if speed_x4_btn:
+		speed_x4_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not speed_x4_btn.pressed.is_connected(_on_speed_x4_pressed):
+			speed_x4_btn.pressed.connect(_on_speed_x4_pressed)
+
+	# ✅ Trouver la musique + la laisser active pendant pause
+	_music_player = _find_music_player()
+	if _music_player:
+		_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+		_music_player.stream_paused = false
+	else:
+		push_warning("[HUD/OPTIONS] Aucun AudioStreamPlayer trouvé (music toggle visuel OK, mais pas d'effet).")
+
+	# Sync initial réel
+	_music_on = true
+	# si tu passes au mode BUS, tu peux lire l’état du bus ici, sinon laisse true
+
+	# vitesse initiale
+	_speed_mult = Engine.time_scale
+	if _speed_mult <= 0.0:
+		_speed_mult = 1.0
+		Engine.time_scale = 1.0
+
+	_refresh_options_toggles()
+
+
+func _on_option_pressed() -> void:
+	if _options_open:
+		_close_options()
+	else:
+		_open_options()
+
+
+func _open_options() -> void:
+	_options_open = true
+
+	# Pause réelle
+	get_tree().paused = true
+
+	# Anim panneau (tween doit tourner en pause)
+	if options_panel:
+		options_panel.visible = true
+		options_panel.position = _panel_closed_pos
+
+		var tw := create_tween()
+		tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		tw.set_trans(Tween.TRANS_SINE)
+		tw.set_ease(Tween.EASE_OUT)
+		tw.tween_property(options_panel, "position", _panel_open_pos, options_open_duration)
+
+
+func _close_options() -> void:
+	_options_open = false
+
+	# Anim fermeture (tween en pause)
+	if options_panel:
+		var tw := create_tween()
+		tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		tw.set_trans(Tween.TRANS_SINE)
+		tw.set_ease(Tween.EASE_IN)
+		tw.tween_property(options_panel, "position", _panel_closed_pos, options_close_duration)
+		tw.finished.connect(func():
+			if options_panel:
+				options_panel.visible = false
+		)
+
+	# Unpause
+	get_tree().paused = false
+
+
+func _on_options_play_pressed() -> void:
+	_close_options()
+
+
+func _on_options_exit_pressed() -> void:
+	# On ferme proprement avant de changer de scène
+	get_tree().paused = false
+	Engine.time_scale = 1.0
+
+	if main_menu_scene_path != "":
+		get_tree().call_deferred("change_scene_to_file", main_menu_scene_path)
+	else:
+		push_warning("[HUD/OPTIONS] main_menu_scene_path est vide.")
+
+
+func _on_music_toggle_pressed() -> void:
+	_music_on = not _music_on
+	_apply_music_state()
+	_refresh_options_toggles()
+
+
+var _music_volume_db_before_mute := 0.0
+
+func _apply_music_state() -> void:
+	var idx := AudioServer.get_bus_index(music_bus_name)
+	if idx == -1:
+		# fallback si tu n’as pas de bus "Music"
+		idx = AudioServer.get_bus_index(&"Master")
+	if idx == -1:
+		return
+
+	AudioServer.set_bus_mute(idx, not _music_on)
+
+	# On mémorise le volume actuel la première fois qu'on mute
+	if not _music_on:
+		_music_volume_db_before_mute = _music_player.volume_db
+		_music_player.volume_db = -80.0
+	else:
+		_music_player.volume_db = _music_volume_db_before_mute
+
+
+func _set_speed_multiplier(mult: float) -> void:
+	_speed_mult = mult
+	Engine.time_scale = mult
+	_refresh_options_toggles()
+
+
+func _refresh_options_toggles() -> void:
+	_set_toggle_texture(music_btn, _music_on)
+	_set_toggle_texture(speed_x1_btn, is_equal_approx(_speed_mult, 1.0))
+	_set_toggle_texture(speed_x2_btn, is_equal_approx(_speed_mult, 2.0))
+	_set_toggle_texture(speed_x4_btn, is_equal_approx(_speed_mult, 4.0))
+
+
+func _set_toggle_texture(btn: TextureButton, on: bool) -> void:
+	if btn == null:
+		return
+	if toggle_empty_tex == null or toggle_full_tex == null:
+		# On ne casse pas le jeu si tu n'as pas encore assigné les textures.
+		return
+
+	var tex := toggle_full_tex if on else toggle_empty_tex
+	btn.texture_normal = tex
+	btn.texture_pressed = tex
+	btn.texture_hover = tex
+	btn.texture_disabled = tex
+
+
+func _find_music_player() -> AudioStreamPlayer:
+	# 1) On cherche un player qui autoplay (heuristique : playing dès le start)
+	# 2) Sinon on prend le premier AudioStreamPlayer trouvé
+	var candidates: Array[AudioStreamPlayer] = []
+
+	var root := get_tree().current_scene
+	if root == null:
+		return null
+
+	_collect_audio_players(root, candidates)
+	if candidates.is_empty():
+		return null
+
+	# Priorité : celui qui joue déjà
+	for p in candidates:
+		if is_instance_valid(p) and p.playing:
+			return p
+
+	# Sinon le premier
+	return candidates[0]
+
+
+func _collect_audio_players(n: Node, out: Array[AudioStreamPlayer]) -> void:
+	if n is AudioStreamPlayer:
+		out.append(n as AudioStreamPlayer)
+	for c in n.get_children():
+		_collect_audio_players(c, out)
+
+func _set_process_mode_recursive(n: Node, mode: int) -> void:
+	if n == null: return
+	n.process_mode = mode
+	for c in n.get_children():
+		_set_process_mode_recursive(c, mode)
+
+
+func _options_fix_mouse_filters() -> void:
+	if options_panel == null:
+		return
+
+	# Le panel bloque les clics vers le jeu derrière
+	options_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	# Mais tous les éléments décoratifs (Labels, TextureRect, etc) doivent IGNORER la souris
+	_fix_mouse_filter_recursive(options_panel)
+	
+
+func _fix_mouse_filter_recursive(n: Node) -> void:
+	for c in n.get_children():
+		if c is Control:
+			# On laisse les vrais boutons actifs
+			if c is BaseButton:
+				(c as Control).mouse_filter = Control.MOUSE_FILTER_STOP
+			else:
+				(c as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+		_fix_mouse_filter_recursive(c)
+		
+		
+func _on_speed_x1_pressed() -> void:
+	_set_speed_multiplier(1.0)
+
+func _on_speed_x2_pressed() -> void:
+	_set_speed_multiplier(2.0)
+
+func _on_speed_x4_pressed() -> void:
+	_set_speed_multiplier(4.0)

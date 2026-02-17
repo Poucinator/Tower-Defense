@@ -1,8 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://bu8ql60gnhsad"]
+[gd_scene load_steps=22 format=3 uid="uid://bu8ql60gnhsad"]
 
 [ext_resource type="Script" uid="uid://bue551sw22h6u" path="res://ui/hud.gd" id="1_5nt5s"]
+[ext_resource type="Texture2D" uid="uid://002rgfxpwph7" path="res://ui/options/toggle_empty.png" id="2_avywa"]
 [ext_resource type="Texture2D" uid="uid://dvue8ktplr8if" path="res://scene/ui/Victory Overlay/258.png" id="2_s4g46"]
 [ext_resource type="Texture2D" uid="uid://cfwmueuhjl0e" path="res://scene/ui/Victory Overlay/256.png" id="3_7w78f"]
+[ext_resource type="Texture2D" uid="uid://bcgihrlabu0cd" path="res://ui/options/toggle_full.png" id="3_n7qh4"]
 [ext_resource type="Texture2D" uid="uid://bpljadse7l2fm" path="res://Sprite/New Tower/Turrets_g2.png" id="4_yx4hk"]
 [ext_resource type="Texture2D" uid="uid://0x02fxs4iccg" path="res://scene/Barrack/_Untitled_design-removebg-preview.png" id="4_yxe7t"]
 [ext_resource type="Texture2D" uid="uid://b06sbfyfa2yi8" path="res://scene/Snipe_tower/Turrets_g9.png" id="5_yx4hk"]
@@ -12,6 +14,11 @@
 [ext_resource type="Texture2D" uid="uid://duo6gib8jg3fc" path="res://ui/ChatGPT_Image_27_oct._2025__19_01_01-removebg-preview.png" id="9_s4g46"]
 [ext_resource type="Texture2D" uid="uid://dql11b26r0cf1" path="res://ui/ChatGPT_Image_27_oct._2025__18_58_26-removebg-preview.png" id="10_7w78f"]
 [ext_resource type="Texture2D" uid="uid://sqg2285mbqw6" path="res://scene/ui/Victory Overlay/259.png" id="12_s4g46"]
+[ext_resource type="Texture2D" uid="uid://di5nmba1sfait" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (7).png" id="13_7w78f"]
+[ext_resource type="Texture2D" uid="uid://bc5e4mvmlec5c" path="res://scene/ui/MainMenu/12.png" id="14_m6auw"]
+[ext_resource type="Texture2D" uid="uid://wogcj2as5m8s" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (9).png" id="15_ou5w8"]
+[ext_resource type="Texture2D" uid="uid://bojhsn8i3v8j1" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (10).png" id="16_avywa"]
+[ext_resource type="Texture2D" uid="uid://drw2temntf7lr" path="res://scene/ui/Victory Overlay/269.png" id="17_n7qh4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldol0"]
 bg_color = Color(0.289058, 0.679883, 0.586034, 1)
@@ -41,6 +48,8 @@ shadow_size = 9
 
 [node name="CanvasLayer" type="CanvasLayer"]
 script = ExtResource("1_5nt5s")
+toggle_empty_tex = ExtResource("2_avywa")
+toggle_full_tex = ExtResource("3_n7qh4")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_right = 607.0
@@ -199,13 +208,14 @@ layout_mode = 2
 texture_normal = ExtResource("9_0twk8")
 
 [node name="CrystalPanel" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -40.0
-offset_bottom = 40.0
+offset_left = -254.0
+offset_top = 23.0
+offset_right = -214.0
+offset_bottom = 63.0
 grow_horizontal = 0
 pivot_offset = Vector2(-220, 10)
 
@@ -226,3 +236,120 @@ expand_mode = 2
 
 [node name="CrystalTimer" type="Timer" parent="."]
 wait_time = 5.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+offset_left = 1752.0
+offset_top = -3.0
+offset_right = 1920.0
+offset_bottom = 172.0
+
+[node name="optionBtn" type="TextureButton" parent="HBoxContainer2"]
+layout_mode = 2
+texture_normal = ExtResource("13_7w78f")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = 278.0
+offset_top = 115.0
+offset_right = 1584.0
+offset_bottom = 934.0
+texture = ExtResource("14_m6auw")
+
+[node name="pauselogo" type="Sprite2D" parent="TextureRect"]
+z_index = 5
+position = Vector2(1083, 161)
+scale = Vector2(0.394943, 0.341304)
+texture = ExtResource("15_ou5w8")
+
+[node name="playBtn" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 1002.0
+offset_top = 548.0
+offset_right = 1169.0
+offset_bottom = 723.0
+texture_normal = ExtResource("16_avywa")
+ignore_texture_size = true
+
+[node name="exitBtn" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 146.0
+offset_top = 554.0
+offset_right = 315.0
+offset_bottom = 729.0
+texture_normal = ExtResource("17_n7qh4")
+ignore_texture_size = true
+
+[node name="musicBtn" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 225.0
+offset_top = 200.0
+offset_right = 315.0
+offset_bottom = 290.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Music" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 200.0
+offset_right = 620.0
+offset_bottom = 223.0
+text = "Activer / Désactiver la musique"
+
+[node name="X1" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 400.0
+offset_right = 420.0
+offset_bottom = 423.0
+text = "X1"
+
+[node name="speedX1Btn" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 225.0
+offset_top = 400.0
+offset_right = 315.0
+offset_bottom = 490.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="X2" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 759.0
+offset_top = 400.0
+offset_right = 799.0
+offset_bottom = 423.0
+text = "X2"
+
+[node name="speedX2Btn" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 609.0
+offset_top = 400.0
+offset_right = 699.0
+offset_bottom = 490.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="X4" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 1069.0
+offset_top = 400.0
+offset_right = 1109.0
+offset_bottom = 423.0
+text = "X4"
+
+[node name="speedX4Btn" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 925.0
+offset_top = 400.0
+offset_right = 1015.0
+offset_bottom = 490.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="gamespeed" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 603.0
+offset_top = 305.0
+offset_right = 710.0
+offset_bottom = 328.0
+text = "Vitesse de jeu"

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1g3bq5wb57oy"
-path="res://.godot/imported/222.png-d4068fd9ef197e4ba63af8590d5c40ff.ctex"
+uid="uid://bcgihrlabu0cd"
+path="res://.godot/imported/toggle_full.png-905abbe111a981db115ca247933f2211.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scene/ui/Victory Overlay/222.png"
-dest_files=["res://.godot/imported/222.png-d4068fd9ef197e4ba63af8590d5c40ff.ctex"]
+source_file="res://ui/options/toggle_full.png"
+dest_files=["res://.godot/imported/toggle_full.png-905abbe111a981db115ca247933f2211.ctex"]
 
 [params]
 
@@ -30,5 +30,5 @@ process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
-process/size_limit=70
+process/size_limit=150
 detect_3d/compress_to=1

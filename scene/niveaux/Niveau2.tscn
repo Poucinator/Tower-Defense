@@ -3513,6 +3513,8 @@ auto_unlock_from_game = true
 power_controller_path = NodePath("../power_controller")
 build_controller_path = NodePath("../BuildController")
 spawner_path = NodePath("../WaveSequence_1/PathSpawnerMultiLVL1")
+options_open_duration = 0.33
+options_close_duration = 0.38
 
 [node name="weatherLayer" type="CanvasLayer" parent="."]
 layer = 19

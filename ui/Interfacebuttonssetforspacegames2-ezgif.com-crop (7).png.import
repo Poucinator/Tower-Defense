@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1g3bq5wb57oy"
-path="res://.godot/imported/222.png-d4068fd9ef197e4ba63af8590d5c40ff.ctex"
+uid="uid://di5nmba1sfait"
+path="res://.godot/imported/Interfacebuttonssetforspacegames2-ezgif.com-crop (7).png-d22de214147a454ac29a38fcc6537f20.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scene/ui/Victory Overlay/222.png"
-dest_files=["res://.godot/imported/222.png-d4068fd9ef197e4ba63af8590d5c40ff.ctex"]
+source_file="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (7).png"
+dest_files=["res://.godot/imported/Interfacebuttonssetforspacegames2-ezgif.com-crop (7).png-d22de214147a454ac29a38fcc6537f20.ctex"]
 
 [params]
 
@@ -30,5 +30,5 @@ process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
-process/size_limit=70
+process/size_limit=175
 detect_3d/compress_to=1
