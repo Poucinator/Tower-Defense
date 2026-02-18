@@ -1,8 +1,9 @@
-[gd_scene load_steps=33 format=3 uid="uid://dhon22w0it0a5"]
+[gd_scene load_steps=34 format=3 uid="uid://dhon22w0it0a5"]
 
 [ext_resource type="Texture2D" uid="uid://b8qud6r0nav8u" path="res://units/Sprites/MK1/attack/marine 1 pistol_shoot_0.png" id="1_ccb1j"]
 [ext_resource type="Script" uid="uid://vb14fhah0dek" path="res://units/marine.gd" id="1_rtuoj"]
 [ext_resource type="Texture2D" uid="uid://xjmt0uqgpcaw" path="res://units/Sprites/MK1/attack/marine 1 pistol_shoot_1.png" id="2_rtuoj"]
+[ext_resource type="Resource" uid="uid://duqf1sf74r37h" path="res://data/voice/mk1_voice.tres" id="2_y70m1"]
 [ext_resource type="Texture2D" uid="uid://bvvno7lyjrv4s" path="res://units/Sprites/MK1/dead/marine 1 pistol_dead_0.png" id="3_d24tk"]
 [ext_resource type="Texture2D" uid="uid://wrqp2eumcyrs" path="res://units/Sprites/MK1/dead/marine 1 pistol_dead_1.png" id="4_leiwa"]
 [ext_resource type="Texture2D" uid="uid://mt701danfxme" path="res://units/Sprites/MK1/dead/marine 1 pistol_dead_2.png" id="5_y70m1"]
@@ -157,6 +158,8 @@ radius = 21.095
 
 [node name="Marine" type="Node2D" groups=["Marine"]]
 script = ExtResource("1_rtuoj")
+voice_bank = ExtResource("2_y70m1")
+speech_label_global_path = NodePath("SpeechLabel")
 max_hp = 120
 attack_damage = 3
 
@@ -192,3 +195,10 @@ frame_progress = 0.8322
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_leiwa")
+
+[node name="SpeechLabel" type="Label" parent="."]
+z_index = 20
+offset_left = -74.0
+offset_top = -94.0
+offset_right = 74.0
+offset_bottom = -71.0

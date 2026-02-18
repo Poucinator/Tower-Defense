@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MarineVoiceBank" load_steps=2 format=3 uid="uid://duqf1sf74r37h"]
+
+[ext_resource type="Script" uid="uid://k6pg5m2ng5pc" path="res://data/voice/marine_voice_bank.gd" id="1_hpolu"]
+
+[resource]
+script = ExtResource("1_hpolu")
+select_lines = Array[String](["On va ou, chef ? ", "Oui chef ? ", "Agent colonial, au rapport", "Police coloniale, j'écoute", "Chef ? "])
+move_lines = Array[String](["Ok j'y vais ", "On y va, les gars ! ", "On va les chopper, ces bestioles"])
+spam_select_lines = Array[String](["Ils sont dans nos villes ! ", "Ils sont dans nos campagnes ! ", "Alors que c'est notre planète !", "N'est ce pas ? ", "Ou trouvent t il toute cette énergie ? "])
+display_duration = 3.0
+y_offset = -28.0

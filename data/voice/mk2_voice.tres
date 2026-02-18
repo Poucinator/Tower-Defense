@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MarineVoiceBank" load_steps=2 format=3 uid="uid://d062hf7p0r3wn"]
+
+[ext_resource type="Script" uid="uid://k6pg5m2ng5pc" path="res://data/voice/marine_voice_bank.gd" id="1_ujuvo"]
+
+[resource]
+script = ExtResource("1_ujuvo")
+select_lines = Array[String](["Officier, à votre écoute", "Officier colonial, j'écoute", "Oui commissaire ? ", "Je vous écoute commissaire", "Officier de police coloniale, à vos ordres"])
+move_lines = Array[String](["C'est parti ! ", "On va se les faire ", "Oui commissaire", "Pour la compagnie !", "On va nettoyer ça "])
+spam_select_lines = Array[String](["Les aliens, quand il y en a un, ça va...", "Si on ajoute le bruit et les odeurs...", "Je dis pas, il y en a des biens", "J'ai un cousin Alien !", "Un détail de l'histoire"])
+display_duration = 3.0
+y_offset = -28.0

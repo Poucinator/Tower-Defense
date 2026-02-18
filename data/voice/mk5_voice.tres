@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MarineVoiceBank" load_steps=2 format=3 uid="uid://dlhkp32vi6l1"]
+
+[ext_resource type="Script" uid="uid://k6pg5m2ng5pc" path="res://data/voice/marine_voice_bank.gd" id="1_eksar"]
+
+[resource]
+script = ExtResource("1_eksar")
+select_lines = Array[String](["Contrôle des papiers ", "Officier colonial, j'écoute", "Des migrants aliens dans le coin ? ", "Pas super légale comme tête !", "Ils sont à vous, tout ces petits aliens ? "])
+move_lines = Array[String](["C'est parti ! ", "On va se les faire ", "Oui commissaire", "Pour la compagnie !", "On va nettoyer ça "])
+spam_select_lines = Array[String](["On va passer ça au karcher !", "Si on ajoute le bruit et les odeurs...", "Quand il y en a un, ça va...", "Je dis pas, il y en a des biens", "J'ai un cousin Alien !"])
+display_duration = 3.0
+y_offset = -28.0

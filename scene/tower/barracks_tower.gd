@@ -49,6 +49,7 @@ var selected: bool = false
 # --- Feedback visuel ---
 var select_circle: ColorRect
 
+var _selected_marine: Node = null
 # --- Menu ---
 @export var click_cooldown_ms := 180
 var _click_ready_at_ms := 0
@@ -173,29 +174,52 @@ func set_rally_position(world_pos: Vector2) -> void:
 
 	rally.global_position = pos
 
+	# ===========================
+	#  VOICE : ordre de déplacement
+	#  -> un seul marine parle (celui cliqué en dernier)
+	# ===========================
+	if _selected_marine and is_instance_valid(_selected_marine) and _marines.has(_selected_marine):
+		if _selected_marine.has_method("play_move_line"):
+			_selected_marine.play_move_line()
+
+	# ===========================
+	#  Déplacement du groupe
+	# ===========================
 	for m in _marines:
-		if m and is_instance_valid(m):
-			var offset: Vector2 = m.slot_offset
-			var target: Vector2 = rally.global_position + offset
+		if m == null or not is_instance_valid(m):
+			continue
 
-			m.is_moving = true
-			if m.has_node("AnimatedSprite2D"):
-				var anim = m.get_node("AnimatedSprite2D")
-				anim.flip_h = target.x < m.global_position.x
-				anim.play("walk")
+		# ✅ Important : caster en Node2D (sinon global_position est "unknown")
+		var m2 := m as Node2D
+		if m2 == null:
+			continue
 
-			var dist = m.global_position.distance_to(target)
-			var duration = dist / move_speed
-			var tw := create_tween()
-			tw.tween_property(m, "global_position", target, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-			tw.finished.connect(func ():
-				if m and is_instance_valid(m):
-					m.is_moving = false
-					if m.has_node("AnimatedSprite2D"):
-						var anim = m.get_node("AnimatedSprite2D")
-						anim.play("idle")
-			)
+		var offset: Vector2 = m2.slot_offset
+		var target: Vector2 = rally.global_position + offset
 
+		m2.is_moving = true
+		if m2.has_node("AnimatedSprite2D"):
+			var a: AnimatedSprite2D = m2.get_node("AnimatedSprite2D")
+			a.flip_h = target.x < m2.global_position.x
+			a.play("walk")
+
+		var dist: float = m2.global_position.distance_to(target)
+		var duration: float = dist / float(move_speed)
+
+		var tw := create_tween()
+		tw.tween_property(m2, "global_position", target, duration)\
+			.set_trans(Tween.TRANS_SINE)\
+			.set_ease(Tween.EASE_IN_OUT)
+
+		# (Optionnel) closure safe : capture une ref locale
+		var m_ref := m2
+		tw.finished.connect(func():
+			if m_ref and is_instance_valid(m_ref):
+				m_ref.is_moving = false
+				if m_ref.has_node("AnimatedSprite2D"):
+					var a2: AnimatedSprite2D = m_ref.get_node("AnimatedSprite2D")
+					a2.play("idle")
+		)
 
 # ========================
 #   Respawn system
@@ -246,16 +270,22 @@ func _unhandled_input(event: InputEvent) -> void:
 # ========================
 #   SELECTION VISUELLE
 # ========================
-func select_group() -> void:
+func select_group(clicked_marine: Node = null) -> void:
 	for b in get_tree().get_nodes_in_group("Barracks"):
 		if b != self:
 			b.deselect_group()
+
 	selected = true
 	select_circle.visible = true
 
+	# ✅ On mémorise le marine cliqué pour les "move lines"
+	if clicked_marine and is_instance_valid(clicked_marine):
+		_selected_marine = clicked_marine
+		
 func deselect_group() -> void:
 	selected = false
 	select_circle.visible = false
+	_selected_marine = null
 
 
 func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:

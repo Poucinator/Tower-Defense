@@ -157,6 +157,7 @@ radius = 19.0263
 
 [node name="Marine" type="Node2D" groups=["Marine"]]
 script = ExtResource("1_oayb5")
+speech_label_global_path = NodePath("SpeechLabel")
 max_hp = 500
 attack_damage = 20
 regen_per_sec = 10.0
@@ -194,3 +195,10 @@ frame_progress = 0.857706
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_5vis3")
+
+[node name="SpeechLabel" type="Label" parent="."]
+z_index = 20
+offset_left = -73.0
+offset_top = -100.0
+offset_right = 75.0
+offset_bottom = -77.0

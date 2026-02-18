@@ -195,3 +195,10 @@ frame_progress = 0.000520002
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_x188j")
+
+[node name="SpeechLabel" type="Label" parent="."]
+z_index = 20
+offset_left = -74.0
+offset_top = -105.0
+offset_right = 74.0
+offset_bottom = -82.0

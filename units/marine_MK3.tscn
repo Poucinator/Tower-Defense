@@ -1,6 +1,7 @@
-[gd_scene load_steps=33 format=3 uid="uid://boh5s28fkmwle"]
+[gd_scene load_steps=34 format=3 uid="uid://boh5s28fkmwle"]
 
 [ext_resource type="Script" uid="uid://vb14fhah0dek" path="res://units/marine.gd" id="1_x188j"]
+[ext_resource type="Resource" uid="uid://dhoxcg3g7d4na" path="res://data/voice/mk3_voice.tres" id="2_mjcwq"]
 [ext_resource type="Texture2D" uid="uid://cdpa7d30msaam" path="res://units/Sprites/MK3/attack/marine 2 rifle_shoot_0.png" id="2_x188j"]
 [ext_resource type="Texture2D" uid="uid://bg67qjkwjd7d4" path="res://units/Sprites/MK3/attack/marine 2 rifle_shoot_1.png" id="3_mjcwq"]
 [ext_resource type="Texture2D" uid="uid://bbodv8eohxc4" path="res://units/Sprites/MK3/dead/marine 2 rifle_dead_0.png" id="4_yjpb0"]
@@ -157,6 +158,8 @@ radius = 19.0263
 
 [node name="Marine" type="Node2D" groups=["Marine"]]
 script = ExtResource("1_x188j")
+voice_bank = ExtResource("2_mjcwq")
+speech_label_global_path = NodePath("SpeechLabel")
 max_hp = 150
 attack_damage = 5
 attack_interval = 0.3
@@ -194,3 +197,10 @@ frame_progress = 0.122719
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_5vis3")
+
+[node name="SpeechLabel" type="Label" parent="."]
+z_index = 20
+offset_left = -74.0
+offset_top = -98.0
+offset_right = 74.0
+offset_bottom = -75.0
