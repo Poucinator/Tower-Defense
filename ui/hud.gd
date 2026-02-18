@@ -1,3 +1,4 @@
+# res://ui/hud/HUD.gd
 extends CanvasLayer
 
 const DBG_CRYSTAL := true
@@ -7,6 +8,10 @@ const DBG_CRYSTAL := true
 # =========================================================
 @export var auto_unlock_from_game: bool = false
 @export var show_crystal_panel_on_start: bool = false
+
+@export var confirm_overlay_path: NodePath = NodePath("ConfirmOverlay")
+@export var confirm_btn_path: NodePath = NodePath("ConfirmOverlay/ConfirmBtn")
+@export var cancel_btn_path: NodePath = NodePath("ConfirmOverlay/CancelBtn")
 
 # --- Références UI (haut) ---
 @onready var gold_label:       Label          = $"HBoxContainer/GoldLabel"
@@ -35,6 +40,12 @@ const DBG_CRYSTAL := true
 # --- Barre droite : Vente ---
 @onready var sell_btn:     BaseButton = $"RightBar/SellBtn"
 
+@onready var confirm_overlay: Control = get_node_or_null(confirm_overlay_path) as Control
+@onready var confirm_btn: BaseButton = get_node_or_null(confirm_btn_path)
+@onready var cancel_btn: BaseButton = get_node_or_null(cancel_btn_path)
+
+var _confirm_open := false
+
 # --- Lien vers contrôleurs externes ---
 @export var power_controller_path: NodePath
 @export var build_controller_path: NodePath
@@ -62,14 +73,15 @@ var _director_cd_active := false
 var _director_cd_left   := 0.0
 
 # --- Scènes & prix ---
-const BLUE_TOWER_SCN      := preload("res://scene/tower/blue_tower.tscn")
-const BLUE_TOWER_PRICE    := 100
-const SNIPE_TOWER_SCN     := preload("res://scene/tower/snipe_tower.tscn")
-const SNIPE_TOWER_PRICE   := 200
-const MISSILE_TOWER_SCN   := preload("res://scene/tower/missile_tower.tscn")
-const MISSILE_TOWER_PRICE := 300
-const BARRACKS_TOWER_SCN  := preload("res://scene/tower/barracks_tower.tscn")
+const BLUE_TOWER_SCN       := preload("res://scene/tower/blue_tower.tscn")
+const BLUE_TOWER_PRICE     := 100
+const SNIPE_TOWER_SCN      := preload("res://scene/tower/snipe_tower.tscn")
+const SNIPE_TOWER_PRICE    := 200
+const MISSILE_TOWER_SCN    := preload("res://scene/tower/missile_tower.tscn")
+const MISSILE_TOWER_PRICE  := 300
+const BARRACKS_TOWER_SCN   := preload("res://scene/tower/barracks_tower.tscn")
 const BARRACKS_TOWER_PRICE := 50
+
 
 # =========================================================
 #                OPTIONS MENU (pause / music / speed)
@@ -108,6 +120,7 @@ const BARRACKS_TOWER_PRICE := 50
 @onready var speed_x4_btn: TextureButton = get_node_or_null(speed_x4_btn_path) as TextureButton
 
 var _options_open := false
+var _options_paused_by_options := false # ✅ NEW: pause "scopée" au menu options
 var _panel_open_pos := Vector2.ZERO
 var _panel_closed_pos := Vector2.ZERO
 
@@ -117,6 +130,8 @@ var _speed_mult := 1.0
 
 # Réf vers la musique de la scène (autoplay)
 var _music_player: AudioStreamPlayer = null
+
+var _music_volume_db_before_mute := 0.0
 
 
 func _ready() -> void:
@@ -709,7 +724,9 @@ func _init_options_menu() -> void:
 	# Le HUD doit continuer à recevoir les clics même si get_tree().paused = true
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
-	# Panneau
+	# =========================
+	# Panneau OPTIONS
+	# =========================
 	if options_panel:
 		_panel_open_pos = options_panel.position
 		_panel_closed_pos = _panel_open_pos + Vector2(0, options_slide_px)
@@ -724,7 +741,34 @@ func _init_options_menu() -> void:
 	else:
 		push_warning("[HUD/OPTIONS] options_panel introuvable (options_panel_path)")
 
+	# =========================
+	# Confirm overlay (sécurité exit)
+	# =========================
+	if confirm_overlay:
+		_confirm_open = false
+		confirm_overlay.visible = false
+		confirm_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+		_set_process_mode_recursive(confirm_overlay, Node.PROCESS_MODE_ALWAYS)
+	else:
+		push_warning("[HUD/OPTIONS] ConfirmOverlay introuvable (confirm_overlay_path)")
+
+	if confirm_btn:
+		confirm_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not confirm_btn.pressed.is_connected(_on_confirm_exit_pressed):
+			confirm_btn.pressed.connect(_on_confirm_exit_pressed)
+	else:
+		push_warning("[HUD/OPTIONS] ConfirmBtn introuvable (confirm_btn_path)")
+
+	if cancel_btn:
+		cancel_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not cancel_btn.pressed.is_connected(_on_confirm_cancel_pressed):
+			cancel_btn.pressed.connect(_on_confirm_cancel_pressed)
+	else:
+		push_warning("[HUD/OPTIONS] CancelBtn introuvable (cancel_btn_path)")
+
+	# =========================
 	# Bouton ouverture
+	# =========================
 	if option_btn:
 		option_btn.process_mode = Node.PROCESS_MODE_ALWAYS
 		if not option_btn.pressed.is_connected(_on_option_pressed):
@@ -782,7 +826,6 @@ func _init_options_menu() -> void:
 
 	# Sync initial réel
 	_music_on = true
-	# si tu passes au mode BUS, tu peux lire l’état du bus ici, sinon laisse true
 
 	# vitesse initiale
 	_speed_mult = Engine.time_scale
@@ -803,8 +846,12 @@ func _on_option_pressed() -> void:
 func _open_options() -> void:
 	_options_open = true
 
-	# Pause réelle
-	get_tree().paused = true
+	# ✅ Pause "scopée" : on ne met pause que si le jeu n'était pas déjà en pause
+	if not get_tree().paused:
+		get_tree().paused = true
+		_options_paused_by_options = true
+	else:
+		_options_paused_by_options = false
 
 	# Anim panneau (tween doit tourner en pause)
 	if options_panel:
@@ -833,23 +880,21 @@ func _close_options() -> void:
 				options_panel.visible = false
 		)
 
-	# Unpause
-	get_tree().paused = false
+	# ✅ On enlève la pause UNIQUEMENT si c'est le menu options qui l'avait mise
+	if _options_paused_by_options:
+		get_tree().paused = false
+	_options_paused_by_options = false
 
 
 func _on_options_play_pressed() -> void:
+	if _confirm_open:
+		_close_confirm_overlay()
+		return
 	_close_options()
 
 
 func _on_options_exit_pressed() -> void:
-	# On ferme proprement avant de changer de scène
-	get_tree().paused = false
-	Engine.time_scale = 1.0
-
-	if main_menu_scene_path != "":
-		get_tree().call_deferred("change_scene_to_file", main_menu_scene_path)
-	else:
-		push_warning("[HUD/OPTIONS] main_menu_scene_path est vide.")
+	_open_confirm_overlay()
 
 
 func _on_music_toggle_pressed() -> void:
@@ -857,8 +902,6 @@ func _on_music_toggle_pressed() -> void:
 	_apply_music_state()
 	_refresh_options_toggles()
 
-
-var _music_volume_db_before_mute := 0.0
 
 func _apply_music_state() -> void:
 	var idx := AudioServer.get_bus_index(music_bus_name)
@@ -870,12 +913,10 @@ func _apply_music_state() -> void:
 
 	AudioServer.set_bus_mute(idx, not _music_on)
 
-	# On mémorise le volume actuel la première fois qu'on mute
-	if not _music_on:
-		_music_volume_db_before_mute = _music_player.volume_db
-		_music_player.volume_db = -80.0
-	else:
-		_music_player.volume_db = _music_volume_db_before_mute
+	# Si tu as bien une piste dans le bus Music, ça suffit.
+	# (On ne touche pas au volume_db du player ici pour éviter des effets de bord.)
+	if _music_player == null or not is_instance_valid(_music_player):
+		return
 
 
 func _set_speed_multiplier(mult: float) -> void:
@@ -905,11 +946,23 @@ func _set_toggle_texture(btn: TextureButton, on: bool) -> void:
 	btn.texture_disabled = tex
 
 
-func _find_music_player() -> AudioStreamPlayer:
-	# 1) On cherche un player qui autoplay (heuristique : playing dès le start)
-	# 2) Sinon on prend le premier AudioStreamPlayer trouvé
-	var candidates: Array[AudioStreamPlayer] = []
+func force_close_options() -> void:
+	if _confirm_open:
+		_close_confirm_overlay()
 
+	if not _options_open:
+		return
+
+	_options_open = false
+	_options_paused_by_options = false
+
+	if options_panel:
+		options_panel.visible = false
+		options_panel.position = _panel_closed_pos
+
+
+func _find_music_player() -> AudioStreamPlayer:
+	var candidates: Array[AudioStreamPlayer] = []
 	var root := get_tree().current_scene
 	if root == null:
 		return null
@@ -923,7 +976,6 @@ func _find_music_player() -> AudioStreamPlayer:
 		if is_instance_valid(p) and p.playing:
 			return p
 
-	# Sinon le premier
 	return candidates[0]
 
 
@@ -932,6 +984,7 @@ func _collect_audio_players(n: Node, out: Array[AudioStreamPlayer]) -> void:
 		out.append(n as AudioStreamPlayer)
 	for c in n.get_children():
 		_collect_audio_players(c, out)
+
 
 func _set_process_mode_recursive(n: Node, mode: int) -> void:
 	if n == null: return
@@ -949,20 +1002,18 @@ func _options_fix_mouse_filters() -> void:
 
 	# Mais tous les éléments décoratifs (Labels, TextureRect, etc) doivent IGNORER la souris
 	_fix_mouse_filter_recursive(options_panel)
-	
+
 
 func _fix_mouse_filter_recursive(n: Node) -> void:
 	for c in n.get_children():
 		if c is Control:
-			# On laisse les vrais boutons actifs
 			if c is BaseButton:
 				(c as Control).mouse_filter = Control.MOUSE_FILTER_STOP
 			else:
 				(c as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
-
 		_fix_mouse_filter_recursive(c)
-		
-		
+
+
 func _on_speed_x1_pressed() -> void:
 	_set_speed_multiplier(1.0)
 
@@ -971,3 +1022,36 @@ func _on_speed_x2_pressed() -> void:
 
 func _on_speed_x4_pressed() -> void:
 	_set_speed_multiplier(4.0)
+
+
+func _open_confirm_overlay() -> void:
+	_confirm_open = true
+	if confirm_overlay:
+		confirm_overlay.visible = true
+
+	# Optionnel : empêcher de cliquer sur les boutons options derrière
+	if options_panel:
+		options_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+
+
+func _close_confirm_overlay() -> void:
+	_confirm_open = false
+	if confirm_overlay:
+		confirm_overlay.visible = false
+
+
+func _on_confirm_cancel_pressed() -> void:
+	# On reste dans le menu options (pause inchangée)
+	_close_confirm_overlay()
+
+
+func _on_confirm_exit_pressed() -> void:
+	# ✅ On quitte vraiment vers le menu principal
+	# On enlève pause + reset vitesse (comme tu faisais)
+	get_tree().paused = false
+	Engine.time_scale = 1.0
+
+	if main_menu_scene_path != "":
+		get_tree().call_deferred("change_scene_to_file", main_menu_scene_path)
+	else:
+		push_warning("[HUD/OPTIONS] main_menu_scene_path est vide.")

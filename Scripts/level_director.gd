@@ -325,7 +325,7 @@ func _prepare_wave(index: int) -> void:
 	_unlock_progression(index)
 
 	while _inter_left > 0.0 and not _skip_inter_delay:
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1, false).timeout
 		_inter_left = max(_inter_left - 0.1, 0.0)
 		if hud and hud.has_method("director_countdown_tick"):
 			hud.call("director_countdown_tick", _inter_left)
@@ -467,7 +467,9 @@ func end_level_victory(crystals_earned: int) -> void:
 		return
 
 	_last_victory_crystals_earned = crystals_earned
-	get_tree().paused = true
+	# Pause "hard" de fin de partie (victoire/défaite)
+	if not get_tree().paused:
+		get_tree().paused = true
 
 	if victory_overlay_scene == null:
 		push_warning("[LD] victory_overlay_scene non assignée dans l'inspector.")
@@ -480,6 +482,11 @@ func end_level_victory(crystals_earned: int) -> void:
 	# Affichage du gain sur l'overlay
 	if _victory_ui.has_method("set_crystals"):
 		_victory_ui.call("set_crystals", crystals_earned)
+
+	# ✅ Si le menu options est ouvert, on le ferme (sans toucher à la pause)
+	if hud and hud.has_method("force_close_options"):
+		hud.call("force_close_options")
+
 
 	# Connexions boutons
 	if _victory_ui.has_signal("continue_pressed") and not _victory_ui.continue_pressed.is_connected(_on_victory_continue):
@@ -550,6 +557,10 @@ func end_level_defeat() -> void:
 	if _defeat_shown:
 		return
 	_defeat_shown = true
+
+# ✅ Si le menu options est ouvert, on le ferme (sans toucher à la pause)
+	if hud and hud.has_method("force_close_options"):
+		hud.call("force_close_options")
 
 	# ferme victoire si jamais (sécurité)
 	if _victory_ui and is_instance_valid(_victory_ui):

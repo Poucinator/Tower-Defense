@@ -4,4 +4,6 @@
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_5kiuu")
-dev_gold_bonus = 3000
+dev_bank_crystals_bonus = 50000
+dev_run_crystals_bonus = 50000
+dev_gold_bonus = 300000

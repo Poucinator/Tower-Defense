@@ -14,6 +14,24 @@ class_name LevelDirectorLevel2
 @export var camera_path: NodePath   # optionnel
 
 ## ==========================================================
+##                PHASE 2 (AUTO-DETECT)
+## ==========================================================
+# On garde ces exports pour compat, mais tu n'es PAS obligé de les remplir.
+@export var phase2_paths: Array[NodePath] = []
+@export var phase2_map_paths: Array[NodePath] = []
+
+@export var phase2_world_bottom: float = 1800.0
+@export var phase2_world_top: float = -200.0
+const PHASE2_SLOT_GROUP := "Phase2BuildSlot"
+
+# Heuristiques (sans inspector) : adapte si tu renommes tes nodes
+const _PHASE2_CONTENT_PREFIXES := ["Phase 2", "Phase2", "object_phase2"]
+const _PHASE2_MAP_EXACT_NAMES := ["niveau 5", "niveau5", "Niveau 5"]
+
+var _phase2_content_nodes: Array[Node] = []
+var _phase2_map_nodes: Array[Node] = []
+
+## ==========================================================
 ##                     VICTORY
 ## ==========================================================
 @export var victory_overlay_scene: PackedScene = preload("res://scene/Victory_Overlay.tscn")
@@ -43,7 +61,6 @@ var current_idx := -1
 var _skip_inter_delay := false
 var _inter_left := 0.0
 
-## Debug defeat (optionnel)
 const DBG_DEFEAT := true
 
 
@@ -54,17 +71,14 @@ func _ready() -> void:
 	add_to_group("LevelDirector")
 
 	# ✅ Appliquer l'or de départ acheté (upgrade start_gold)
-	# À faire AU DÉBUT, avant que le HUD lise Game.gold dans son _ready().
 	if Game and Game.has_method("reset_gold_to_start_value"):
 		Game.reset_gold_to_start_value()
 	else:
 		push_warning("[LD2] Game.reset_gold_to_start_value() introuvable (autoload Game ?)")
 
 	# ✅ Niveau 2 : par défaut, les tours doivent pouvoir aller jusqu'à MK2
-	# (l'achat labo sert uniquement à débloquer MK3 par type)
-	if Game:
-		if "max_tower_tier" in Game:
-			Game.max_tower_tier = maxi(int(Game.max_tower_tier), 2)
+	if Game and ("max_tower_tier" in Game):
+		Game.max_tower_tier = maxi(int(Game.max_tower_tier), 2)
 
 	# HUD
 	hud = get_node_or_null(hud_path)
@@ -76,6 +90,11 @@ func _ready() -> void:
 
 	# Caméra
 	_init_camera()
+
+	# ✅ Phase2 : resolve auto + hide au start (sans inspector)
+	_resolve_phase2_nodes()
+	_hide_phase2_nodes_on_start()
+	_hide_phase2_buildslots_on_start()
 
 	# Defeat hooks (robuste, late + node_added)
 	call_deferred("_connect_defeat_objectives_late")
@@ -91,7 +110,6 @@ func _ready() -> void:
 		call_deferred("_start_or_intro")
 
 
-
 func _init_camera() -> void:
 	if camera_path != NodePath(""):
 		camera = get_node_or_null(camera_path) as Camera2D
@@ -104,7 +122,6 @@ func _init_camera() -> void:
 		push_warning("[LD2] ❌ Aucune caméra gameplay trouvée (groupe 'player_camera').")
 		return
 
-	# ✅ On force la caméra de gameplay comme current ici aussi
 	camera.make_current()
 
 
@@ -117,11 +134,9 @@ func _load_waves() -> void:
 			push_warning("[LD2] Vague introuvable : %s" % [p])
 			continue
 
-		# Désactive tout autostart éventuel
 		if "autostart" in w:
 			w.autostart = false
 
-		# Support des 2 conventions (WaveSequence = wave_sequence_finished / Spawner = wave_cleared)
 		if w.has_signal("wave_sequence_finished"):
 			if not w.wave_sequence_finished.is_connected(_on_wave_finished):
 				w.wave_sequence_finished.connect(_on_wave_finished.bind(w))
@@ -143,8 +158,8 @@ func _start_or_intro() -> void:
 	else:
 		_prepare_wave(0)
 
+
 func _on_intro_finished() -> void:
-	# Sécurité caméra après story
 	if camera:
 		if camera.has_method("reset_after_story"):
 			camera.reset_after_story()
@@ -164,16 +179,17 @@ func _prepare_wave(index: int) -> void:
 	current_idx = index
 	var wave := waves[index]
 
-	# Liaison HUD -> premier spawner de la wave (pour afficher timer/next, etc.)
+	# ✅ IMPORTANT : applique les déblocages/événements au moment où la wave devient active
+	_unlock_progression(index)
+
+	# Liaison HUD -> premier spawner de la wave
 	var first_spawner := _get_first_spawner_in_wave(wave)
 	if first_spawner and hud and hud.has_method("set_spawner"):
 		hud.call("set_spawner", first_spawner)
 
-	# Inter-delay
 	_skip_inter_delay = false
 	_inter_left = inter_level_delay
 
-	# Bouton NEXT du HUD (mode “piloté par director”)
 	if hud and hud.has_signal("next_clicked"):
 		if not hud.next_clicked.is_connected(_on_hud_next_clicked):
 			hud.next_clicked.connect(_on_hud_next_clicked, CONNECT_ONE_SHOT)
@@ -182,7 +198,7 @@ func _prepare_wave(index: int) -> void:
 		hud.call("director_countdown_start", inter_level_delay)
 
 	while _inter_left > 0.0 and not _skip_inter_delay:
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1, false).timeout
 		_inter_left = max(_inter_left - 0.1, 0.0)
 		if hud and hud.has_method("director_countdown_tick"):
 			hud.call("director_countdown_tick", _inter_left)
@@ -190,7 +206,6 @@ func _prepare_wave(index: int) -> void:
 	if hud and hud.has_method("director_countdown_done"):
 		hud.call("director_countdown_done")
 
-	# Démarrer la wave
 	if "begin" in wave:
 		wave.begin(0.0, index)
 	else:
@@ -198,14 +213,13 @@ func _prepare_wave(index: int) -> void:
 
 
 func _on_hud_next_clicked() -> void:
-	# Skip = reward en PO (gold) (même logique que niveau 1)
 	var reward := 0
 	if Game and Game.has_method("compute_wave_skip_reward"):
 		reward = int(Game.compute_wave_skip_reward(_inter_left))
 	else:
-		reward = int(ceil(max(_inter_left, 0.0))) # fallback
+		reward = int(ceil(max(_inter_left, 0.0)))
 
-	if reward > 0 and "add_gold" in Game:
+	if reward > 0 and ("add_gold" in Game):
 		Game.add_gold(reward)
 	_skip_inter_delay = true
 
@@ -220,7 +234,6 @@ func _on_wave_finished(_wave_index: int, finished_wave: Node) -> void:
 
 	var next_idx := idx + 1
 
-	# Fin niveau -> victoire
 	if next_idx >= waves.size():
 		var earned := 0
 		if Game and Game.has_method("get_run_crystals_total"):
@@ -230,7 +243,6 @@ func _on_wave_finished(_wave_index: int, finished_wave: Node) -> void:
 		end_level_victory(earned)
 		return
 
-	# Between-story optionnelle
 	if story and story.has_method("has_between_for_wave") and story.call("has_between_for_wave", next_idx):
 		story.call("play_between_then", next_idx, Callable(self, "_prepare_wave").bind(next_idx))
 	else:
@@ -245,6 +257,173 @@ func _get_first_spawner_in_wave(wave: Node) -> Node:
 		if e and e.path != NodePath(""):
 			return wave.get_node_or_null(e.path)
 	return null
+
+
+## ==========================================================
+##          PHASE 2 : AUTO RESOLVE + HIDE/REVEAL
+## ==========================================================
+func _resolve_phase2_nodes() -> void:
+	_phase2_content_nodes.clear()
+	_phase2_map_nodes.clear()
+
+	# 1) Si tu as mis des NodePaths (optionnel) -> on les respecte
+	for p in phase2_paths:
+		var n := get_node_or_null(p)
+		if n:
+			_phase2_content_nodes.append(n)
+
+	for p in phase2_map_paths:
+		var n := get_node_or_null(p)
+		if n:
+			_phase2_map_nodes.append(n)
+
+	# 2) Sinon : auto-detect dans la scène courante (sans inspector)
+	if _phase2_content_nodes.is_empty() or _phase2_map_nodes.is_empty():
+		var root := get_tree().current_scene
+		if root == null:
+			root = get_tree().root
+
+		var all := _collect_all_nodes(root)
+
+		# Map chunk (niveau 5)
+		if _phase2_map_nodes.is_empty():
+			for n in all:
+				if _is_phase2_map_node(n):
+					_phase2_map_nodes.append(n)
+
+		# Contenu Phase2 (parents + objets)
+		if _phase2_content_nodes.is_empty():
+			for n in all:
+				if _is_phase2_content_node(n):
+					_phase2_content_nodes.append(n)
+
+	# Warnings utiles (pas du spam)
+	if _phase2_map_nodes.is_empty():
+		push_warning("[LD2] Phase2 MAP introuvable (cherche: %s). La carte ne s'étendra pas." % str(_PHASE2_MAP_EXACT_NAMES))
+	if _phase2_content_nodes.is_empty():
+		push_warning("[LD2] Phase2 CONTENT introuvable (cherche prefixes: %s / contains 'phase2')." % str(_PHASE2_CONTENT_PREFIXES))
+
+
+func _collect_all_nodes(root: Node) -> Array[Node]:
+	var out: Array[Node] = []
+	var stack: Array[Node] = [root]
+
+	while stack.size() > 0:
+		# ✅ Évite pop_back() (retourne Variant -> warning/error)
+		var last_i := stack.size() - 1
+		var n: Node = stack[last_i]
+		stack.remove_at(last_i)
+
+		out.append(n)
+
+		for c in n.get_children():
+			if c is Node:
+				stack.append(c)
+
+	return out
+
+
+func _is_phase2_map_node(n: Node) -> bool:
+	# Map extension : exact name "niveau 5" (ou variantes)
+	if n == null:
+		return false
+	return _PHASE2_MAP_EXACT_NAMES.has(String(n.name))
+
+
+func _is_phase2_content_node(n: Node) -> bool:
+	if n == null:
+		return false
+
+	var name_s := String(n.name)
+	for pref in _PHASE2_CONTENT_PREFIXES:
+		if name_s.begins_with(pref):
+			return true
+
+	# fallback : tout ce qui contient "phase2" (peu importe le casing)
+	if name_s.to_lower().contains("phase2"):
+		return true
+
+	return false
+
+
+func _hide_phase2_nodes_on_start() -> void:
+	# Cache la map ajoutée (niveau 5)
+	for n in _phase2_map_nodes:
+		_set_canvas_visible_recursive(n, false)
+
+	# Cache le contenu phase2
+	for n in _phase2_content_nodes:
+		_set_canvas_visible_recursive(n, false)
+
+
+func _reveal_phase2_map() -> void:
+	for n in _phase2_map_nodes:
+		_set_canvas_visible_recursive(n, true)
+
+	# Ajuste limites caméra
+	if camera:
+		if ("world_bottom" in camera) and ("world_top" in camera):
+			camera.world_bottom = phase2_world_bottom
+			camera.world_top = phase2_world_top
+		elif camera is Camera2D:
+			camera.limit_bottom = int(phase2_world_bottom)
+			camera.limit_top = int(phase2_world_top)
+
+
+func _reveal_phase2_zone() -> void:
+	for n in _phase2_content_nodes:
+		_set_canvas_visible_recursive(n, true)
+
+	# Ajuste limites caméra (même logique)
+	if camera:
+		if ("world_bottom" in camera) and ("world_top" in camera):
+			camera.world_bottom = phase2_world_bottom
+			camera.world_top = phase2_world_top
+		elif camera is Camera2D:
+			camera.limit_bottom = int(phase2_world_bottom)
+			camera.limit_top = int(phase2_world_top)
+
+
+func _set_canvas_visible_recursive(root: Node, v: bool) -> void:
+	var ci := root as CanvasItem
+	if ci:
+		ci.visible = v
+	for c in root.get_children():
+		if c is Node:
+			_set_canvas_visible_recursive(c, v)
+
+
+func _unlock_progression(index: int) -> void:
+	# ✅ Wave 5 -> révéler la map + révéler le contenu + slots + HUD crystals
+	if index == 5:
+		# sécurité : si la scène a changé/reload, on re-resolve
+		if _phase2_map_nodes.is_empty() or _phase2_content_nodes.is_empty():
+			_resolve_phase2_nodes()
+
+		_reveal_phase2_map()
+		_reveal_phase2_zone()
+		_unlock_phase2_buildslots()
+
+		# ✅ IMPORTANT : réactiver l'affichage/compteur des cristaux comme dans LD1
+		if hud and hud.has_method("unlock_element"):
+			hud.call("unlock_element", "crystals")
+
+		# Feedback HUD optionnel
+		if hud and hud.has_method("show_phase2_unlocked"):
+			hud.call("show_phase2_unlocked")
+
+func _hide_phase2_buildslots_on_start() -> void:
+	for slot in get_tree().get_nodes_in_group(PHASE2_SLOT_GROUP):
+		if slot is CanvasItem:
+			slot.visible = false
+
+
+func _unlock_phase2_buildslots() -> void:
+	for slot in get_tree().get_nodes_in_group(PHASE2_SLOT_GROUP):
+		if slot is CanvasItem:
+			slot.visible = true
+		if slot.has_method("enable"):
+			slot.enable()
 
 
 ## ==========================================================
@@ -307,7 +486,8 @@ func end_level_victory(crystals_earned: int) -> void:
 		return
 
 	_last_victory_crystals_earned = crystals_earned
-	get_tree().paused = true
+	if not get_tree().paused:
+		get_tree().paused = true
 
 	if victory_overlay_scene == null:
 		push_warning("[LD2] victory_overlay_scene non assignée.")
@@ -316,6 +496,9 @@ func end_level_victory(crystals_earned: int) -> void:
 	_victory_ui = victory_overlay_scene.instantiate() as CanvasLayer
 	_victory_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_victory_ui)
+
+	if hud and hud.has_method("force_close_options"):
+		hud.call("force_close_options")
 
 	if _victory_ui.has_method("set_crystals"):
 		_victory_ui.call("set_crystals", crystals_earned)
@@ -343,15 +526,13 @@ func _commit_victory_once() -> void:
 
 	if "commit_run_crystals_to_bank" in Game:
 		Game.commit_run_crystals_to_bank()
-	else:
-		if "add_bank_crystals" in Game:
-			Game.add_bank_crystals(_last_victory_crystals_earned)
+	elif "add_bank_crystals" in Game:
+		Game.add_bank_crystals(_last_victory_crystals_earned)
 
 
 func _on_victory_continue() -> void:
 	get_tree().paused = false
 	_close_victory_overlay()
-	# pas de commit, pas de change_scene
 
 
 func _on_victory_labo() -> void:
@@ -384,12 +565,14 @@ func end_level_defeat() -> void:
 		return
 	_defeat_shown = true
 
-	# ferme victoire si jamais (sécurité)
 	if _victory_ui and is_instance_valid(_victory_ui):
 		_victory_ui.queue_free()
 	_victory_ui = null
 
 	get_tree().paused = true
+
+	if hud and hud.has_method("force_close_options"):
+		hud.call("force_close_options")
 
 	if defeat_overlay_scene == null:
 		push_warning("[LD2] defeat_overlay_scene non assignée.")

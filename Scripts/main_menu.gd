@@ -9,7 +9,7 @@ func _ready():
 
 func _on_play_pressed():
 	print("Lancement du jeu…")
-	get_tree().change_scene_to_file("res://scene/main.tscn")   # mets ton chemin exact
+	get_tree().change_scene_to_file("res://scene/niveaux/main.tscn")   # mets ton chemin exact
 
 
 func _on_settings_pressed():

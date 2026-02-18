@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://f6c0dgfhdlyr"]
+[gd_scene load_steps=27 format=3 uid="uid://f6c0dgfhdlyr"]
 
 [ext_resource type="Script" uid="uid://bpcvg2j1nkr4w" path="res://Scripts/laboUI.gd" id="1_0fg1g"]
 [ext_resource type="VideoStream" uid="uid://d3gsnpqpmu6c6" path="res://Sprite/decort/Labo-Idle-vidéo.ogv" id="1_ef10h"]
@@ -9,7 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://51r2llou24ds" path="res://ui/bouton ship/Petit 176x175/turret_button_no_snowflake.png" id="5_c6hm3"]
 [ext_resource type="Texture2D" uid="uid://c6mqoix4s0jjw" path="res://ui/bouton ship/Petit 176x175/turret_button_green.png" id="6_0fg1g"]
 [ext_resource type="Texture2D" uid="uid://bcokjorxn4jdw" path="res://ui/bouton ship/Petit 176x175/turret_button_red_orange (1).png" id="7_6ucq0"]
-[ext_resource type="Texture2D" uid="uid://d1g3bq5wb57oy" path="res://scene/ui/Victory Overlay/222.png" id="9_6ucq0"]
 [ext_resource type="Texture2D" uid="uid://c8loa4aa8wbef" path="res://ui/bouton ship/Petit 176x175/turret_button_grey_barracks_monochrome.png" id="9_26aai"]
 [ext_resource type="Texture2D" uid="uid://g6uq0woy700x" path="res://ui/ico_2.png" id="9_86s86"]
 [ext_resource type="Texture2D" uid="uid://dql11b26r0cf1" path="res://ui/ChatGPT_Image_27_oct._2025__18_58_26-removebg-preview.png" id="10_26aai"]
@@ -178,7 +177,7 @@ offset_left = 4.0
 offset_top = 192.0
 offset_right = 1560.0
 offset_bottom = 1084.0
-texture = ExtResource("9_6ucq0")
+texture = ExtResource("13_byuyr")
 
 [node name="BarracksMenu" type="Control" parent="HUD/UpgradeFrame"]
 anchors_preset = 0

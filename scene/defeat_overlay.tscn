@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://c1i2vwcxvupe0"]
 
 [ext_resource type="Script" uid="uid://da0llovi46e7v" path="res://Scripts/defeat_overlay.gd" id="1_ye66j"]
-[ext_resource type="Texture2D" uid="uid://d1g3bq5wb57oy" path="res://scene/ui/Victory Overlay/222.png" id="2_lq8sk"]
+[ext_resource type="Texture2D" uid="uid://cvalq1oa0rqh2" path="res://scene/ui/Victory Overlay/fond.png" id="2_ye66j"]
 [ext_resource type="Texture2D" uid="uid://5ufb6jrc74n2" path="res://scene/ui/Victory Overlay/277.png" id="3_ye8sn"]
 [ext_resource type="Texture2D" uid="uid://drw2temntf7lr" path="res://scene/ui/Victory Overlay/269.png" id="6_efpsw"]
 [ext_resource type="Texture2D" uid="uid://cjq524i3sgabc" path="res://scene/ui/Victory Overlay/271.png" id="7_cp38v"]
@@ -11,9 +11,9 @@
 script = ExtResource("1_ye66j")
 
 [node name="222" type="Sprite2D" parent="."]
-position = Vector2(235.25, 245.25)
-scale = Vector2(1.10143, 1.13232)
-texture = ExtResource("2_lq8sk")
+position = Vector2(233.75, 253)
+scale = Vector2(1.04893, 0.910798)
+texture = ExtResource("2_ye66j")
 
 [node name="277" type="Sprite2D" parent="."]
 position = Vector2(241.938, 153)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bu8ql60gnhsad"]
+[gd_scene load_steps=24 format=3 uid="uid://bu8ql60gnhsad"]
 
 [ext_resource type="Script" uid="uid://bue551sw22h6u" path="res://ui/hud.gd" id="1_5nt5s"]
 [ext_resource type="Texture2D" uid="uid://002rgfxpwph7" path="res://ui/options/toggle_empty.png" id="2_avywa"]
@@ -19,6 +19,8 @@
 [ext_resource type="Texture2D" uid="uid://wogcj2as5m8s" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (9).png" id="15_ou5w8"]
 [ext_resource type="Texture2D" uid="uid://bojhsn8i3v8j1" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (10).png" id="16_avywa"]
 [ext_resource type="Texture2D" uid="uid://drw2temntf7lr" path="res://scene/ui/Victory Overlay/269.png" id="17_n7qh4"]
+[ext_resource type="Texture2D" uid="uid://cnbojrdjfqwxy" path="res://ui/Ok sans fond (1).png" id="20_ok7io"]
+[ext_resource type="Texture2D" uid="uid://dg3h5xeejtgau" path="res://ui/KO sans fond.png" id="21_iw51o"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldol0"]
 bg_color = Color(0.289058, 0.679883, 0.586034, 1)
@@ -248,6 +250,7 @@ layout_mode = 2
 texture_normal = ExtResource("13_7w78f")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+visible = false
 offset_left = 278.0
 offset_top = 115.0
 offset_right = 1584.0
@@ -353,3 +356,49 @@ offset_top = 305.0
 offset_right = 710.0
 offset_bottom = 328.0
 text = "Vitesse de jeu"
+
+[node name="ConfirmOverlay" type="TextureRect" parent="."]
+offset_left = 538.0
+offset_top = 229.0
+offset_right = 1392.0
+offset_bottom = 817.0
+texture = ExtResource("14_m6auw")
+
+[node name="ConfirmLabel" type="Label" parent="ConfirmOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.433
+anchor_top = 0.327
+anchor_right = 0.433
+anchor_bottom = 0.327
+offset_left = -138.782
+offset_top = 45.724
+offset_right = 230.218
+offset_bottom = 68.724
+text = "Quitter le niveau et revenir au menu principal ? "
+
+[node name="ConfirmBtn" type="TextureButton" parent="ConfirmOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.687
+anchor_top = 0.704
+anchor_right = 0.687
+anchor_bottom = 0.704
+offset_left = -48.6981
+offset_top = -49.952
+offset_right = 48.3019
+offset_bottom = 50.048
+texture_normal = ExtResource("20_ok7io")
+
+[node name="CancelBtn" type="TextureButton" parent="ConfirmOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.225
+anchor_top = 0.704
+anchor_right = 0.225
+anchor_bottom = 0.704
+offset_left = -48.15
+offset_top = -49.952
+offset_right = 48.85
+offset_bottom = 50.048
+texture_normal = ExtResource("21_iw51o")

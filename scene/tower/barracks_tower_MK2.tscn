@@ -19,7 +19,7 @@ ring_radius = 30.0
 move_speed = 40.0
 respawn_delay = 8.0
 upgrade_scene = ExtResource("3_354qy")
-upgrade_cost = 250
+upgrade_cost = 1000
 upgrade_icon = ExtResource("4_354qy")
 tower_tier = 2
 
