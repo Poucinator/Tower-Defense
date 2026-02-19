@@ -319,6 +319,7 @@ func _ready() -> void:
 	# Options menu : init (pause/music/speed)
 	# =========================
 	_init_options_menu()
+	_apply_crystal_timer_pause_policy()
 
 	set_process(true)
 
@@ -647,6 +648,7 @@ func _on_crystal_timer_timeout() -> void:
 	Game.add_run_crystals(1)
 
 func _start_crystal_income() -> void:
+	_apply_crystal_timer_pause_policy()
 	if _crystal_running:
 		if DBG_CRYSTAL:
 			print("[CRYSTAL] income already running -> skip")
@@ -1055,3 +1057,10 @@ func _on_confirm_exit_pressed() -> void:
 		get_tree().call_deferred("change_scene_to_file", main_menu_scene_path)
 	else:
 		push_warning("[HUD/OPTIONS] main_menu_scene_path est vide.")
+
+# =========================================================
+#              Pause-safe : Crystal Timer
+# =========================================================
+func _apply_crystal_timer_pause_policy() -> void:
+	if crystal_timer:
+		crystal_timer.process_mode = Node.PROCESS_MODE_PAUSABLE

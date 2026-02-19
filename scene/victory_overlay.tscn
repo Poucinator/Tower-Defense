@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://6q674d83nxnd"]
+[gd_scene load_steps=13 format=3 uid="uid://6q674d83nxnd"]
 
 [ext_resource type="Script" uid="uid://do6vjcpwbsr3s" path="res://scene/victory_overlay.gd" id="1_ts3bi"]
 [ext_resource type="Texture2D" uid="uid://cvalq1oa0rqh2" path="res://scene/ui/Victory Overlay/fond.png" id="2_ts3bi"]
@@ -8,9 +8,19 @@
 [ext_resource type="Texture2D" uid="uid://drw2temntf7lr" path="res://scene/ui/Victory Overlay/269.png" id="6_vc87o"]
 [ext_resource type="Texture2D" uid="uid://cjq524i3sgabc" path="res://scene/ui/Victory Overlay/271.png" id="7_eufel"]
 [ext_resource type="Texture2D" uid="uid://3so1vf02kw0j" path="res://scene/ui/Victory Overlay/17.png" id="8_c2skw"]
+[ext_resource type="Texture2D" uid="uid://cnbojrdjfqwxy" path="res://ui/Ok sans fond (1).png" id="9_3lgjy"]
+[ext_resource type="Texture2D" uid="uid://dg3h5xeejtgau" path="res://ui/KO sans fond.png" id="10_73487"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_2qceq"]
+font_size = 29
+
+[sub_resource type="LabelSettings" id="LabelSettings_vc87o"]
+font_size = 28
 
 [node name="VictoryOverlay" type="CanvasLayer"]
 script = ExtResource("1_ts3bi")
+main_menu_scene_path = "uid://dnhnh3otraghe"
+labo_ui_scene_path = "uid://f6c0dgfhdlyr"
 
 [node name="222" type="Sprite2D" parent="."]
 position = Vector2(227.5, 267)
@@ -72,3 +82,105 @@ offset_bottom = 398.0
 texture_normal = ExtResource("8_c2skw")
 ignore_texture_size = true
 stretch_mode = 0
+
+[node name="NextLevelOverlay" type="TextureRect" parent="."]
+offset_left = 631.0
+offset_top = 238.0
+offset_right = 1410.0
+offset_bottom = 826.0
+texture = ExtResource("2_ts3bi")
+
+[node name="277" type="Sprite2D" parent="NextLevelOverlay"]
+position = Vector2(417.5, 142)
+scale = Vector2(0.149235, 0.135877)
+texture = ExtResource("3_3lgjy")
+
+[node name="Label" type="Label" parent="NextLevelOverlay"]
+layout_mode = 0
+offset_left = 223.0
+offset_top = 141.0
+offset_right = 613.0
+offset_bottom = 217.0
+text = "Confirmer la fin du niveau "
+label_settings = SubResource("LabelSettings_2qceq")
+
+[node name="NextConfirmBtn" type="TextureButton" parent="NextLevelOverlay"]
+layout_mode = 0
+offset_left = 503.0
+offset_top = 434.0
+offset_right = 600.0
+offset_bottom = 534.0
+texture_normal = ExtResource("9_3lgjy")
+
+[node name="NextCancelBtn" type="TextureButton" parent="NextLevelOverlay"]
+layout_mode = 0
+offset_left = 141.0
+offset_top = 431.0
+offset_right = 238.0
+offset_bottom = 531.0
+texture_normal = ExtResource("10_73487")
+
+[node name="Label2" type="Label" parent="NextLevelOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.026
+anchor_bottom = 0.02
+offset_left = 154.0
+offset_top = 263.0
+offset_right = 716.746
+offset_bottom = 376.24
+text = "Confirmer la fin du niveau 
+et passer à la suite. "
+label_settings = SubResource("LabelSettings_vc87o")
+
+[node name="ExittomenuOverlay" type="TextureRect" parent="."]
+offset_left = 631.0
+offset_top = 238.0
+offset_right = 1410.0
+offset_bottom = 826.0
+texture = ExtResource("2_ts3bi")
+
+[node name="277" type="Sprite2D" parent="ExittomenuOverlay"]
+position = Vector2(417.5, 142)
+scale = Vector2(0.149235, 0.135877)
+texture = ExtResource("3_3lgjy")
+
+[node name="Label" type="Label" parent="ExittomenuOverlay"]
+layout_mode = 0
+offset_left = 223.0
+offset_top = 141.0
+offset_right = 613.0
+offset_bottom = 217.0
+text = "Retouner au menu principal"
+label_settings = SubResource("LabelSettings_2qceq")
+
+[node name="ExitConfirmBtn" type="TextureButton" parent="ExittomenuOverlay"]
+layout_mode = 0
+offset_left = 503.0
+offset_top = 434.0
+offset_right = 600.0
+offset_bottom = 534.0
+texture_normal = ExtResource("9_3lgjy")
+
+[node name="ExitCancelBtn" type="TextureButton" parent="ExittomenuOverlay"]
+layout_mode = 0
+offset_left = 141.0
+offset_top = 431.0
+offset_right = 238.0
+offset_bottom = 531.0
+texture_normal = ExtResource("10_73487")
+
+[node name="Label2" type="Label" parent="ExittomenuOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.026
+anchor_bottom = 0.02
+offset_left = 151.0
+offset_top = 238.0
+offset_right = 713.746
+offset_bottom = 391.24
+text = "Voulez-vous vraiment retouner au
+menu principal ? 
+
+La progression sera perdue."
+label_settings = SubResource("LabelSettings_vc87o")
