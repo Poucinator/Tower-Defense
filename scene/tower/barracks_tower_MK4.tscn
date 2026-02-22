@@ -29,7 +29,7 @@ shape = SubResource("RectangleShape2D_j1ifm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = 7
-scale = Vector2(0.101229, 0.101429)
+scale = Vector2(0.153895, 0.146538)
 texture = ExtResource("5_ftcrs")
 
 [node name="Rally" type="Node2D" parent="."]

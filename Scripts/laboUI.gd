@@ -102,13 +102,13 @@ const MK3_TITLE_TEXT := "Amélioration max du niveau de la tour"
 #     EXPORTS (SUMMON : 3 upgrades) ✅ NOUVEAU
 # =========================================================
 @export var summon_cooldown_btn_path: NodePath
-@export var summon_cooldown_label_path: NodePath # optionnel
+@export var summon_cooldown_label_path: NodePath 
 
 @export var summon_marine_lvl_btn_path: NodePath
-@export var summon_marine_lvl_label_path: NodePath # optionnel
+@export var summon_marine_lvl_label_path: NodePath 
 
 @export var summon_number_btn_path: NodePath
-@export var summon_number_label_path: NodePath # optionnel
+@export var summon_number_label_path: NodePath 
 
 # =========================================================
 #     HEAL : 3 upgrades ✅
@@ -143,8 +143,8 @@ const MK3_TITLE_TEXT := "Amélioration max du niveau de la tour"
 #                 EXPORTS (bouton MK3 : UI)
 # =========================================================
 @export var mk3_btn_path: NodePath
-@export var mk3_cost_label_path: NodePath # optionnel
-@export var mk3_title_label_path: NodePath # ✅ NOUVEAU : "Amélioration max..."
+@export var mk3_cost_label_path: NodePath 
+@export var mk3_title_label_path: NodePath 
 
 # Textures MK3 (une par tour) - au minimum "normal"
 @export var mk3_barracks_normal: Texture2D
@@ -245,7 +245,9 @@ const MK3_TITLE_TEXT := "Amélioration max du niveau de la tour"
 @onready var confirm_cancel_btn: BaseButton = get_node_or_null(confirm_cancel_btn_path)
 @onready var confirm_confirm_btn: BaseButton = get_node_or_null(confirm_confirm_btn_path)
 
-@onready var next_btn: BaseButton = get_node_or_null(next_btn_path) as BaseButton# =========================================================
+@onready var next_btn: BaseButton = get_node_or_null(next_btn_path) as BaseButton
+
+# =========================================================
 #                 ETAT
 # =========================================================
 var _tween: Tween
