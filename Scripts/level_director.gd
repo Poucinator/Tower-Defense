@@ -14,6 +14,17 @@ extends Node
 var story: Node = null
 
 ## =========================================================
+##                CAMERA PAN PHASE 2
+## =========================================================
+@export var phase2_camera_pan_enabled: bool = true
+@export var phase2_camera_pan_distance_px: float = 300.0
+@export_range(0.05, 5.0, 0.05) var phase2_camera_pan_duration: float = 1.2
+
+var _phase2_camera_pan_done: bool = false
+var _phase2_camera_pan_tween: Tween = null
+
+
+## =========================================================
 ##                 WEATHER / METEO
 ## =========================================================
 @export var rain_particles_path: NodePath      # -> CanvasItem (ex: WeatherLayer/RainParticles)
@@ -420,6 +431,7 @@ func _unlock_progression(index: int) -> void:
 	if index == 5:
 		_reveal_phase2_zone()
 		_unlock_phase2_buildslots()
+		_play_phase2_camera_pan()
 
 	if hud == null or not hud.has_method("unlock_element"):
 		return
@@ -601,3 +613,52 @@ func _on_defeat_menu() -> void:
 
 func _on_defeat_quit() -> void:
 	get_tree().quit()
+
+
+func _play_phase2_camera_pan() -> void:
+	if not phase2_camera_pan_enabled:
+		return
+	if _phase2_camera_pan_done:
+		return
+	_phase2_camera_pan_done = true
+
+	if camera == null or not is_instance_valid(camera):
+		return
+	if not (camera is Camera2D):
+		push_warning("[LD] Phase2 cam pan ignoré: camera n'est pas une Camera2D.")
+		return
+
+	var cam := camera as Camera2D
+
+	# Sécurité: si un tween précédent existe, on le tue.
+	if _phase2_camera_pan_tween and is_instance_valid(_phase2_camera_pan_tween):
+		_phase2_camera_pan_tween.kill()
+		_phase2_camera_pan_tween = null
+
+	# On déplace la caméra "comme si le joueur panait" => on touche la POSITION (pas offset)
+	var start_pos: Vector2 = cam.global_position
+	var desired_pos: Vector2 = start_pos + Vector2(0.0, phase2_camera_pan_distance_px)
+
+	# Clamp destination selon le système de limites dispo (camera custom ou Camera2D native)
+	desired_pos.y = _clamp_camera_y(cam, desired_pos.y)
+
+	_phase2_camera_pan_tween = create_tween()
+	_phase2_camera_pan_tween.set_trans(Tween.TRANS_SINE)
+	_phase2_camera_pan_tween.set_ease(Tween.EASE_IN_OUT)
+	_phase2_camera_pan_tween.tween_property(cam, "global_position", desired_pos, max(phase2_camera_pan_duration, 0.05))
+	
+func _clamp_camera_y(cam: Camera2D, y: float) -> float:
+	# ✅ Priorité à ta caméra custom si elle expose world_top/world_bottom
+	# (ton LevelDirector les met déjà à jour dans _reveal_phase2_zone()).
+	if ("world_top" in cam) and ("world_bottom" in cam):
+		var top: float = float(cam.world_top)
+		var bottom: float = float(cam.world_bottom)
+		if bottom < top:
+			var tmp := top
+			top = bottom
+			bottom = tmp
+		return clampf(y, top, bottom)
+
+	# ✅ Fallback Camera2D standard
+	# Note: limit_* peut être "désactivé" selon les flags internes, mais en pratique chez toi ça sert.
+	return clampf(y, float(cam.limit_top), float(cam.limit_bottom))

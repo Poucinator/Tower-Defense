@@ -51,11 +51,11 @@ upgrade_icon = ExtResource("3_qf1js")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.011832, 0.0214193)
 rotation = 1.57079
-scale = Vector2(0.127155, 0.084711)
+scale = Vector2(0.101527, 0.113386)
 sprite_frames = SubResource("SpriteFrames_58b7d")
-animation = &"idle"
+animation = &"shoot"
 autoplay = "idle"
-frame_progress = 0.386909
+frame_progress = 0.571245
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(4.45963, 2.73663)
