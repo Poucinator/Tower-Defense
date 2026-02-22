@@ -37,6 +37,7 @@ radius = 148.0
 [node name="BlueTower" type="StaticBody2D" groups=["Tower"]]
 z_index = 5
 rotation = 1.5708
+scale = Vector2(1.18155, 1.27153)
 collision_layer = 5
 input_pickable = true
 script = ExtResource("1_wf2o0")
@@ -58,6 +59,7 @@ animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(3.87385, 4.52352)
 shape = SubResource("RectangleShape2D_ptvpv")
 
 [node name="Area" type="Marker2D" parent="."]

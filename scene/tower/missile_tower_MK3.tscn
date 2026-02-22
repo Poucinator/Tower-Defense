@@ -1,14 +1,15 @@
-[gd_scene load_steps=7 format=3 uid="uid://bhe7mkvfjcy7u"]
+[gd_scene load_steps=8 format=3 uid="uid://bhe7mkvfjcy7u"]
 
 [ext_resource type="Script" uid="uid://dvq0kwsnfjiu5" path="res://scene/tower/missile_tower.gd" id="1_t4ksi"]
-[ext_resource type="Texture2D" uid="uid://8ihlmw5ve1jo" path="res://Sprite/New Tower/Turrets_g25.png" id="2_t4ksi"]
-[ext_resource type="Texture2D" uid="uid://bo7xvmgfltjo0" path="res://Sprite/New Tower/Turrets_g24.png" id="3_p7pbx"]
+[ext_resource type="Texture2D" uid="uid://6nhrfayc0ddh" path="res://Sprite/New Tower/Missile tower/MK3/Idle.png" id="2_p7pbx"]
+[ext_resource type="Texture2D" uid="uid://by0c3wbpxlohl" path="res://Sprite/New Tower/Missile tower/MK3/shot1.png" id="3_fxk76"]
+[ext_resource type="Texture2D" uid="uid://b2b3q4mnbqlxm" path="res://Sprite/New Tower/Missile tower/MK3/Shot 2.png" id="4_oreor"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_58b7d"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_t4ksi")
+"texture": ExtResource("2_p7pbx")
 }],
 "loop": true,
 "name": &"idle",
@@ -16,14 +17,17 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_p7pbx")
+"texture": ExtResource("2_p7pbx")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_t4ksi")
+"texture": ExtResource("3_fxk76")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_oreor")
 }],
 "loop": true,
 "name": &"shoot",
-"speed": 2.0
+"speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ptvpv"]
@@ -50,13 +54,14 @@ tower_tier = 3
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.011832, 0.0214193)
 rotation = 1.57079
-scale = Vector2(0.127155, 0.084711)
+scale = Vector2(0.0712483, 0.0899882)
 sprite_frames = SubResource("SpriteFrames_58b7d")
-animation = &"shoot"
+animation = &"idle"
 autoplay = "idle"
-frame_progress = 0.248725
+frame_progress = 0.753889
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(3.94167, 7.73096)
 shape = SubResource("RectangleShape2D_ptvpv")
 
 [node name="Area" type="Marker2D" parent="."]

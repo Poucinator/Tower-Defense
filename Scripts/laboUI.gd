@@ -2,7 +2,7 @@ extends Control
 class_name LaboUI
 
 const MK3_COST := 50
-
+const MK3_TITLE_TEXT := "Amélioration max du niveau de la tour"
 # =========================================================
 #                 EXPORTS (références UI)
 # =========================================================
@@ -144,6 +144,7 @@ const MK3_COST := 50
 # =========================================================
 @export var mk3_btn_path: NodePath
 @export var mk3_cost_label_path: NodePath # optionnel
+@export var mk3_title_label_path: NodePath # ✅ NOUVEAU : "Amélioration max..."
 
 # Textures MK3 (une par tour) - au minimum "normal"
 @export var mk3_barracks_normal: Texture2D
@@ -190,6 +191,7 @@ const MK3_COST := 50
 @onready var item_icon: TextureRect = get_node_or_null(item_icon_path)
 @onready var mk3_btn: TextureButton = get_node_or_null(mk3_btn_path)
 @onready var mk3_cost_label: Label = get_node_or_null(mk3_cost_label_path)
+@onready var mk3_title_label: Label = get_node_or_null(mk3_title_label_path) 
 
 # Barracks Buff UI
 @onready var barracks_buff_btn: BaseButton = get_node_or_null(barracks_buff_btn_path)
@@ -354,6 +356,12 @@ func _ready() -> void:
 
 	if mk3_cost_label:
 		mk3_cost_label.visible = false
+
+	if mk3_title_label:
+		mk3_title_label.visible = false
+	else:
+		push_warning("[LaboUI] mk3_title_label introuvable (mk3_title_label_path)")
+
 
 	if barracks_buff_btn:
 		barracks_buff_btn.visible = false
@@ -591,6 +599,12 @@ func _reset_header_ui() -> void:
 		item_icon.visible = false
 		item_icon.texture = null
 
+	if mk3_title_label:
+		mk3_title_label.visible = false
+		# Optionnel : vider le texte pour éviter tout “flash”
+		mk3_title_label.text = ""
+
+
 	if mk3_btn:
 		mk3_btn.visible = false
 		mk3_btn.disabled = false
@@ -731,7 +745,6 @@ func _update_item_icon(item_id: ItemId) -> void:
 
 	item_icon.texture = tex
 	item_icon.visible = tex != null
-
 # =========================================================
 #                 MK3 : textures + état + achat
 # =========================================================
@@ -739,10 +752,20 @@ func _update_mk3_button(item_id: ItemId) -> void:
 	if not mk3_btn:
 		return
 
+	# --- Si ce n'est pas une tour : on cache tout ce qui est MK3 ---
 	if not _is_tower(item_id):
 		mk3_btn.visible = false
-		if mk3_cost_label: mk3_cost_label.visible = false
+		if mk3_cost_label:
+			mk3_cost_label.visible = false
+		if mk3_title_label:
+			mk3_title_label.visible = false
+			mk3_title_label.text = ""
 		return
+
+	# --- C'est une tour : on affiche le titre MK3 ---
+	if mk3_title_label:
+		mk3_title_label.text = MK3_TITLE_TEXT
+		mk3_title_label.visible = true
 
 	var normal: Texture2D = null
 	var hover: Texture2D = null
@@ -769,6 +792,11 @@ func _update_mk3_button(item_id: ItemId) -> void:
 	if normal == null:
 		push_warning("[LaboUI] Texture MK3 normal manquante pour %s" % str(item_id))
 		mk3_btn.visible = false
+		if mk3_cost_label:
+			mk3_cost_label.visible = false
+		if mk3_title_label:
+			mk3_title_label.visible = false
+			mk3_title_label.text = ""
 		return
 
 	mk3_btn.texture_normal = normal
@@ -799,7 +827,7 @@ func _update_mk3_button(item_id: ItemId) -> void:
 		if mk3_cost_label:
 			mk3_cost_label.text = "Coût : %d cristaux" % MK3_COST
 			mk3_cost_label.visible = true
-
+			
 func _set_mk3_state(disabled: bool, gray: bool) -> void:
 	mk3_btn.disabled = disabled
 	mk3_btn.modulate = Color(1, 1, 1, DISABLED_ALPHA) if gray else Color(1, 1, 1, 1)

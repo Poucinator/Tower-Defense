@@ -18,6 +18,7 @@ tower_tier = 5
 max_rally_distance = 4000.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(1.52405, 1.37132)
 shape = SubResource("RectangleShape2D_j1ifm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

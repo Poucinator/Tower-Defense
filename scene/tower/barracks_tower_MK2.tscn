@@ -24,6 +24,7 @@ upgrade_icon = ExtResource("4_354qy")
 tower_tier = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(1.54445, 1.53402)
 shape = SubResource("RectangleShape2D_j1ifm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

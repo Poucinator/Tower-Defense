@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dvq0kwsnfjiu5" path="res://scene/tower/missile_tower.gd" id="1_16baa"]
 [ext_resource type="Texture2D" uid="uid://clnhdvwuucbng" path="res://Sprite/New Tower/Turrets_g29.png" id="2_16baa"]
 [ext_resource type="PackedScene" uid="uid://bhe7mkvfjcy7u" path="res://scene/tower/missile_tower_MK3.tscn" id="2_en60q"]
-[ext_resource type="Texture2D" uid="uid://8ihlmw5ve1jo" path="res://Sprite/New Tower/Turrets_g25.png" id="3_d0gnk"]
+[ext_resource type="Texture2D" uid="uid://bxme6rmxje6m1" path="res://Sprite/New Tower/Missile tower/MK3/logo.png" id="3_en60q"]
 [ext_resource type="Texture2D" uid="uid://bv4qnspal1s85" path="res://Sprite/New Tower/Turrets_g30.png" id="3_pgqwf"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_58b7d"]
@@ -37,6 +37,7 @@ radius = 315.025
 [node name="BlueTower" type="StaticBody2D" groups=["Tower"]]
 z_index = 5
 rotation = 1.5708
+scale = Vector2(1.13038, 1.21386)
 collision_layer = 5
 input_pickable = true
 script = ExtResource("1_16baa")
@@ -49,7 +50,7 @@ detector_path = NodePath("Tower")
 muzzle_path = NodePath("Muzzle")
 upgrade_scene = ExtResource("2_en60q")
 upgrade_cost = 5000
-upgrade_icon = ExtResource("3_d0gnk")
+upgrade_icon = ExtResource("3_en60q")
 tower_tier = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -63,6 +64,7 @@ frame = 1
 frame_progress = 0.596244
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(3.08671, 3.44925)
 shape = SubResource("RectangleShape2D_ptvpv")
 
 [node name="Area" type="Marker2D" parent="."]

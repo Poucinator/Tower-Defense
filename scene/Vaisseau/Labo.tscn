@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://f6c0dgfhdlyr"]
+[gd_scene load_steps=29 format=3 uid="uid://f6c0dgfhdlyr"]
 
 [ext_resource type="Script" uid="uid://bpcvg2j1nkr4w" path="res://Scripts/laboUI.gd" id="1_0fg1g"]
 [ext_resource type="VideoStream" uid="uid://d3gsnpqpmu6c6" path="res://Sprite/decort/Labo-Idle-vidéo.ogv" id="1_ef10h"]
@@ -24,9 +24,14 @@
 [ext_resource type="Texture2D" uid="uid://bjyw213gajcxj" path="res://ui/ico_5.png" id="19_l6xme"]
 [ext_resource type="Texture2D" uid="uid://cu05mx7xbuuai" path="res://ui/ico_1.png" id="20_6pkgp"]
 [ext_resource type="Texture2D" uid="uid://cqt0ql4ldhd7y" path="res://ui/ico_5_single_shield.png" id="23_122ta"]
+[ext_resource type="Texture2D" uid="uid://5ufb6jrc74n2" path="res://scene/ui/Victory Overlay/277.png" id="23_kqdhb"]
 [ext_resource type="Texture2D" uid="uid://bs38sstbefgnh" path="res://ui/Interfacebuttonssetforspacegames2-ezgif.com-crop (5).png" id="26_kqdhb"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr5yx"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_kqdhb"]
+font_size = 20
+shadow_size = 5
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -97,6 +102,7 @@ summon_icon = ExtResource("10_26aai")
 heal_icon = ExtResource("11_isfpo")
 mk3_btn_path = NodePath("HUD/UpgradeFrame/Mk3Btn")
 mk3_cost_label_path = NodePath("HUD/UpgradeFrame/Mk3CostLabel")
+mk3_title_label_path = NodePath("HUD/UpgradeFrame/Mk3TitleLabel")
 mk3_barracks_normal = ExtResource("9_26aai")
 mk3_gun_normal = ExtResource("10_h3qnd")
 mk3_snipe_normal = ExtResource("11_3p5c6")
@@ -196,7 +202,7 @@ texture_normal = ExtResource("17_3p5c6")
 layout_mode = 0
 offset_left = 431.0
 offset_top = 472.0
-offset_right = 531.0
+offset_right = 698.0
 offset_bottom = 547.0
 
 [node name="GunMenu" type="Control" parent="HUD/UpgradeFrame"]
@@ -216,7 +222,7 @@ texture_normal = ExtResource("18_w0uum")
 layout_mode = 0
 offset_left = 439.0
 offset_top = 478.0
-offset_right = 649.0
+offset_right = 732.0
 offset_bottom = 514.0
 
 [node name="SnipeMenu" type="Control" parent="HUD/UpgradeFrame"]
@@ -236,7 +242,7 @@ texture_normal = ExtResource("19_l6xme")
 layout_mode = 0
 offset_left = 435.0
 offset_top = 478.0
-offset_right = 604.0
+offset_right = 721.0
 offset_bottom = 533.0
 
 [node name="MissileMenu" type="Control" parent="HUD/UpgradeFrame"]
@@ -425,21 +431,24 @@ offset_right = 391.0
 offset_bottom = 367.0
 
 [node name="Mk3CostLabel" type="Label" parent="HUD/UpgradeFrame"]
+z_index = 8
 layout_mode = 0
-offset_left = 432.0
-offset_top = 275.0
-offset_right = 580.0
-offset_bottom = 322.0
+offset_left = 430.0
+offset_top = 325.0
+offset_right = 578.0
+offset_bottom = 372.0
 
 [node name="Mk3TitleLabel" type="Label" parent="HUD/UpgradeFrame"]
+z_index = 17
 layout_mode = 0
-offset_left = 220.0
-offset_top = 138.0
-offset_right = 428.0
-offset_bottom = 198.0
+offset_left = 428.0
+offset_top = 288.0
+offset_right = 720.0
+offset_bottom = 348.0
 
 [node name="ConfirmOverlay" type="Control" parent="."]
 visible = false
+z_index = 20
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -463,10 +472,17 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_tr5yx")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ConfirmOverlay/Panel"]
 layout_mode = 0
-offset_right = 40.0
+offset_left = 3.0
+offset_right = 353.0
 offset_bottom = 203.0
 
 [node name="TitleLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
+z_index = 12
+layout_mode = 2
+label_settings = SubResource("LabelSettings_kqdhb")
+
+[node name="spacer" type="Control" parent="ConfirmOverlay/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="DescLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
@@ -477,6 +493,11 @@ text_overrun_behavior = 3
 
 [node name="CostLabel" type="Label" parent="ConfirmOverlay/Panel/VBoxContainer"]
 layout_mode = 2
+
+[node name="277" type="Sprite2D" parent="ConfirmOverlay/Panel/VBoxContainer"]
+position = Vector2(225, -1.99999)
+scale = Vector2(0.138854, 0.127482)
+texture = ExtResource("23_kqdhb")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ConfirmOverlay/Panel"]
 layout_mode = 0

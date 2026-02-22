@@ -37,6 +37,7 @@ radius = 1159.07
 [node name="BlueTower" type="StaticBody2D" groups=["Tower"]]
 z_index = 5
 rotation = 1.5708
+scale = Vector2(1.29401, 1.51399)
 collision_layer = 5
 input_pickable = true
 script = ExtResource("1_4ypvp")
@@ -58,6 +59,7 @@ animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(3.08995, 2.44959)
 shape = SubResource("RectangleShape2D_ptvpv")
 
 [node name="Area" type="Marker2D" parent="."]
@@ -68,6 +70,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Tower" groups=["Tower"]]
+scale = Vector2(0.896412, 0.905098)
 shape = SubResource("CircleShape2D_df2s1")
 
 [node name="Muzzle" type="Node2D" parent="."]

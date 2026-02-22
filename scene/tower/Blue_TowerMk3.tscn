@@ -35,6 +35,7 @@ radius = 349.023
 [node name="BlueTower" type="StaticBody2D" groups=["Tower"]]
 z_index = 5
 rotation = 1.5708
+scale = Vector2(1.91424, 1.89306)
 collision_layer = 5
 script = ExtResource("1_0ac3u")
 fire_interval = 0.1
@@ -54,6 +55,7 @@ autoplay = "idle"
 frame_progress = 0.630038
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(2.64676, 3.38864)
 shape = SubResource("RectangleShape2D_ptvpv")
 
 [node name="Area" type="Marker2D" parent="."]

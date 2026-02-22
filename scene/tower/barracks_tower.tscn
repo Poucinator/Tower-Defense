@@ -22,6 +22,7 @@ upgrade_cost = 300
 upgrade_icon = ExtResource("4_488rp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(1.62169, 1.59854)
 shape = SubResource("RectangleShape2D_j1ifm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
