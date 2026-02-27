@@ -24,13 +24,20 @@ const BULLET_SCN := preload("res://scene/tower/snipe_bullet.tscn")
 var detector: Area2D
 var muzzle: Node2D
 var shoot_timer: Timer
+
 var curr_targets: Array[Node2D] = []
 var current_target: Node2D = null
+
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
 
+# Anti-clic immédiatement après la pose
 @export var click_cooldown_ms := 180
 var _click_ready_at_ms := 0
+
+# Menu + preview portée
 var _menu_ref: Node = null
+var _range_ring: RangeRing = null
+var _range_watch_timer: Timer = null
 
 # ============================================================
 #                 BUFFS DÉGÂTS (Barracks aura)
@@ -53,12 +60,11 @@ func get_damage_mult() -> float:
 
 func _ready() -> void:
 	add_to_group("Tower") # ✅ pour que la Barracks puisse me choisir
+	input_pickable = true
+	set_process_input(true) # ✅ reçoit les clics même si l’UI les consomme ensuite
 
 	detector = get_node_or_null(detector_path)
 	muzzle   = get_node_or_null(muzzle_path)
-
-	# Important pour que la tour soit cliquable
-	input_pickable = true
 
 	if anim:
 		anim.play("idle")
@@ -97,14 +103,14 @@ func _process(delta: float) -> void:
 func _is_valid_target(e: Node2D) -> bool:
 	if e == null or not is_instance_valid(e):
 		return false
-
 	if ("is_flying" in e) and e.is_flying and not can_target_flying:
 		return false
-
 	return true
 
 
-# ---------- Clic : ouvrir le menu ----------
+# ============================================================
+#  INPUT : clic sur la tour -> menu + portée
+# ============================================================
 func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if Time.get_ticks_msec() < _click_ready_at_ms:
@@ -112,7 +118,59 @@ func _input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
 		_open_upgrade_menu()
 
 
+# ✅ Clic ailleurs : ferme cercle + menu si besoin (même si l'UI consomme le clic)
+func _input(event: InputEvent) -> void:
+	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		return
+
+	var ring_visible := (_range_ring != null and is_instance_valid(_range_ring) and _range_ring.visible)
+	var menu_alive := (_menu_ref != null and is_instance_valid(_menu_ref) and (_menu_ref as Node).is_inside_tree())
+	if not ring_visible and not menu_alive:
+		return
+
+	var mouse_pos := get_global_mouse_position()
+
+	# Si un menu est ouvert : on ferme SEULEMENT si clic hors "contenu menu" ET hors tour
+	if menu_alive:
+		if not _is_click_on_menu(mouse_pos) and not _is_click_on_self(mouse_pos):
+			_hide_range_and_cleanup()
+		return
+
+	# Pas de menu (ex: MK3 / upgrade verrouillé / upgrade_scene null)
+	if ring_visible and not _is_click_on_self(mouse_pos):
+		_hide_range_and_cleanup()
+
+
+# ============================================================
+#  API "soft" pour forcer la fermeture depuis une autre tour
+# ============================================================
+func close_upgrade_ui() -> void:
+	_hide_range_and_cleanup()
+
+func hide_range_preview() -> void:
+	_show_range(false)
+
+
+# ============================================================
+#  MENU + PORTÉE
+# ============================================================
 func _open_upgrade_menu() -> void:
+	# ✅ Un seul cercle/menu à la fois : on ferme tous les autres "Tower"
+	for t in get_tree().get_nodes_in_group("Tower"):
+		if t == self or t == null or not is_instance_valid(t):
+			continue
+		if t.has_method("close_upgrade_ui"):
+			t.call("close_upgrade_ui")
+		elif t.has_method("hide_range_preview"):
+			t.call("hide_range_preview")
+
+	# Ferme proprement un ancien menu local
+	_close_menu_only()
+
+	# Affiche portée
+	_show_range(true)
+
+	# Si pas d'upgrade possible : portée seule
 	if upgrade_scene == null:
 		return
 
@@ -133,17 +191,180 @@ func _open_upgrade_menu() -> void:
 			print("[SnipeTower] Upgrade vers MK%d verrouillé (max_tower_tier=%d)" % [next_tier, Game.max_tower_tier])
 			return
 
-	if _menu_ref and is_instance_valid(_menu_ref):
-		_menu_ref.queue_free()
-		_menu_ref = null
-
 	var menu := preload("res://ui/tower_menu.tscn").instantiate()
 	get_tree().current_scene.add_child(menu)
 	menu.setup(upgrade_icon, upgrade_cost, global_position, self)
 	menu.option_chosen.connect(_on_upgrade_clicked, CONNECT_ONE_SHOT)
 	_menu_ref = menu
 
+	_start_range_watch()
 
+
+func _close_menu_only() -> void:
+	if _range_watch_timer and is_instance_valid(_range_watch_timer):
+		_range_watch_timer.stop()
+		_range_watch_timer.queue_free()
+		_range_watch_timer = null
+
+	if _menu_ref and is_instance_valid(_menu_ref):
+		_menu_ref.queue_free()
+	_menu_ref = null
+
+
+func _hide_range_and_cleanup() -> void:
+	_close_menu_only()
+	_show_range(false)
+
+
+func _is_menu_visible() -> bool:
+	if _menu_ref == null or not is_instance_valid(_menu_ref):
+		return false
+	if not (_menu_ref as Node).is_inside_tree():
+		return false
+	# Le menu peut se "cacher" par modulate/scale -> visible peut rester true.
+	# Filet de sécurité uniquement.
+	if _menu_ref is CanvasItem:
+		return (_menu_ref as CanvasItem).visible
+	return true
+
+
+func _start_range_watch() -> void:
+	if _range_watch_timer and is_instance_valid(_range_watch_timer):
+		_range_watch_timer.stop()
+		_range_watch_timer.queue_free()
+
+	_range_watch_timer = Timer.new()
+	_range_watch_timer.one_shot = false
+	_range_watch_timer.wait_time = 0.1
+	add_child(_range_watch_timer)
+
+	_range_watch_timer.timeout.connect(func():
+		if not _is_menu_visible():
+			_hide_range_and_cleanup()
+	)
+
+	_range_watch_timer.start()
+
+
+# ============================================================
+#  PORTÉE : ring
+# ============================================================
+func _show_range(enable: bool) -> void:
+	if enable:
+		_ensure_range_ring()
+		if _range_ring:
+			_range_ring.visible = true
+			_range_ring.queue_redraw()
+	else:
+		if _range_ring:
+			_range_ring.visible = false
+
+
+func _ensure_range_ring() -> void:
+	if _range_ring and is_instance_valid(_range_ring):
+		return
+
+	var r := _get_detector_radius()
+	if r <= 0.0:
+		return
+
+	_range_ring = RangeRing.new()
+	_range_ring.radius = r
+	_range_ring.z_index = -1
+	_range_ring.visible = false
+	add_child(_range_ring)
+
+
+func _get_detector_radius() -> float:
+	# 1) Priorité : detector exporté
+	if detector and detector is Area2D:
+		var cs := (detector as Area2D).get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if cs and cs.shape is CircleShape2D:
+			return (cs.shape as CircleShape2D).radius
+
+	# 2) Fallback : node nommé "Tower" (convention)
+	var tower_area := get_node_or_null("Tower") as Area2D
+	if tower_area:
+		var cs2 := tower_area.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if cs2 and cs2.shape is CircleShape2D:
+			return (cs2.shape as CircleShape2D).radius
+
+	return 0.0
+
+
+func _is_click_on_self(world_pos: Vector2) -> bool:
+	var space := get_world_2d().direct_space_state
+	var prm := PhysicsPointQueryParameters2D.new()
+	prm.position = world_pos
+	prm.collide_with_areas = true
+	prm.collide_with_bodies = true
+
+	var hits: Array[Dictionary] = space.intersect_point(prm, 16)
+	for hit: Dictionary in hits:
+		var col: Object = hit.get("collider") as Object
+		if col == self:
+			return true
+
+	return false
+
+
+# ✅ "Dans le menu" = dans le contenu (panel/bouton), pas juste le root fullscreen transparent
+func _is_click_on_menu(world_pos: Vector2) -> bool:
+	if _menu_ref == null or not is_instance_valid(_menu_ref):
+		return false
+	if not (_menu_ref as Node).is_inside_tree():
+		return false
+	if not (_menu_ref is Control):
+		return (_menu_ref is CanvasItem and (_menu_ref as CanvasItem).visible)
+
+	var root: Control = _menu_ref as Control
+	if not root.visible:
+		return false
+
+	var best: Control = _find_smallest_hit_control(root, world_pos)
+	if best == null:
+		return false
+	if best == root:
+		return false
+
+	return true
+
+
+func _find_smallest_hit_control(root: Control, world_pos: Vector2) -> Control:
+	var stack: Array[Control] = [root]
+	var best: Control = null
+	var best_area: float = INF
+
+	while not stack.is_empty():
+		var c: Control = stack.pop_back() as Control
+		if c == null or not is_instance_valid(c) or not c.visible:
+			continue
+
+		var rect: Rect2 = c.get_global_rect()
+		if rect.has_point(world_pos):
+			var area: float = rect.size.x * rect.size.y
+			if area < best_area:
+				best = c
+				best_area = area
+
+		for child in c.get_children():
+			if child is Control:
+				stack.append(child as Control)
+
+	return best
+
+
+class RangeRing extends Node2D:
+	var radius: float = 64.0
+
+	func _draw() -> void:
+		draw_circle(Vector2.ZERO, radius, Color(0.35, 0.65, 1.0, 0.12))
+		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 96, Color(0.35, 0.65, 1.0, 0.35), 2.0)
+
+
+# ============================================================
+#  Upgrade
+# ============================================================
 func _on_upgrade_clicked() -> void:
 	if "is_selling_mode" in Game and Game.is_selling_mode:
 		return
@@ -172,7 +393,9 @@ func _on_upgrade_clicked() -> void:
 	queue_free()
 
 
-# --------- détection / tir ----------
+# ============================================================
+#  Tir
+# ============================================================
 func _on_tower_body_entered(b: Node2D) -> void:
 	if b.is_in_group("Enemy") and _is_valid_target(b):
 		curr_targets.append(b)
@@ -231,27 +454,21 @@ func _shoot_at(target: Node2D) -> void:
 	b.global_position = spawn
 	get_parent().add_child(b)
 
-	# ✅ dégâts avec buff (Barracks aura etc.)
 	var dmg := int(round(float(bullet_damage) * get_damage_mult()))
 
-	# ✅ nombre d'ennemis SUPPLÉMENTAIRES touchés via le labo (Break Snipe)
 	var extra_hits := 0
 	if Game and Game.has_method("get_snipe_break_extra_hits"):
 		extra_hits = int(Game.get_snipe_break_extra_hits())
 
-	# ✅ configure(speed, damage, extra_hits) puis fire_at (direction fixe)
 	if b.has_method("configure"):
 		b.call("configure", bullet_speed, dmg, extra_hits)
 		if b.has_method("fire_at"):
 			b.call("fire_at", target.global_position)
 	elif b.has_method("fire_at"):
-		# Convention : fire_at(target_pos, override_damage=-1, override_speed=-1)
 		b.call("fire_at", target.global_position, dmg, bullet_speed)
-		# si on n'a pas configure, on tente quand même de pousser extra_hits
 		if "extra_hits" in b:
 			b.extra_hits = extra_hits
 	else:
-		# fallback propriétés
 		if "damage" in b: b.damage = dmg
 		if "speed" in b: b.speed = bullet_speed
 		if "extra_hits" in b: b.extra_hits = extra_hits

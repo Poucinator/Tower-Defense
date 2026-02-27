@@ -76,12 +76,15 @@ func _ready() -> void:
 		add_child(rally)
 		rally.position = Vector2.ZERO
 
-	# Selection circle
 	select_circle = ColorRect.new()
 	select_circle.color = Color(0, 1, 0, 0.3)
 	select_circle.size = Vector2(80, 80)
 	select_circle.position = Vector2(-40, -40)
 	select_circle.visible = false
+
+	# ✅ CRITIQUE : ne doit JAMAIS capturer la souris, sinon la tour ne reçoit plus le clic
+	select_circle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
 	add_child(select_circle)
 
 	if marine_scene == null:

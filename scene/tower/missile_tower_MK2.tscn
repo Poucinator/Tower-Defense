@@ -32,7 +32,7 @@ animations = [{
 size = Vector2(10, 10)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_df2s1"]
-radius = 315.025
+radius = 350.333
 
 [node name="BlueTower" type="StaticBody2D" groups=["Tower"]]
 z_index = 5

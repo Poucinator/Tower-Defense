@@ -333,12 +333,17 @@ func _closest_enemy(enemies: Array[Node2D]) -> Node2D:
 #              Sélection via clic
 # =========================================================
 func _on_input_event(_vp, event: InputEvent, _shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+	# ✅ IMPORTANT : input_event est aussi appelé sur hover/mouse motion.
+	# On ne sélectionne la barracks QUE sur clic gauche.
+	if event is InputEventMouseButton \
+			and event.button_index == MOUSE_BUTTON_LEFT \
+			and event.pressed:
+
 		play_select_line()
 
-	if barrack and barrack.has_method("select_group"):
-		# On passe le marine cliqué -> la barrack saura qui est le "speaker"
-		barrack.select_group(self)
+		if barrack and barrack.has_method("select_group"):
+			# On passe le marine cliqué -> la barrack saura qui est le "speaker"
+			barrack.select_group(self)
 
 
 # =========================================================
