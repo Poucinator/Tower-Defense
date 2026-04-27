@@ -1,6 +1,6 @@
 [gd_scene load_steps=39 format=3 uid="uid://bf7qp34jo472o"]
 
-[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_h0d0r"]
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob/mob_b.gd" id="1_h0d0r"]
 [ext_resource type="Texture2D" uid="uid://kjlhsifo65wg" path="res://Sprite/Enemy/Mushroom/Dead/tile014.png" id="2_awhc0"]
 [ext_resource type="Texture2D" uid="uid://eg4poukotixx" path="res://Sprite/Enemy/Mushroom/attack/tile000.png" id="2_xdism"]
 [ext_resource type="Texture2D" uid="uid://banuh5j8g8ml8" path="res://Sprite/Enemy/Mushroom/Dead/tile013.png" id="3_mg2en"]

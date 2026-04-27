@@ -1,6 +1,6 @@
 [gd_scene load_steps=119 format=3 uid="uid://bqup7qp10cdxt"]
 
-[ext_resource type="Script" uid="uid://dmqrhpbdl58fk" path="res://Scripts/mob_D.gd" id="1_3fyy4"]
+[ext_resource type="Script" uid="uid://dmqrhpbdl58fk" path="res://Scripts/mob/mob_D.gd" id="1_3fyy4"]
 [ext_resource type="PackedScene" uid="uid://brvusgx64ayb" path="res://scene/Ennemies/4D/slime/Slime green.tscn" id="2_sptda"]
 [ext_resource type="Texture2D" uid="uid://bd1wtj70a6mth" path="res://Sprite/Enemy/4D/Slime 4D/Purple Slime/without Shadow/attack/Down/tile000.png" id="3_3fyy4"]
 [ext_resource type="Texture2D" uid="uid://c2kxgnekwwo2g" path="res://Sprite/Enemy/4D/Slime 4D/Purple Slime/without Shadow/attack/Down/tile001.png" id="4_sptda"]

@@ -14,6 +14,9 @@ signal quit_pressed              # Optionnel (si tu écoutes côté parent)
 # ✅ Fix régression : gèle vraiment le temps quand le VictoryOverlay est ouvert
 @export var freeze_time_scale_when_open: bool = true
 
+# Durée minimale d'affichage du loader
+@export_range(0.1, 10.0, 0.1, "suffix:s") var loading_min_display_time: float = 2.0
+
 var _saved_time_scale: float = 1.0
 var _time_scale_frozen: bool = false
 
@@ -171,7 +174,7 @@ func _on_next_confirm_pressed() -> void:
 
 	_restore_time_scale_if_needed()
 	get_tree().paused = false
-	get_tree().change_scene_to_file(labo_ui_scene_path)
+	SceneLoader.goto_scene_with_loading(labo_ui_scene_path, loading_min_display_time)
 
 func _on_next_cancel_pressed() -> void:
 	_set_overlay_visible(next_level_overlay, false)
@@ -202,7 +205,7 @@ func _on_exit_confirm_pressed() -> void:
 
 	_restore_time_scale_if_needed()
 	get_tree().paused = false
-	get_tree().change_scene_to_file(main_menu_scene_path)
+	SceneLoader.goto_scene_with_loading(main_menu_scene_path, loading_min_display_time)
 
 func _on_exit_cancel_pressed() -> void:
 	_set_overlay_visible(exit_to_menu_overlay, false)

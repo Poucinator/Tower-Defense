@@ -1,6 +1,6 @@
 [gd_scene load_steps=106 format=3 uid="uid://dyrkvmi664ll"]
 
-[ext_resource type="Script" uid="uid://cf3joba2r05pm" path="res://Scripts/mob_C.gd" id="1_5n8ic"]
+[ext_resource type="Script" uid="uid://cf3joba2r05pm" path="res://Scripts/mob/mob_C.gd" id="1_5n8ic"]
 [ext_resource type="Texture2D" uid="uid://xnnu23wxrg5j" path="res://Sprite/Enemy/Purple golem V2/attack/Down/tile000.png" id="2_v6m8l"]
 [ext_resource type="Texture2D" uid="uid://7qvomd0fk7sl" path="res://Sprite/Enemy/Purple golem V2/attack/Down/tile001.png" id="3_wu6ho"]
 [ext_resource type="Texture2D" uid="uid://cvn4c2n2i77mn" path="res://Sprite/Enemy/Purple golem V2/attack/Down/tile002.png" id="4_a58t6"]

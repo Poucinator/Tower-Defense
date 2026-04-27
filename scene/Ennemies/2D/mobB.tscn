@@ -1,6 +1,6 @@
 [gd_scene load_steps=40 format=3 uid="uid://c17x4prr8nycm"]
 
-[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_ij5d4"]
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob/mob_b.gd" id="1_ij5d4"]
 [ext_resource type="Texture2D" uid="uid://ci6sphv5d277t" path="res://scene/Ennemies/2D/Golem/tile000.png" id="2_2ctxp"]
 [ext_resource type="Texture2D" uid="uid://cetog7rk43jdc" path="res://scene/Ennemies/2D/Golem/attack/tile000.png" id="2_7k6s8"]
 [ext_resource type="Texture2D" uid="uid://cerqedsk5mc25" path="res://scene/Ennemies/2D/Golem/Dead/tile000.png" id="2_jsiqr"]

@@ -1,6 +1,6 @@
-[gd_scene load_steps=110 format=3 uid="uid://dm7xeynocpev8"]
+[gd_scene load_steps=111 format=3 uid="uid://dm7xeynocpev8"]
 
-[ext_resource type="Script" uid="uid://cf3joba2r05pm" path="res://Scripts/mob_C.gd" id="1_gvhmf"]
+[ext_resource type="Script" uid="uid://dffhhc254be13" path="res://Scripts/mob/mob_bomb.gd" id="1_gvhmf"]
 [ext_resource type="Texture2D" uid="uid://cdos1g27pjnkw" path="res://Sprite/Enemy/Slime 4D/Bomb Slime/attack/Down/tile000.png" id="2_g1bms"]
 [ext_resource type="Texture2D" uid="uid://opchclypkf7b" path="res://Sprite/Enemy/Slime 4D/Bomb Slime/attack/Down/tile001.png" id="3_8l5yd"]
 [ext_resource type="Texture2D" uid="uid://45nhkvb2j4nu" path="res://Sprite/Enemy/Slime 4D/Bomb Slime/attack/Down/tile002.png" id="4_aqbug"]
@@ -500,11 +500,14 @@ border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.02, 0.02, 0.02, 1)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_g1bms"]
+radius = 90.0
+
 [node name="CharacterBody2D" type="CharacterBody2D" groups=["Enemy"]]
 collision_layer = 2
 script = ExtResource("1_gvhmf")
-max_hp = 150
-attack_damage = 10
+max_hp = 100
+explosion_damage = 500
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -13)
@@ -526,3 +529,9 @@ offset_bottom = -49.0
 theme_override_styles/background = SubResource("StyleBoxFlat_ij5d4")
 theme_override_styles/fill = SubResource("StyleBoxFlat_2ctxp")
 show_percentage = false
+
+[node name="ExplosionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExplosionArea"]
+position = Vector2(0, -13)
+shape = SubResource("CircleShape2D_g1bms")

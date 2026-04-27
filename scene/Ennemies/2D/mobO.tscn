@@ -1,6 +1,6 @@
 [gd_scene load_steps=30 format=3 uid="uid://c8sx3dan50kc4"]
 
-[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_rm252"]
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob/mob_b.gd" id="1_rm252"]
 [ext_resource type="Texture2D" uid="uid://c1brc1rtc8ktu" path="res://Sprite/Enemy/Slime bleu/Dead/tile039.png" id="2_jupy3"]
 [ext_resource type="Texture2D" uid="uid://7rc86vsb2he0" path="res://Sprite/Enemy/Slime bleu/Dead/tile040.png" id="3_lnx5x"]
 [ext_resource type="Texture2D" uid="uid://dbqmnvmf62tb0" path="res://Sprite/Enemy/Slime bleu/Dead/tile041.png" id="4_arwbb"]

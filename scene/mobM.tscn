@@ -1,6 +1,6 @@
 [gd_scene load_steps=39 format=3 uid="uid://bosmeipu65j6k"]
 
-[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_eqmka"]
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob/mob_b.gd" id="1_eqmka"]
 [ext_resource type="Texture2D" uid="uid://ctxemnurxdj5a" path="res://Sprite/Enemy/OrangeGolem/attack/tile000.png" id="2_0epni"]
 [ext_resource type="Texture2D" uid="uid://cqllfubsxap47" path="res://Sprite/Enemy/OrangeGolem/dead/tile000.png" id="2_233an"]
 [ext_resource type="Texture2D" uid="uid://c2xu6i1wi5ipn" path="res://Sprite/Enemy/OrangeGolem/dead/tile001.png" id="3_7rsr8"]

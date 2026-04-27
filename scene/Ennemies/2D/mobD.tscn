@@ -1,6 +1,6 @@
 [gd_scene load_steps=60 format=3 uid="uid://cr714ro7vnj2n"]
 
-[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_ih6fg"]
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob/mob_b.gd" id="1_ih6fg"]
 [ext_resource type="Texture2D" uid="uid://drnilsw1i2xxd" path="res://Sprite/Enemy/Mouche/Dead/0_Monster_Dying_000.png" id="2_ih6fg"]
 [ext_resource type="Texture2D" uid="uid://c4r37xid5xstl" path="res://Sprite/Enemy/Mouche/attack/0_Monster_Attack_000.png" id="2_v3rty"]
 [ext_resource type="Texture2D" uid="uid://cfrlx2w3gfutw" path="res://Sprite/Enemy/Mouche/Dead/0_Monster_Dying_001.png" id="3_dwuha"]

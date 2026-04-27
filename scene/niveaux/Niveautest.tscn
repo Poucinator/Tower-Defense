@@ -1,4 +1,4 @@
-[gd_scene load_steps=218 format=4 uid="uid://cdpmoo5y6dlkg"]
+[gd_scene load_steps=219 format=4 uid="uid://cdpmoo5y6dlkg"]
 
 [ext_resource type="PackedScene" uid="uid://bu8ql60gnhsad" path="res://scene/HUD.tscn" id="1_cwqj4"]
 [ext_resource type="Texture2D" uid="uid://bgct2fyah2sh0" path="res://Sprite/fx/weather/rain.png" id="2_j03el"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://cgt35wd8d6mxu" path="res://Scripts/path_spawner.gd" id="13_h8r8w"]
 [ext_resource type="Script" uid="uid://bgbah0klh7wbu" path="res://Scripts/spawn_lane.gd" id="14_5fb78"]
 [ext_resource type="PackedScene" uid="uid://brvusgx64ayb" path="res://scene/Ennemies/4D/slime/Slime green.tscn" id="15_axcwv"]
+[ext_resource type="PackedScene" uid="uid://dm7xeynocpev8" path="res://scene/Ennemies/4D/slime/Slime bomb.tscn" id="15_j03el"]
 [ext_resource type="PackedScene" uid="uid://rdfi74et5cod" path="res://scene/stage1.tscn" id="16_0p73a"]
 [ext_resource type="PackedScene" uid="uid://dioea7wlkn1me" path="res://scene/stage2.tscn" id="17_5vgcs"]
 [ext_resource type="PackedScene" uid="uid://c7eaadqb5bugq" path="res://scene/stage3.tscn" id="18_cq3mw"]
@@ -1979,8 +1980,8 @@ metadata/_custom_type_script = "uid://6hr8nrey163n"
 script = ExtResource("14_5fb78")
 path2d_path = NodePath("")
 stage_scene = ExtResource("16_0p73a")
-mob_scene = ExtResource("15_axcwv")
-count = 2
+mob_scene = ExtResource("15_j03el")
+count = 6
 interval = 1.0
 rotates = false
 loop = false

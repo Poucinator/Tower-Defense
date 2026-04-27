@@ -74,6 +74,12 @@ var _pending_mode: PendingMode = PendingMode.NONE
 var _pending_upgrade_id: StringName = &""
 var _pending_cost: int = 0
 
+# Upgrade actuellement affiché dans l'overlay.
+# Sert uniquement au comportement toggle :
+# - reclic même bouton => fermeture
+# - clic autre bouton => remplacement du contenu
+var _opened_upgrade_id: StringName = &""
+
 var _ov_tween: Tween
 var _overlay_open := false
 
@@ -189,7 +195,20 @@ func _refresh_one_button(btn: BaseButton, upgrade_id: StringName) -> void:
 
 
 func _request_upgrade(upgrade_id: StringName) -> void:
+	# =========================================================
+	# Toggle "comme Labo"
+	# - même bouton recliqué alors que son overlay est déjà ouvert
+	#   => on ferme
+	# - autre bouton => on remplace le contenu normalement
+	# =========================================================
+	if _overlay_open and _opened_upgrade_id == upgrade_id:
+		_close_overlay()
+		return
+
 	var level := _get_level(upgrade_id)
+
+	# On mémorise quel upgrade a demandé l'ouverture de l'overlay.
+	_opened_upgrade_id = upgrade_id
 
 	# ✅ MAX : overlay info, pas d'achat
 	if level >= MAX_LEVEL:
@@ -201,7 +220,7 @@ func _request_upgrade(upgrade_id: StringName) -> void:
 		_open_info("%s (MAX)" % title_max, desc_max + "\n\n" + details_max)
 		return
 
-	# ✅ Achat : on ouvre TOUJOURS l'overlay
+	# ✅ Achat : on ouvre l'overlay d'achat
 	var title := _get_title(upgrade_id)
 	var desc := _get_desc(upgrade_id)
 	var cost := _get_cost_for_next_level(level)
@@ -214,7 +233,7 @@ func _request_upgrade(upgrade_id: StringName) -> void:
 
 	var details := _build_purchase_details(upgrade_id, level, cost)
 
-	# petit ajout de feedback si pas assez
+	# Feedback si pas assez
 	if not can_afford:
 		details += "\n\n❌ Pas assez de cristaux."
 
@@ -223,7 +242,6 @@ func _request_upgrade(upgrade_id: StringName) -> void:
 	# ✅ on désactive "Valider" si pas assez
 	if _ov_confirm:
 		_ov_confirm.disabled = not can_afford
-
 
 func _apply_pending_purchase() -> void:
 	if _pending_upgrade_id == &"":
@@ -279,6 +297,7 @@ func _close_overlay() -> void:
 	_pending_mode = PendingMode.NONE
 	_pending_upgrade_id = &""
 	_pending_cost = 0
+	_opened_upgrade_id = &""
 	_close_overlay_animated()
 
 
@@ -309,8 +328,8 @@ func _on_next_pressed() -> void:
 	_pending_mode = PendingMode.NEXT_CONFIRM
 	_pending_upgrade_id = &""
 	_pending_cost = 0
+	_opened_upgrade_id = &""
 	_open_info("Lancer le niveau", "Es-tu sûr de vouloir commencer le prochain niveau ?", false, true)
-
 
 func _change_to_next_scene() -> void:
 	if not next_scene_path.is_empty():

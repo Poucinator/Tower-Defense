@@ -1,6 +1,6 @@
 [gd_scene load_steps=78 format=3 uid="uid://bc8kuo8s5to0b"]
 
-[ext_resource type="Script" uid="uid://dvocipsk0ol8b" path="res://Scripts/Mob_Fly.gd" id="1_mcbml"]
+[ext_resource type="Script" uid="uid://dvocipsk0ol8b" path="res://Scripts/mob/Mob_Fly.gd" id="1_mcbml"]
 [ext_resource type="Texture2D" uid="uid://bu217biff5pgl" path="res://Sprite/Enemy/4D/Bee/attack/Down/tile000.png" id="2_hln8d"]
 [ext_resource type="Texture2D" uid="uid://pimmko0mc7uy" path="res://Sprite/Enemy/4D/Bee/attack/Down/tile001.png" id="3_iwcsy"]
 [ext_resource type="Texture2D" uid="uid://cas12uagori6w" path="res://Sprite/Enemy/4D/Bee/attack/Down/tile002.png" id="4_snhrc"]

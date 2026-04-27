@@ -1,6 +1,6 @@
 [gd_scene load_steps=42 format=3 uid="uid://dp3b2t6sf6vjc"]
 
-[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob_b.gd" id="1_iax78"]
+[ext_resource type="Script" uid="uid://b6gwlqgldwxdh" path="res://Scripts/mob/mob_b.gd" id="1_iax78"]
 [ext_resource type="Texture2D" uid="uid://n58syt7y7oon" path="res://Sprite/Enemy/Lezard/dead/0_Monster_Dying_000.png" id="2_iax78"]
 [ext_resource type="Texture2D" uid="uid://de7utx1ag3yx7" path="res://Sprite/Enemy/Lezard/dead/0_Monster_Dying_001.png" id="3_t0ld5"]
 [ext_resource type="Texture2D" uid="uid://4eo7p404ll26" path="res://Sprite/Enemy/Lezard/dead/0_Monster_Dying_002.png" id="4_ubn4s"]
